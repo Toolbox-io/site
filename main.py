@@ -1,9 +1,9 @@
 import mimetypes
 import os
 
-from flask import Flask, send_from_directory, redirect
+from flask import Flask, send_from_directory, redirect, request, render_template
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='src/templates')
 
 # Путь к папке с контентом
 CONTENT_PATH = 'src'
@@ -50,7 +50,16 @@ def serve_files(path):
     file = find_file(path)
     file_path = file[0]
     # If it's a directory and URL doesn't end with '/', redirect
-    if file[1]: return redirect(file[1])
+    if file[1]:
+        # Preserve query parameters
+        query_params = request.query_string.decode()
+        redirect_url = file[1]
+        if query_params:
+            if '?' in redirect_url:
+                redirect_url += f"&{query_params}"
+            else:
+                redirect_url += f"?{query_params}"
+        return redirect(redirect_url)
     
     if file_path:
         # Определяем тип контента по расширению
@@ -69,6 +78,48 @@ def serve_files(path):
 def index():
     return send_from_directory(CONTENT_PATH, 'index.html')
 
+
+@app.route('/guides/<path:subpath>')
+def guides_handler(subpath: str):
+    # Use find_file to check for file existence
+    print(f"subpath: {subpath}")
+    print(f"full path: guides/{subpath}")
+    file_path, redirect_path = find_file(f"guides/{subpath}")
+    print(f"file path of guides/{subpath}: {file_path}")
+    print(f"redirect of guides/{subpath}: {redirect_path}")
+    print("---")
+
+    # 1. If the request explicitly ends with .md and the file exists, serve it as a static file
+    if file_path and ((subpath.lower().endswith('.md') and file_path.endswith('.md')) or "." in subpath):
+        mime_type = mimetypes.guess_type(file_path)[0]
+        return send_from_directory(
+            os.path.dirname(file_path),
+            os.path.basename(file_path),
+            mimetype=mime_type
+        )
+
+    # 2. If the request does not end with .md, but find_file resolved to an .md file, process as a guide
+    if not subpath.lower().endswith('.md') and file_path and file_path.endswith('.md'):
+        guide_name = os.path.splitext(subpath)[0]
+        # Custom guide processing logic (example: render HTML page)
+        html = f"""
+        <html>
+        <head><title>Guide: {guide_name}</title></head>
+        <body>
+            <h1>Processed Guide: {guide_name}</h1>
+            <p>This is a processed guide for: <b>{guide_name}</b></p>
+        </body>
+        </html>
+        """
+        return html
+
+    # Handle /raw
+    if subpath.lower().endswith('/raw'):
+        return render_template("raw_guide.html", guide=f"{os.path.dirname(f"/guides/{subpath}").upper()}.md")
+
+    # If not found, redirect as specified
+    guide_name = os.path.splitext(subpath)[0].upper() + '.md'
+    return redirect(f"/guides?guide={guide_name}")
 
 if __name__ == '__main__':
     app.run(debug=True)

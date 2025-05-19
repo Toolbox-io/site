@@ -9,7 +9,7 @@ Icon: phonelink_lock
 При попытке открыть любое защищённое приложение, потенциальный мошенник увидит фальшивое сообщение о сбое:
 
 <img 
-  src="../res/guides/how_to_lock_apps/crash.png" 
+  src="/res/guides/how_to_lock_apps/crash.png" 
   alt="Фальшивое сообщение о сбое"
   width="293,8"
   height="620,8"
@@ -25,7 +25,7 @@ Icon: phonelink_lock
 Дальше нужно ввести пароль для входа в приложение:
 
 <img
-  src="../res/guides/how_to_lock_apps/password.png"
+  src="/res/guides/how_to_lock_apps/password.png"
   alt="Экран ввода пароля"
   width="293,8"
   height="620,8"
@@ -47,7 +47,7 @@ Icon: phonelink_lock
 > Чтобы отключить постоянное уведомление, нажмите и удерживайте его, а затем нажмите **Выключить уведомления**:
 > 
 > <img
->   src="../res/guides/how_to_lock_apps/notification.png"
+>   src="/res/guides/how_to_lock_apps/notification.png"
 >   alt="Выключение постоянного уведомления"
 >   width="293,8"
 >   height="620,8"
@@ -57,7 +57,7 @@ Icon: phonelink_lock
 1. Зайдите в Toolbox.io и перейдите в раздел [**Блокировка приложений**](toolbox-io://page/applocker).
    
    <img
-     src="../res/guides/how_to_lock_apps/applocker.png"
+     src="/res/guides/how_to_lock_apps/applocker.png"
      alt="Экран Блокировки приложений"
      width="293,8"
      height="620,8"
@@ -66,13 +66,13 @@ Icon: phonelink_lock
 3. Предоставьте разрешение спец. возможностей:
    
    <img
-     src="../res/guides/how_to_lock_apps/accessibility_1.png"
+     src="/res/guides/how_to_lock_apps/accessibility_1.png"
      alt="Предоставление разрешения специальных возможностей"
      width="293,8"
      height="620,8"
      class="phone" />
    <img
-     src="../res/guides/how_to_lock_apps/accessibility_2.png"
+     src="/res/guides/how_to_lock_apps/accessibility_2.png"
      alt="Предоставление разрешения специальных возможностей"
      width="293,8"
      height="620,8"
@@ -81,7 +81,7 @@ Icon: phonelink_lock
 5. Выберите приложения, которые нужно защитить через пункт **Приложения** на странице Блокировки приложений:
    
    <img
-     src="../res/guides/how_to_lock_apps/select_apps.png"
+     src="/res/guides/how_to_lock_apps/select_apps.png"
      alt="Экран выбора приложений"
      width="293,8"
      height="620,8"

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta lang="ru" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title></title>
+        <script type="module" src="/guides/api.js"></script>
+        <script type="module" src="/common.js"></script>
+        <script type="module">
+            import {Utils} from "/common.js";
+
+            async function main() {
+                const header = await Utils.loadMarkdown("{{ guide }}");
+                document.title = header.DisplayName;
+            }
+            main();
+        </script>
+        <link rel="stylesheet" href="/css/common.css" />
+    </head>
+    <body class="markdown"></body>
+</html>

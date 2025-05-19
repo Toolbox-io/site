@@ -1,15 +1,19 @@
 // @ts-ignore
-import { marked } from "./node_modules/marked/lib/marked.esm.js";
+import { marked } from "/node_modules/marked/lib/marked.esm.js";
 // @ts-ignore
-import hljs from './node_modules/@highlightjs/cdn-assets/es/core.js';
+import hljs from '/node_modules/@highlightjs/cdn-assets/es/core.js';
 // @ts-ignore
-import xml from './node_modules/@highlightjs/cdn-assets/es/languages/xml.min.js';
+import xml from '/node_modules/@highlightjs/cdn-assets/es/languages/xml.min.js';
+console.log("common file loading");
+console.log("export");
 window.marked = marked;
 window.hljs = hljs;
+console.log("fix");
 // noinspection JSUnusedLocalSymbols,ES6ConvertVarToLetConst,JSUnusedGlobalSymbols
 export var exports = {};
 export const token = "gi" + "thu" + "b_p" + "at_11BPW3Z" + "7Y0M847x0i" + "90jER_DKs" +
     "vP8tQQwkRCvQd" + "0MCf7hc5" + "K9QVvtF" + "8eoI5eM9Drg" + "oVWG5FHXPIsg4HeMh";
+console.log("utils");
 export var Utils;
 (function (Utils) {
     function getMarkdownHeader(markdown) {
@@ -123,7 +127,7 @@ export var Utils;
     Utils.notification = notification;
     async function loadMarkdown(file, element = document.body) {
         if (file === "" || !file.endsWith(".md")) {
-            throw new SyntaxError("Invalid file");
+            throw new SyntaxError(`Invalid file ${file}`);
         }
         let text = await (await fetch(file)).text();
         console.log(text);
@@ -185,6 +189,7 @@ export var Utils;
     Utils.loadMarkdown = loadMarkdown;
     hljs.registerLanguage("xml", xml);
 })(Utils || (Utils = {}));
+console.log("cookies");
 // noinspection JSUnusedGlobalSymbols
 export var Cookies;
 (function (Cookies) {
@@ -229,6 +234,7 @@ export var Cookies;
     }
     Cookies.getAll = getAll;
 })(Cookies || (Cookies = {}));
+console.log("hover fix");
 // hover fix
 (() => {
     let hasHoverClass = false;
@@ -259,6 +265,7 @@ export var Cookies;
     document.addEventListener('mousemove', enableHover, true);
     enableHover();
 })();
+console.log("components");
 export var Components;
 (function (Components) {
     class TioHeader extends HTMLElement {

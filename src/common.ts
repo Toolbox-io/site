@@ -1,19 +1,24 @@
 // @ts-ignore
-import { marked } from "./node_modules/marked/lib/marked.esm.js";
+import { marked } from "/node_modules/marked/lib/marked.esm.js";
 // @ts-ignore
-import hljs from './node_modules/@highlightjs/cdn-assets/es/core.js';
+import hljs from '/node_modules/@highlightjs/cdn-assets/es/core.js';
 // @ts-ignore
-import xml from './node_modules/@highlightjs/cdn-assets/es/languages/xml.min.js';
+import xml from '/node_modules/@highlightjs/cdn-assets/es/languages/xml.min.js';
 
+console.log("common file loading");
+
+console.log("export");
 (window as any).marked = marked;
 (window as any).hljs = hljs;
 
+console.log("fix");
 // noinspection JSUnusedLocalSymbols,ES6ConvertVarToLetConst,JSUnusedGlobalSymbols
 export var exports = {};
 
 export const token = "gi" + "thu" + "b_p" + "at_11BPW3Z" + "7Y0M847x0i" + "90jER_DKs" +
     "vP8tQQwkRCvQd" + "0MCf7hc5" + "K9QVvtF" + "8eoI5eM9Drg" + "oVWG5FHXPIsg4HeMh"
 
+console.log("utils");
 export namespace Utils {
     import TioHeader = Components.TioHeader;
     export type MarkdownHeader = { [key: string]: string }
@@ -141,7 +146,7 @@ export namespace Utils {
 
     export async function loadMarkdown(file: string, element: HTMLElement = document.body): Promise<any> {
         if (file === "" || !file.endsWith(".md")) {
-            throw new SyntaxError("Invalid file")
+            throw new SyntaxError(`Invalid file ${file}`)
         }
 
         let text = await (await fetch(file)).text();
@@ -214,6 +219,7 @@ export namespace Utils {
     hljs.registerLanguage("xml", xml);
 }
 
+console.log("cookies");
 // noinspection JSUnusedGlobalSymbols
 export namespace Cookies {
     export function get(name: string): string | null {
@@ -256,6 +262,7 @@ export namespace Cookies {
     }
 }
 
+console.log("hover fix");
 // hover fix
 (() => {
     let hasHoverClass = false;
@@ -290,6 +297,7 @@ export namespace Cookies {
     enableHover();
 })()
 
+console.log("components");
 export namespace Components {
     export class TioHeader extends HTMLElement {
         static observedAttributes = ["tab"];

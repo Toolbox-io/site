@@ -28,7 +28,7 @@ Icon: lock
 1. Откройте Toolbox.io и перейдите в раздел [Защита блокировки](toolbox-io://page/unlockProtection).
 
    <img
-     src="../res/guides/how_to_use_unlock_protection/unlock_protection.png"
+     src="/res/guides/how_to_use_unlock_protection/unlock_protection.png"
      alt="Экран Защиты блокировки"
      width="293,8"
      height="620,8"
@@ -37,7 +37,7 @@ Icon: lock
    следующем экране.
    
    <img
-   src="../res/guides/how_to_use_unlock_protection/devadmin.png"
+   src="/res/guides/how_to_use_unlock_protection/devadmin.png"
    alt="Экран Защиты блокировки"
    width="293,8"
    height="620,8"
