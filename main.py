@@ -121,5 +121,13 @@ def guides_handler(subpath: str):
     guide_name = os.path.splitext(subpath)[0].upper() + '.md'
     return redirect(f"/guides?guide={guide_name}")
 
+@app.route("/favicon.ico")
+def favicon():
+    return send_from_directory(
+        directory=CONTENT_PATH,
+        path="res/favicon.svg",
+        mimetype=mimetypes.guess_type(os.path.join(CONTENT_PATH, "res/favicon.svg"))[0]
+    )
+
 if __name__ == '__main__':
     app.run(debug=True)

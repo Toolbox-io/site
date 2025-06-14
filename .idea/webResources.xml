@@ -10,6 +10,14 @@
           </resourceRoots>
         </entryData>
       </entry>
+      <entry url="file://$PROJECT_DIR$/src/node_modules">
+        <entryData>
+          <resourceRoots>
+            <path value="file://$PROJECT_DIR$/src/res" />
+            <path value="file://$PROJECT_DIR$/src/css" />
+          </resourceRoots>
+        </entryData>
+      </entry>
     </contentEntries>
   </component>
 </project>
