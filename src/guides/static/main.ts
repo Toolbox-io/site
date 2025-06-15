@@ -1,9 +1,11 @@
-import {Cookies, token, Utils} from "../../common.js";
+// noinspection JSUnusedLocalSymbols
+
+import {Utils} from "../../common.js";
 
 import delay = Utils.delay;
-import {GuideHeader, GuideJSON} from "./api.js";
+import {GuideJSON} from "./api.js";
 import loadMarkdown = Utils.loadMarkdown;
-import getMarkdownHeader = Utils.getMarkdownHeader;
+
 
 import setUpTabs = Utils.setUpTabs;
 
@@ -58,122 +60,44 @@ document.getElementById("guide_back")!!.addEventListener("click", async () => {
     document.getElementById("guide")!!.innerHTML = "";
 });
 
-let currentRatelimitRemaining = Cookies.get("guides-ratelimitRemaining");
-let currentRatelimitReset = Cookies.get("guides-ratelimitReset");
-if (currentRatelimitReset === null) {
-    currentRatelimitReset = (Date.now() + 100).toString();
-}
-if (currentRatelimitRemaining === null) {
-    currentRatelimitRemaining = "-1";
+async function fetchGuidesList(): Promise<GuideJSON> {
+    const response = await fetch("/guides/list");
+    if (!response.ok) throw new Error("Failed to fetch guides list");
+    return await response.json();
 }
 
-let bool = Number(currentRatelimitRemaining) !== 0
-if (!bool) {
-    bool = Date.now() > Number(currentRatelimitReset)
-}
-
-if (bool) {
-    const headers: any = {
-        "Accept": "application/json",
-        "X-GitHub-Api-Version": "2022-11-28",
-        "Authorization": `Bearer ${token}`
-    };
-
-    let cookiedJSON = Cookies.get("guides-json");
-
-    const prevEtag = Cookies.get("guides-etag");
-    if (prevEtag !== null && cookiedJSON !== null) {
-        headers["if-none-match"] = prevEtag;
-    }
-
-    const response = await fetch(
-        "https://api.github.com/repos/Toolbox-io/Toolbox-io/contents/guides",
-        {
-            headers: headers
-        }
-    );
-    if (response.ok || response.status === 304) {
-        let responseJSON: GuideJSON;
-        if (cookiedJSON != null && response.status === 304) {
-            responseJSON = JSON.parse(cookiedJSON);
-            console.log("Using cached guides");
-        } else {
-            console.log("Getting new data");
-            responseJSON = await response.json();
-        }
-
-        let savedJSON: GuideJSON = []
-
-        for (const entry of responseJSON) {
-            const type = entry.type;
-            const name = entry.name;
-            const download_url = entry.download_url;
-
-            if (type === "file" && name.endsWith(".md") && name !== "README.md") {
-                try {
-                    const guide_content = await (await fetch(download_url)).text();
-                    const guide_header = getMarkdownHeader(guide_content) as GuideHeader;
-                    const guide = document.createElement("div");
-                    guide.classList.add("guide", "toucheffect");
-
-                    const icon = document.createElement("span");
-                    icon.classList.add("material-symbols", "guide_icon");
-                    if (guide_header.Icon) {
-                        icon.textContent = guide_header.Icon;
-                    } else {
-                        icon.textContent = "description";
-                    }
-                    guide.appendChild(icon);
-
-                    const title = document.createElement("div");
-                    title.classList.add("guide_title");
-                    title.textContent = guide_header.DisplayName;
-                    guide.appendChild(title);
-
-                    guides.appendChild(guide);
-                    guide.addEventListener("click", () => {
-                        loadMarkdown(name, document.getElementById("guide")!!);
-                        switchPage(1);
-                    });
-                    sizeElements();
-                } catch (e) {
-                    console.log(e);
-                }
-
-                savedJSON.push(
-                    {
-                        name: name,
-                        type: type,
-                        download_url: download_url
-                    }
-                );
-            }
-        }
-
-        console.log(savedJSON);
-
-        Cookies.set("guides-json", JSON.stringify(savedJSON));
-        const etag = response.headers.get("etag");
-        if (etag !== null) {
-            Cookies.set("guides-etag", etag);
-        }
-
-        const urlParams = new URLSearchParams(window.location.search);
-        const selectedGuide = urlParams.get('guide');
-        if (selectedGuide !== null) {
-            await loadMarkdown(selectedGuide, document.getElementById("guide")!!);
+async function renderGuidesList() {
+    const guidesList = await fetchGuidesList();
+    guides.innerHTML = "";
+    for (const entry of guidesList) {
+        const guide = document.createElement("div");
+        guide.classList.add("guide", "toucheffect");
+        const icon = document.createElement("span");
+        icon.classList.add("material-symbols", "guide_icon");
+        icon.textContent = entry.header.Icon || "description";
+        guide.appendChild(icon);
+        const title = document.createElement("div");
+        title.classList.add("guide_title");
+        title.textContent = entry.header.DisplayName;
+        guide.appendChild(title);
+        guides.appendChild(guide);
+        guide.addEventListener("click", async () => {
+            await loadMarkdown(entry.name, document.getElementById("guide")!!);
             await switchPage(1);
-        }
-    } else {
-        console.error(`Failed to fetch guides: ${response.status} - ${response.statusText}`);
+        });
+        sizeElements();
     }
+}
 
-    const ratelimitRemaining = response.headers.get("x-ratelimit-remaining")!!;
-    const ratelimitReset = response.headers.get("x-ratelimit-reset")!!;
+renderGuidesList();
 
-    console.log(`Rate limit remaining: ${ratelimitRemaining}`);
-    console.log(`reset: ${ratelimitReset}`);
-
-    Cookies.set("guides-ratelimitRemaining", ratelimitRemaining);
-    Cookies.set("guides-ratelimitReset", ratelimitReset);
+const urlParams = new URLSearchParams(window.location.search);
+const selectedGuide = urlParams.get('guide');
+if (selectedGuide !== null) {
+    try {
+        await loadMarkdown(selectedGuide, document.getElementById("guide")!!);
+    } catch (e) {
+        await loadMarkdown("ERROR.md", document.getElementById("guide")!!);
+    }
+    await switchPage(1);
 }

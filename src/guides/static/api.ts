@@ -3,10 +3,9 @@ export type GuideHeader = {
     "Icon": string
 }
 
-export type GuideJSON = GuideEntry[]
-
 export type GuideEntry = {
-    type: "file" | "dir",
     name: string,
-    download_url: string
+    header: GuideHeader
 }
+
+export type GuideJSON = GuideEntry[];
