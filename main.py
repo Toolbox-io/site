@@ -1,108 +1,114 @@
 import mimetypes
-import os
+from pathlib import Path
+from typing import Optional, Tuple
 
-from flask import Flask, send_from_directory, redirect, request, render_template
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 
-app = Flask(__name__, template_folder='src/templates')
+app = FastAPI()
 
-# Путь к папке с контентом
-CONTENT_PATH = 'src'
+# Constants
+CONTENT_PATH = Path("src")
+TEMPLATES_PATH = CONTENT_PATH / "templates"
 
+# Setup templates
+templates = Jinja2Templates(directory=str(TEMPLATES_PATH))
 
-# Функция для поиска файла с учетом разных расширений
-def find_file(path: str) -> tuple[str | None, str | None]:
-    # Полный путь относительно CONTENT_PATH
-    full_path = os.path.join(CONTENT_PATH, path)
+# Mount static files for favicon and other static content
+app.mount("/static", StaticFiles(directory=str(CONTENT_PATH / "res")), name="static")
 
-    # Если это директория и в ней есть index.html
-    if os.path.isdir(full_path):
-        index_file = os.path.join(full_path, 'index.html')
-        if os.path.isfile(index_file):
-            if not path.endswith("/"): return index_file, f"{path}/"
-            else: return index_file, None
-        # Если index.html нет, ищем <dir>.html в родительской папке
-        dir_html = os.path.join(os.path.dirname(full_path), os.path.basename(path) + '.html')
-        if os.path.isfile(dir_html):
+def find_file(path: str) -> Tuple[Optional[Path], Optional[str]]:
+    """
+    Find a file with the given path, handling various cases like directories and extensions.
+    Returns a tuple of (file_path, redirect_path).
+    """
+    full_path = CONTENT_PATH / path
+
+    # Handle directory case
+    if full_path.is_dir():
+        index_file = full_path / "index.html"
+        if index_file.is_file():
+            if not path.endswith("/"):
+                return index_file, f"{path}/"
+            return index_file, None
+        
+        # Check for <dir>.html in parent directory
+        dir_html = full_path.parent / f"{full_path.name}.html"
+        if dir_html.is_file():
             return dir_html, None
         return None, None
 
-    # Если это файл без расширения
-    if os.path.isfile(full_path):
+    # Handle file without extension
+    if full_path.is_file():
         return full_path, None
 
-    # Если есть файл с расширением .html
-    html_path = os.path.join(CONTENT_PATH, path + '.html')
-    if os.path.isfile(html_path):
+    # Handle .html extension
+    html_path = CONTENT_PATH / f"{path}.html"
+    if html_path.is_file():
         return html_path, None
 
-    # Проверяем все подкаталоги
-    for dirpath, dirnames, filenames in os.walk(CONTENT_PATH):
-        for filename in filenames:
-            if filename.startswith(path):
-                return os.path.join(dirpath, filename), None
+    # Search in subdirectories
+    for file_path in CONTENT_PATH.rglob("*"):
+        if file_path.is_file() and file_path.name.startswith(path):
+            return file_path, None
 
     return None, None
 
+@app.get("/")
+async def index():
+    """Serve the index.html file from the content directory."""
+    index_path = CONTENT_PATH / "index.html"
+    if not index_path.is_file():
+        raise HTTPException(status_code=404, detail="Index file not found")
+    return FileResponse(index_path)
 
-# Обработчик всех запросов
-@app.route('/<path:path>')
-def serve_files(path):
-    file = find_file(path)
-    file_path = file[0]
-    # If it's a directory and URL doesn't end with '/', redirect
-    if file[1]:
-        # Preserve query parameters
-        query_params = request.query_string.decode()
-        redirect_url = file[1]
-        if query_params:
-            if '?' in redirect_url:
-                redirect_url += f"&{query_params}"
-            else:
-                redirect_url += f"?{query_params}"
-        return redirect(redirect_url)
+@app.get("/{path:path}")
+async def serve_files(path: str, request: Request):
+    """Serve files from the content directory with various fallbacks."""
+    file_path, redirect_path = find_file(path)
     
-    if file_path:
-        # Определяем тип контента по расширению
-        mime_type = mimetypes.guess_type(file_path)[0]
-        return send_from_directory(
-            os.path.dirname(file_path),
-            os.path.basename(file_path),
-            mimetype=mime_type
-        )
+    if redirect_path:
+        # Preserve query parameters
+        query_string = request.url.query
+        redirect_url = redirect_path
+        if query_string:
+            if '?' in redirect_url:
+                redirect_url += f"&{query_string}"
+            else:
+                redirect_url += f"?{query_string}"
+        return RedirectResponse(url=redirect_url)
+    
+    if not file_path:
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    mime_type, _ = mimetypes.guess_type(str(file_path))
+    return FileResponse(
+        path=file_path,
+        media_type=mime_type
+    )
 
-    return "404 Not Found", 404
+@app.get("/guides/{subpath:path}")
+async def guides_handler(subpath: str, request: Request):
+    """Handle guide requests with special processing for markdown files."""
 
+    print("guide handler called")
 
-# Обработчик для корневой директории
-@app.route('/')
-def index():
-    return send_from_directory(CONTENT_PATH, 'index.html')
-
-
-@app.route('/guides/<path:subpath>')
-def guides_handler(subpath: str):
-    # Use find_file to check for file existence
-    print(f"subpath: {subpath}")
-    print(f"full path: guides/{subpath}")
     file_path, redirect_path = find_file(f"guides/{subpath}")
-    print(f"file path of guides/{subpath}: {file_path}")
-    print(f"redirect of guides/{subpath}: {redirect_path}")
-    print("---")
-
-    # 1. If the request explicitly ends with .md and the file exists, serve it as a static file
-    if file_path and ((subpath.lower().endswith('.md') and file_path.endswith('.md')) or "." in subpath):
-        mime_type = mimetypes.guess_type(file_path)[0]
-        return send_from_directory(
-            os.path.dirname(file_path),
-            os.path.basename(file_path),
-            mimetype=mime_type
+    
+    # Handle raw markdown files
+    if file_path and ((subpath.lower().endswith('.md') and file_path.suffix == '.md') or "." in subpath):
+        mime_type, _ = mimetypes.guess_type(str(file_path))
+        return FileResponse(
+            path=file_path,
+            media_type=mime_type
         )
-
-    # 2. If the request does not end with .md, but find_file resolved to an .md file, process as a guide
-    if not subpath.lower().endswith('.md') and file_path and file_path.endswith('.md'):
-        guide_name = os.path.splitext(subpath)[0]
-        # Custom guide processing logic (example: render HTML page)
-        html = f"""
+    
+    # Handle markdown files for processing
+    if not subpath.lower().endswith('.md') and file_path and file_path.suffix == '.md':
+        guide_name = file_path.stem
+        return HTMLResponse(content=f"""
         <html>
         <head><title>Guide: {guide_name}</title></head>
         <body>
@@ -110,24 +116,43 @@ def guides_handler(subpath: str):
             <p>This is a processed guide for: <b>{guide_name}</b></p>
         </body>
         </html>
-        """
-        return html
-
-    # Handle /raw
+        """)
+    
+    # Handle /raw endpoint
     if subpath.lower().endswith('/raw'):
-        return render_template("raw_guide.html", guide=f"{os.path.dirname(f"/guides/{subpath}").upper()}.md")
+        return templates.TemplateResponse(
+            "raw_guide.html",
+            {"request": request, "guide": f"GUIDES/{Path(subpath).parent.name.upper()}.MD"}
+        )
+    
+    # Redirect for not found guides
+    guide_name = f"{Path(subpath).stem.upper()}.md"
+    # Preserve query parameters
+    query_string = request.url.query
+    redirect_url = f"/guides?guide={guide_name}"
+    if query_string:
+        if '?' in redirect_url:
+            redirect_url += f"&{query_string}"
+        else:
+            redirect_url += f"?{query_string}"
+    return RedirectResponse(url=redirect_url)
 
-    # If not found, redirect as specified
-    guide_name = os.path.splitext(subpath)[0].upper() + '.md'
-    return redirect(f"/guides?guide={guide_name}")
+@app.get("/favicon.ico")
+async def favicon():
+    """Serve the favicon."""
 
-@app.route("/favicon.ico")
-def favicon():
-    return send_from_directory(
-        directory=CONTENT_PATH,
-        path="res/favicon.svg",
-        mimetype=mimetypes.guess_type(os.path.join(CONTENT_PATH, "res/favicon.svg"))[0]
+    print("returning favicon")
+
+    favicon_path = CONTENT_PATH / "res" / "favicon.svg"
+    if not favicon_path.is_file():
+        raise HTTPException(status_code=404, detail="Favicon not found")
+    
+    mime_type, _ = mimetypes.guess_type(str(favicon_path))
+    return FileResponse(
+        path=favicon_path,
+        media_type=mime_type
     )
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
