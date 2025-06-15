@@ -13,22 +13,11 @@ app = FastAPI()
 # Constants
 CONTENT_PATH = Path("src")
 TEMPLATES_PATH = CONTENT_PATH / "templates"
-LOGFILE = "server.log"
 GUIDES_PATH = CONTENT_PATH / "guides"
 exclude_guides = ["README.md", "ERROR.md"]
 
 # Setup templates
 templates = Jinja2Templates(directory=str(TEMPLATES_PATH))
-
-# Init log
-with open(LOGFILE, "w") as _log:
-    _log.write("Starting server...")
-
-def write_log(msg: str):
-    print(msg)
-    with open(LOGFILE, "a") as log:
-        log.write(msg + "\n")
-
 
 def find_file(path: str) -> Tuple[Optional[Path], Optional[str]]:
     """
