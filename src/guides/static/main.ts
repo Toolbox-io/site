@@ -1,4 +1,4 @@
-import {Cookies, token, Utils} from "../common.js";
+import {Cookies, token, Utils} from "../../common.js";
 
 import delay = Utils.delay;
 import {GuideHeader, GuideJSON} from "./api.js";

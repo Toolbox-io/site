@@ -1,4 +1,4 @@
-import { Cookies, token, Utils } from "../common.js";
+import { Cookies, token, Utils } from "../../common.js";
 var delay = Utils.delay;
 var loadMarkdown = Utils.loadMarkdown;
 var getMarkdownHeader = Utils.getMarkdownHeader;

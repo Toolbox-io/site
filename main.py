@@ -1,19 +1,31 @@
 import mimetypes
+import re
 from pathlib import Path
 from typing import Optional, Tuple
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
+from starlette.staticfiles import StaticFiles
 
 app = FastAPI()
 
 # Constants
 CONTENT_PATH = Path("src")
 TEMPLATES_PATH = CONTENT_PATH / "templates"
+LOGFILE = "server.log"
 
 # Setup templates
 templates = Jinja2Templates(directory=str(TEMPLATES_PATH))
+
+# Init log
+with open(LOGFILE, "w") as _log:
+    _log.write("Starting server...")
+
+def write_log(msg: str):
+    print(msg)
+    with open(LOGFILE, "a") as log:
+        log.write(msg + "\n")
 
 
 def find_file(path: str) -> Tuple[Optional[Path], Optional[str]]:
@@ -53,13 +65,64 @@ def find_file(path: str) -> Tuple[Optional[Path], Optional[str]]:
 
     return None, None
 
+def static(path: str | Path):
+    if not path is Path:
+        path = Path(path)
+    path = str(path.resolve())
+
+    app.mount(path, StaticFiles(directory=path), name=path)
+
 @app.get("/")
-async def index():
-    """Serve the index.html file from the content directory."""
-    index_path = CONTENT_PATH / "index.html"
-    if not index_path.is_file():
-        raise HTTPException(status_code=404, detail="Index file not found")
-    return FileResponse(index_path)
+async def index(): return FileResponse(CONTENT_PATH / "index.html")
+
+@app.get("/favicon.ico")
+async def favicon(): return FileResponse(CONTENT_PATH / "res" / "favicon.svg")
+
+@app.get("/guides/")
+async def guides(): return FileResponse(CONTENT_PATH / "guides/index.html")
+
+@app.get("/guides/{subpath:path}")
+async def guides_handler(subpath: str, request: Request):
+    """Handle guide requests with special processing for markdown files."""
+
+    file_path, redirect_path = find_file(f"guides/{subpath}")
+    
+    # Handle files
+    if (
+        "." in subpath or
+        (file_path and file_path.parent.is_dir() and file_path.parent.resolve() != (CONTENT_PATH / "guides").resolve())
+    ):
+        if not (file_path and file_path.is_file()):
+            raise HTTPException(status_code=404)
+        return FileResponse(file_path)
+    
+    # Handle /raw endpoint
+    if subpath.lower().endswith('/raw'):
+        return templates.TemplateResponse(
+            "raw_guide.html",
+            {"request": request, "guide": f"guides/{Path(subpath).parent.name}.md"}
+        )
+    
+    # Redirect for not found guides
+    guide_name = f"{Path(subpath).stem.upper()}.md"
+
+    if not (CONTENT_PATH / "guides" / guide_name).is_file():
+        raise HTTPException(
+            status_code=404,
+            detail=f"""
+            # Ошибка
+            Извините, гайд {guide_name} не был найден на сервере.
+            
+            [Все гайды](/guides)
+            """
+        )
+
+    # Preserve query parameters
+    query_string = re.sub(r"&?guide=.*?(&|$)", "", request.url.query)
+    redirect_url = f"/guides/?guide={guide_name}"
+    if query_string:
+        redirect_url += f"&{query_string}"
+    return RedirectResponse(url=redirect_url)
 
 @app.get("/{path:path}")
 async def serve_files(path: str, request: Request):
@@ -83,70 +146,6 @@ async def serve_files(path: str, request: Request):
     mime_type, _ = mimetypes.guess_type(str(file_path))
     return FileResponse(
         path=file_path,
-        media_type=mime_type
-    )
-
-@app.get("/guides/{subpath:path}")
-async def guides_handler(subpath: str, request: Request):
-    """Handle guide requests with special processing for markdown files."""
-
-    print("guide handler called")
-
-    file_path, redirect_path = find_file(f"guides/{subpath}")
-    
-    # Handle raw markdown files
-    if file_path and ((subpath.lower().endswith('.md') and file_path.suffix == '.md') or "." in subpath):
-        mime_type, _ = mimetypes.guess_type(str(file_path))
-        return FileResponse(
-            path=file_path,
-            media_type=mime_type
-        )
-    
-    # Handle markdown files for processing
-    if not subpath.lower().endswith('.md') and file_path and file_path.suffix == '.md':
-        guide_name = file_path.stem
-        return HTMLResponse(content=f"""
-        <html>
-        <head><title>Guide: {guide_name}</title></head>
-        <body>
-            <h1>Processed Guide: {guide_name}</h1>
-            <p>This is a processed guide for: <b>{guide_name}</b></p>
-        </body>
-        </html>
-        """)
-    
-    # Handle /raw endpoint
-    if subpath.lower().endswith('/raw'):
-        return templates.TemplateResponse(
-            "raw_guide.html",
-            {"request": request, "guide": f"GUIDES/{Path(subpath).parent.name.upper()}.MD"}
-        )
-    
-    # Redirect for not found guides
-    guide_name = f"{Path(subpath).stem.upper()}.md"
-    # Preserve query parameters
-    query_string = request.url.query
-    redirect_url = f"/guides?guide={guide_name}"
-    if query_string:
-        if '?' in redirect_url:
-            redirect_url += f"&{query_string}"
-        else:
-            redirect_url += f"?{query_string}"
-    return RedirectResponse(url=redirect_url)
-
-@app.get("/favicon.ico")
-async def favicon():
-    """Serve the favicon."""
-
-    print("returning favicon")
-
-    favicon_path = CONTENT_PATH / "res" / "favicon.svg"
-    if not favicon_path.is_file():
-        raise HTTPException(status_code=404, detail="Favicon not found")
-    
-    mime_type, _ = mimetypes.guess_type(str(favicon_path))
-    return FileResponse(
-        path=favicon_path,
         media_type=mime_type
     )
 
