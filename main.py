@@ -4,7 +4,6 @@ from typing import Optional, Tuple
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
-from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
 app = FastAPI()
@@ -16,8 +15,6 @@ TEMPLATES_PATH = CONTENT_PATH / "templates"
 # Setup templates
 templates = Jinja2Templates(directory=str(TEMPLATES_PATH))
 
-# Mount static files for favicon and other static content
-app.mount("/static", StaticFiles(directory=str(CONTENT_PATH / "res")), name="static")
 
 def find_file(path: str) -> Tuple[Optional[Path], Optional[str]]:
     """
