@@ -5,20 +5,16 @@ import hljs from '/node_modules/@highlightjs/cdn-assets/es/core.js';
 // @ts-ignore
 import xml from '/node_modules/@highlightjs/cdn-assets/es/languages/xml.min.js';
 
-console.log("common file loading");
 
-console.log("export");
 (window as any).marked = marked;
 (window as any).hljs = hljs;
 
-console.log("fix");
 // noinspection JSUnusedLocalSymbols,ES6ConvertVarToLetConst,JSUnusedGlobalSymbols
 export var exports = {};
 
 export const token = "gi" + "thu" + "b_p" + "at_11BPW3Z" + "7Y0M847x0i" + "90jER_DKs" +
     "vP8tQQwkRCvQd" + "0MCf7hc5" + "K9QVvtF" + "8eoI5eM9Drg" + "oVWG5FHXPIsg4HeMh"
 
-console.log("utils");
 export namespace Utils {
     import TioHeader = Components.TioHeader;
     export type MarkdownHeader = { [key: string]: string }
@@ -219,7 +215,6 @@ export namespace Utils {
     hljs.registerLanguage("xml", xml);
 }
 
-console.log("cookies");
 // noinspection JSUnusedGlobalSymbols
 export namespace Cookies {
     export function get(name: string): string | null {
@@ -262,42 +257,6 @@ export namespace Cookies {
     }
 }
 
-console.log("hover fix");
-// hover fix
-(() => {
-    let hasHoverClass = false;
-    const container = document.body;
-    let lastTouchTime = 0;
-
-    function enableHover() {
-        // filter emulated events coming from touch events
-        // @ts-ignore
-        if (new Date() - lastTouchTime < 500) return;
-        if (hasHoverClass) return;
-
-        container.className += ' hasHover';
-        hasHoverClass = true;
-    }
-
-    function disableHover() {
-        if (!hasHoverClass) return;
-
-        container.className = container.className.replace(' hasHover', '');
-        hasHoverClass = false;
-    }
-
-    function updateLastTouchTime() {
-        // @ts-ignore
-        lastTouchTime = new Date();
-    }
-
-    document.addEventListener('touchstart', updateLastTouchTime, true);
-    document.addEventListener('touchstart', disableHover, true);
-    document.addEventListener('mousemove', enableHover, true);
-    enableHover();
-})()
-
-console.log("components");
 export namespace Components {
     export class TioHeader extends HTMLElement {
         static observedAttributes = ["tab"];
@@ -389,3 +348,37 @@ export namespace Components {
     customElements.define("tio-header", TioHeader);
     customElements.define("tio-footer", TioFooter);
 }
+
+// hover fix
+(() => {
+    let hasHoverClass = false;
+    const container = document.body;
+    let lastTouchTime = 0;
+
+    function enableHover() {
+        // filter emulated events coming from touch events
+        // @ts-ignore
+        if (new Date() - lastTouchTime < 500) return;
+        if (hasHoverClass) return;
+
+        container.className += ' hasHover';
+        hasHoverClass = true;
+    }
+
+    function disableHover() {
+        if (!hasHoverClass) return;
+
+        container.className = container.className.replace(' hasHover', '');
+        hasHoverClass = false;
+    }
+
+    function updateLastTouchTime() {
+        // @ts-ignore
+        lastTouchTime = new Date();
+    }
+
+    document.addEventListener('touchstart', updateLastTouchTime, true);
+    document.addEventListener('touchstart', disableHover, true);
+    document.addEventListener('mousemove', enableHover, true);
+    enableHover();
+})()

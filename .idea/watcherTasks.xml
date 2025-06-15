@@ -1,8 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ProjectTasksOptions">
-    <enabled-global>
-      <option value="SCSS 2" />
-    </enabled-global>
+    <TaskOptions isEnabled="true">
+      <option name="arguments" value="-c &quot;'/Users/denis0001-dev/Library/Application Support/JetBrains/PyCharm2025.1/node/versions/22.16.0/bin/node' '/Users/$OSUser$/Library/Application Support/JetBrains/PyCharm2025.1/node/versions/22.16.0/bin/sass' $FileName$:$FileNameWithoutExtension$.css --no-source-map -s compressed &amp;&amp; echo $('/Users/denis0001-dev/Library/Application Support/JetBrains/PyCharm2025.1/node/versions/22.16.0/bin/node' '/Users/$OSUser$/Library/Application Support/JetBrains/PyCharm2025.1/node/versions/22.16.0/bin/postcss' $FileNameWithoutExtension$.css --use autoprefixer --no-map) &gt; $FileNameWithoutExtension$.css&quot;" />
+      <option name="checkSyntaxErrors" value="true" />
+      <option name="description" />
+      <option name="exitCodeBehavior" value="ERROR" />
+      <option name="fileExtension" value="scss" />
+      <option name="immediateSync" value="true" />
+      <option name="name" value="SCSS" />
+      <option name="output" value="$FileNameWithoutExtension$.css:$FileNameWithoutExtension$.css.map" />
+      <option name="outputFilters">
+        <array />
+      </option>
+      <option name="outputFromStdout" value="false" />
+      <option name="program" value="bash" />
+      <option name="runOnExternalChanges" value="true" />
+      <option name="scopeName" value="Project Files" />
+      <option name="trackOnlyRoot" value="true" />
+      <option name="workingDir" value="$FileDir$" />
+      <envs />
+    </TaskOptions>
+    <TaskOptions isEnabled="false">
+      <option name="arguments" value="&quot;/Users/denis0001-dev/Library/Application Support/JetBrains/PyCharm2025.1/node/versions/22.16.0/bin/terser&quot; $FileNameWithoutExtension$.js -o $FileNameWithoutExtension$.min.js -m" />
+      <option name="checkSyntaxErrors" value="true" />
+      <option name="description" />
+      <option name="exitCodeBehavior" value="ERROR" />
+      <option name="fileExtension" value="ts" />
+      <option name="immediateSync" value="true" />
+      <option name="name" value="UglifyJS" />
+      <option name="output" value="$FileNameWithoutExtension$.min.js" />
+      <option name="outputFilters">
+        <array />
+      </option>
+      <option name="outputFromStdout" value="false" />
+      <option name="program" value="$APPLICATION_CONFIG_DIR$/node/versions/22.16.0/bin/node" />
+      <option name="runOnExternalChanges" value="true" />
+      <option name="scopeName" value="JS files to minify" />
+      <option name="trackOnlyRoot" value="true" />
+      <option name="workingDir" value="$FileDir$" />
+      <envs />
+    </TaskOptions>
   </component>
 </project>

@@ -5,68 +5,66 @@ import {Utils} from "../../common.js";
 import delay = Utils.delay;
 import {GuideJSON} from "./api.js";
 import loadMarkdown = Utils.loadMarkdown;
-
-
 import setUpTabs = Utils.setUpTabs;
 
-let _currentPage: 0 | 1 = 0;
+await (async () => {
+    let _currentPage: 0 | 1 = 0;
 
-function sizeElements() {
-    let biggestElement: HTMLDivElement | null = null
-    const wrapper = document.getElementsByClassName("wrapper")[0] as HTMLDivElement;
-    Array.from(wrapper.children).forEach((element) => {
-        if (biggestElement !== null && biggestElement.getBoundingClientRect().height < element.getBoundingClientRect().height) {
-            biggestElement = element as HTMLDivElement;
+    function sizeElements() {
+        let biggestElement: HTMLDivElement | null = null
+        const wrapper = document.getElementsByClassName("wrapper")[0] as HTMLDivElement;
+        Array.from(wrapper.children).forEach((element) => {
+            if (biggestElement !== null && biggestElement.getBoundingClientRect().height < element.getBoundingClientRect().height) {
+                biggestElement = element as HTMLDivElement;
+            }
+            if (biggestElement === null) {
+                biggestElement = element as HTMLDivElement;
+            }
+            console.log(element);
+        });
+        if (biggestElement !== null) {
+            wrapper.style.height = `${(biggestElement as HTMLDivElement).getBoundingClientRect().height}px`
         }
-        if (biggestElement === null) {
-            biggestElement = element as HTMLDivElement;
-        }
-        console.log(element);
-    });
-    if (biggestElement !== null) {
-        wrapper.style.height = `${(biggestElement as HTMLDivElement).getBoundingClientRect().height}px`
     }
-}
 
-async function switchPage(page: 0 | 1) {
-    const wrapper = document.getElementsByClassName("wrapper")[0] as HTMLDivElement;
+    async function switchPage(page: 0 | 1) {
+        const wrapper = document.getElementsByClassName("wrapper")[0] as HTMLDivElement;
 
-    const currentPage = wrapper.children[_currentPage];
-    const targetPage = wrapper.children[page];
+        const currentPage = wrapper.children[_currentPage];
+        const targetPage = wrapper.children[page];
 
-    currentPage.classList.add("page_hiding");
-    targetPage.classList.add("notransition");
-    targetPage.classList.add("page_showing");
-    targetPage.classList.remove("notransition");
-    targetPage.classList.remove("page_hidden");
-    targetPage.classList.add("page_visible");
-    await delay(500);
-    currentPage.classList.remove("page_hiding");
-    currentPage.classList.add("page_hidden");
-    targetPage.classList.remove("page_showing");
-    targetPage.classList.remove("page_visible");
-    _currentPage = page;
+        currentPage.classList.add("page_hiding");
+        targetPage.classList.add("notransition");
+        targetPage.classList.add("page_showing");
+        targetPage.classList.remove("notransition");
+        targetPage.classList.remove("page_hidden");
+        targetPage.classList.add("page_visible");
+        await delay(500);
+        currentPage.classList.remove("page_hiding");
+        currentPage.classList.add("page_hidden");
+        targetPage.classList.remove("page_showing");
+        targetPage.classList.remove("page_visible");
+        _currentPage = page;
+        sizeElements();
+    }
+
+    setUpTabs();
     sizeElements();
-}
 
-setUpTabs();
+    const guides = document.getElementById("guides_list") as HTMLDivElement;
 
-sizeElements();
+    document.getElementById("guide_back")!!.addEventListener("click", async () => {
+        await switchPage(0);
+        document.getElementById("guide")!!.innerHTML = "";
+    });
 
-const guides = document.getElementById("guides_list") as HTMLDivElement;
+    async function fetchGuidesList(): Promise<GuideJSON> {
+        const response = await fetch("/guides/list");
+        if (!response.ok) throw new Error("Failed to fetch guides list");
+        return await response.json();
+    }
 
-document.getElementById("guide_back")!!.addEventListener("click", async () => {
-    await switchPage(0);
-    document.getElementById("guide")!!.innerHTML = "";
-});
-
-async function fetchGuidesList(): Promise<GuideJSON> {
-    const response = await fetch("/guides/list");
-    if (!response.ok) throw new Error("Failed to fetch guides list");
-    return await response.json();
-}
-
-async function renderGuidesList() {
+    // Render guides list
     const guidesList = await fetchGuidesList();
     guides.innerHTML = "";
     for (const entry of guidesList) {
@@ -87,17 +85,16 @@ async function renderGuidesList() {
         });
         sizeElements();
     }
-}
 
-renderGuidesList();
-
-const urlParams = new URLSearchParams(window.location.search);
-const selectedGuide = urlParams.get('guide');
-if (selectedGuide !== null) {
-    try {
-        await loadMarkdown(selectedGuide, document.getElementById("guide")!!);
-    } catch (e) {
-        await loadMarkdown("ERROR.md", document.getElementById("guide")!!);
+    // Load the guide
+    const urlParams = new URLSearchParams(window.location.search);
+    const selectedGuide = urlParams.get('guide');
+    if (selectedGuide !== null) {
+        try {
+            await loadMarkdown(selectedGuide, document.getElementById("guide")!!);
+        } catch (e) {
+            await loadMarkdown("ERROR.md", document.getElementById("guide")!!);
+        }
+        await switchPage(1);
     }
-    await switchPage(1);
-}
+})()

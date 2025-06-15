@@ -4,16 +4,12 @@ import { marked } from "/node_modules/marked/lib/marked.esm.js";
 import hljs from '/node_modules/@highlightjs/cdn-assets/es/core.js';
 // @ts-ignore
 import xml from '/node_modules/@highlightjs/cdn-assets/es/languages/xml.min.js';
-console.log("common file loading");
-console.log("export");
 window.marked = marked;
 window.hljs = hljs;
-console.log("fix");
 // noinspection JSUnusedLocalSymbols,ES6ConvertVarToLetConst,JSUnusedGlobalSymbols
 export var exports = {};
 export const token = "gi" + "thu" + "b_p" + "at_11BPW3Z" + "7Y0M847x0i" + "90jER_DKs" +
     "vP8tQQwkRCvQd" + "0MCf7hc5" + "K9QVvtF" + "8eoI5eM9Drg" + "oVWG5FHXPIsg4HeMh";
-console.log("utils");
 export var Utils;
 (function (Utils) {
     function getMarkdownHeader(markdown) {
@@ -189,7 +185,6 @@ export var Utils;
     Utils.loadMarkdown = loadMarkdown;
     hljs.registerLanguage("xml", xml);
 })(Utils || (Utils = {}));
-console.log("cookies");
 // noinspection JSUnusedGlobalSymbols
 export var Cookies;
 (function (Cookies) {
@@ -234,38 +229,6 @@ export var Cookies;
     }
     Cookies.getAll = getAll;
 })(Cookies || (Cookies = {}));
-console.log("hover fix");
-// hover fix
-(() => {
-    let hasHoverClass = false;
-    const container = document.body;
-    let lastTouchTime = 0;
-    function enableHover() {
-        // filter emulated events coming from touch events
-        // @ts-ignore
-        if (new Date() - lastTouchTime < 500)
-            return;
-        if (hasHoverClass)
-            return;
-        container.className += ' hasHover';
-        hasHoverClass = true;
-    }
-    function disableHover() {
-        if (!hasHoverClass)
-            return;
-        container.className = container.className.replace(' hasHover', '');
-        hasHoverClass = false;
-    }
-    function updateLastTouchTime() {
-        // @ts-ignore
-        lastTouchTime = new Date();
-    }
-    document.addEventListener('touchstart', updateLastTouchTime, true);
-    document.addEventListener('touchstart', disableHover, true);
-    document.addEventListener('mousemove', enableHover, true);
-    enableHover();
-})();
-console.log("components");
 export var Components;
 (function (Components) {
     class TioHeader extends HTMLElement {
@@ -358,3 +321,33 @@ export var Components;
     customElements.define("tio-header", TioHeader);
     customElements.define("tio-footer", TioFooter);
 })(Components || (Components = {}));
+// hover fix
+(() => {
+    let hasHoverClass = false;
+    const container = document.body;
+    let lastTouchTime = 0;
+    function enableHover() {
+        // filter emulated events coming from touch events
+        // @ts-ignore
+        if (new Date() - lastTouchTime < 500)
+            return;
+        if (hasHoverClass)
+            return;
+        container.className += ' hasHover';
+        hasHoverClass = true;
+    }
+    function disableHover() {
+        if (!hasHoverClass)
+            return;
+        container.className = container.className.replace(' hasHover', '');
+        hasHoverClass = false;
+    }
+    function updateLastTouchTime() {
+        // @ts-ignore
+        lastTouchTime = new Date();
+    }
+    document.addEventListener('touchstart', updateLastTouchTime, true);
+    document.addEventListener('touchstart', disableHover, true);
+    document.addEventListener('mousemove', enableHover, true);
+    enableHover();
+})();
