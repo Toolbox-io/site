@@ -235,6 +235,7 @@ export var Cookies;
 })(Cookies || (Cookies = {}));
 export var Components;
 (function (Components) {
+    let _applied = false;
     class TioHeader extends HTMLElement {
         static observedAttributes = ["tab"];
         internals;
@@ -322,8 +323,11 @@ export var Components;
         }
     }
     Components.TioFooter = TioFooter;
-    customElements.define("tio-header", TioHeader);
-    customElements.define("tio-footer", TioFooter);
+    if (!_applied) {
+        customElements.define("tio-header", TioHeader);
+        customElements.define("tio-footer", TioFooter);
+        _applied = true;
+    }
 })(Components || (Components = {}));
 // hover fix
 (() => {

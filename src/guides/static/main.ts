@@ -1,5 +1,6 @@
 // noinspection JSUnusedLocalSymbols
 
+// @ts-ignore
 import {Utils} from "../../common.js";
 
 import delay = Utils.delay;

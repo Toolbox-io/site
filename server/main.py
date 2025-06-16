@@ -16,11 +16,12 @@ import routes.guides
 @app.get("/{path:path}")
 async def serve_files(path: str, request: Request):
     """Serve .mdpage.md files first, then files from the content directory with various fallbacks."""
+    mdpath = path.upper()
     # 1. Try to serve .mdpage.md file first
-    if (CONTENT_PATH / f"{path}.page.md").is_file():
+    if (CONTENT_PATH / f"{mdpath}.page.md").resolve().is_file():
         return templates.TemplateResponse(
             "mdpage.html",
-            {"request": request, "file": f"{path}.page.md"}
+            {"request": request, "file": f"{mdpath}.page.md"}
         )
 
     # 2. Fallback to regular file logic
@@ -39,8 +40,12 @@ async def serve_files(path: str, request: Request):
     
     if not file_path:
         raise HTTPException(status_code=404, detail="File not found")
+
+    if file_path.is_file() and file_path.name.endswith(".ts"):
+        raise HTTPException(status_code=403, detail="Access denied")
     
     mime_type, _ = mimetypes.guess_type(str(file_path))
+    print("Serving file:", file_path)
     return FileResponse(
         path=file_path,
         media_type=mime_type

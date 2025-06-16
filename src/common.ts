@@ -5,7 +5,6 @@ import hljs from '/node_modules/@highlightjs/cdn-assets/es/core.js';
 // @ts-ignore
 import xml from '/node_modules/@highlightjs/cdn-assets/es/languages/xml.min.js';
 
-
 (window as any).marked = marked;
 (window as any).hljs = hljs;
 
@@ -262,6 +261,8 @@ export namespace Cookies {
 }
 
 export namespace Components {
+    let _applied = false
+
     export class TioHeader extends HTMLElement {
         static observedAttributes = ["tab"];
         private readonly internals;
@@ -349,8 +350,11 @@ export namespace Components {
         }
     }
 
-    customElements.define("tio-header", TioHeader);
-    customElements.define("tio-footer", TioFooter);
+    if (!_applied) {
+        customElements.define("tio-header", TioHeader);
+        customElements.define("tio-footer", TioFooter);
+        _applied = true
+    }
 }
 
 // hover fix

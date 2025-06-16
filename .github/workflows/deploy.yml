@@ -17,21 +17,55 @@ concurrency:
 
 defaults:
   run:
-    working-directory: "/home/denis0001-dev/Toolbox-io"
+    working-directory: "/root"
 
 jobs:
   deploy:
     runs-on: self-hosted
     env:
-      HOME: "/home/denis0001-dev"
+      HOME: "/root"
     steps:
       - name: Setup
         run: |
-          git config --global --add safe.directory /home/denis0001-dev/Toolbox-io
-      - name: Update repository
-        run: git pull
+          git config --global url.https://github.com/.insteadOf git://github.com/
+      - name: Checkout
+        env:
+          REPO_URL: ${{ github.repositoryUrl }}
+          REF: ${{ github.ref_name }}
+        run: |
+          echo "Going to the site directory"
+          mkdir -p site
+          cd site
+          echo "Initializing repo"
+          git init
+          echo "Adding origin URL"
+          git config remote.origin.url >&- || git remote add origin $REPO_URL
+          echo "Fetching"
+          git fetch --all
+          echo "Checkout"
+          git reset --hard origin/$REF
+      - name: Set up Python environment
+        working-directory: /root/site/server
+        run: |
+          python3 -m venv .venv
+          ./.venv/bin/pip3 install -r requirements.txt
+      - name: Set up frontend dependencies
+        working-directory: /root/site/src
+        run: npm install
       - name: Configure server
-        run: echo "port=80" > server/server.properties
+        working-directory: /root/site/server
+        run: |
+          echo "port=80" > server.properties
+      - name: Set up the service
+        working-directory: /root/site/server
+        run: |
+          cp -f server.service /etc/systemd/system/server.service
+          systemctl daemon-reload
+      - name: Prepare content
+        working-directory: /root/site/src
+        run: |
+          chmod +x ./minify.sh
+          ./minify.sh
       - name: Start the server
         run: |
           systemctl restart server
