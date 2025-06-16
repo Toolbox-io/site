@@ -82,7 +82,6 @@ await (async () => {
     document.getElementById("demo").addEventListener("click", scaleVideo);
     document.getElementById("video_dialog").addEventListener("click", unscaleVideo);
     // Features cards
-    const html = $("html");
     const features = document.getElementById("features");
     const blur = document.getElementById("card_dialog");
     Array.from(features.children).forEach((item) => {
@@ -95,103 +94,27 @@ await (async () => {
             feature.addEventListener("click", async () => {
                 if (!feature.classList.contains("expanded")) {
                     const rect = feature.getBoundingClientRect();
-                    const x = rect.x;
-                    const y = rect.y - 5;
-                    const width = rect.width;
-                    const height = rect.height;
-                    replacement.classList.add("replacement");
-                    if (getComputedStyle(features).gridTemplateColumns.indexOf(" ") === -1) {
-                        replacement.style.width = `${width}px`;
-                        replacement.style.height = `${height}px`;
-                    }
-                    else {
-                        replacement.style.width = "";
-                        replacement.style.height = "";
-                    }
-                    Array.from(features.children).forEach(item2 => {
-                        if (item2 != feature && item2.classList.length > 0) {
-                            const item3 = item2;
-                            const rect2 = item3.getBoundingClientRect();
-                            item3.style.width = `${rect2.width}px`;
-                            item3.style.height = `${rect2.height}px`;
-                            item3.style.boxSizing = "border-box";
-                        }
-                    });
-                    feature.style.top = `${y}px`;
-                    feature.style.left = `${x}px`;
-                    feature.style.width = `${width}px`;
-                    feature.style.height = `${height}px`;
-                    feature.insertAdjacentElement("beforebegin", replacement);
-                    feature.style.position = "fixed";
-                    feature.style.boxSizing = "border-box";
-                    feature.style.zIndex = "1001";
-                    feature.style.transform = "none";
-                    feature.style.animation = "cardExpand 0.5s ease-in-out";
-                    feature.style.animationFillMode = "forwards";
+                    feature.insertAdjacentElement("afterend", replacement);
+                    replacement.innerHTML = feature.innerHTML;
+                    replacement.classList.add("placeholder", "feature");
+                    replacement.id = `${feature.id}_placeholder`;
                     feature.classList.add("noHover");
                     blur.classList.add("open");
                     desc.style.opacity = "0";
-                    await delay(500);
                     desc.style.display = "none";
                     longDesc.style.display = "block";
                     longDesc.style.opacity = "1";
                     close.style.display = "block";
                     close.style.opacity = "1";
-                    await delay(500);
                     feature.classList.add("expanded");
                 }
             });
             close.addEventListener("click", async () => {
-                const computedStyle = getComputedStyle(feature);
-                const top = computedStyle.top;
-                const left = computedStyle.left;
-                const width = computedStyle.width;
-                const height = computedStyle.height;
-                feature.style.animation = "";
-                feature.style.top = top;
-                feature.style.left = left;
-                feature.style.width = width;
-                feature.style.height = height;
-                const rect = replacement.getBoundingClientRect();
-                const top2 = computedStyle.top;
-                const left2 = computedStyle.left;
-                feature.style.top = "";
-                feature.style.left = "";
-                // @ts-ignore
-                const top3 = (Number(computedStyle.top.replace("px", "")) + (replacement.getBoundingClientRect().y -
-                    features.getBoundingClientRect().y
-                // @ts-ignore
-                ) - html.scrollTop()) + "px";
-                // @ts-ignore
-                const left3 = (Number(computedStyle.left.replace("px", "")) + (replacement.getBoundingClientRect().x -
-                    features.getBoundingClientRect().x
-                // @ts-ignore
-                ) - html.scrollLeft()) + "px";
-                feature.style.top = `${top2}`;
-                feature.style.left = `${left2}`;
-                let tmpStyle = document.head.querySelector("style#tmp");
-                if (tmpStyle == null) {
-                    tmpStyle = document.createElement("style");
-                }
-                // noinspection CssInvalidPropertyValue
-                tmpStyle.innerHTML = `
-            @keyframes cardCollapse {
-                from {}
-                to {
-                    top: ${top3};
-                    left: ${left3};
-                    width: ${rect.width}px;
-                    height: ${rect.height}px;
-                }
-            }
-            `;
-                tmpStyle.id = "tmp";
-                document.head.appendChild(tmpStyle);
-                feature.style.animation = "cardCollapse 0.5s ease-in-out";
-                feature.style.animationFillMode = "";
+                feature.classList.add("closing");
                 longDesc.style.opacity = "0";
                 close.style.opacity = "0";
                 blur.style.opacity = "0";
+                feature.style.opacity = "0";
                 await delay(500);
                 blur.classList.remove("open");
                 blur.style.opacity = "";
@@ -200,15 +123,7 @@ await (async () => {
                 desc.style.display = "block";
                 desc.style.opacity = "1";
                 feature.style.animation = "";
-                replacement.remove();
-                feature.style.top = "";
-                feature.style.left = "";
-                feature.style.width = "";
-                feature.style.height = "";
-                feature.style.position = "";
-                feature.style.zIndex = "";
-                feature.style.boxSizing = "";
-                feature.style.transform = "";
+                feature.style.opacity = "1";
                 feature.classList.remove("noHover", "expanded");
                 Array.from(features.children).forEach(item2 => {
                     const item3 = item2;
@@ -218,130 +133,11 @@ await (async () => {
                         item3.style.boxSizing = "";
                     }
                 });
-            });
-        }
-    });
-    function countMatches(regex, str) {
-        let m;
-        let counter = 0;
-        while ((m = regex.exec(str)) !== null) {
-            // This is necessary to avoid infinite loops with zero-width matches
-            if (m.index === regex.lastIndex) {
-                regex.lastIndex++;
-            }
-            // The result can be accessed through the `m`-variable.
-            m.forEach((match, groupIndex) => {
-                console.log(`Found match, group ${groupIndex}: ${match}`);
-            });
-            counter++;
-        }
-        return counter;
-    }
-    function getRowHeight(grid, row) {
-        let regex = /(\d+)px/gm;
-        let m;
-        let counter = 0;
-        let ret = null;
-        while ((m = regex.exec(getComputedStyle(grid).gridTemplateRows)) !== null) {
-            counter++;
-            // This is necessary to avoid infinite loops with zero-width matches
-            if (m.index === regex.lastIndex) {
-                regex.lastIndex++;
-            }
-            if (counter === row) {
-                // The result can be accessed through the `m`-variable.
-                m.forEach((match, groupIndex) => {
-                    if (groupIndex === 1) {
-                        ret = Number(match);
-                    }
-                });
-            }
-            if (ret !== null)
-                return ret;
-        }
-        return ret;
-    }
-    function getRows(grid) {
-        return countMatches(/\d+px/gm, getComputedStyle(grid).gridTemplateRows);
-    }
-    function getColumns(grid) {
-        return countMatches(/\d+px/gm, getComputedStyle(grid).gridTemplateColumns);
-    }
-    function getItem(grid, row, column) {
-        // Calculate the index of the item in the grid
-        const index = (row - 1) * getColumns(grid) + (column - 1);
-        // Get all the grid items
-        const items = grid.children;
-        // Return the item at the specified index
-        return items[index] || null;
-    }
-    function setupGrid() {
-        features
-            .querySelectorAll(".placeholder")
-            .forEach((el) => el.remove());
-        const rows = getRows(features);
-        const columns = getColumns(features);
-        const placeholders = [];
-        for (let row = 1; row <= rows; row++) {
-            let prevItem = null;
-            for (let column = 1; column <= columns; column++) {
-                const item = getItem(features, row, column);
-                if (!item && prevItem != null) {
-                    const placeholder = document.createElement("div");
-                    placeholder.style.height = `${getRowHeight(features, row)}px`;
-                    placeholder.classList.add("placeholder");
-                    placeholders.push(placeholder);
-                }
-                else {
-                    prevItem = item;
-                }
-            }
-        }
-        for (const placeholder of placeholders) {
-            features.appendChild(placeholder);
-        }
-    }
-    function recalcPlaceholders() {
-        Array.from(features.children).forEach(item => {
-            const item2 = item;
-            if (item2.classList.length === 0) {
-                item2.style.height = "";
-            }
-        });
-        const rows = getRows(features);
-        const columns = getColumns(features);
-        for (let row = 1; row <= rows; row++) {
-            for (let column = 1; column <= columns; column++) {
-                const item = getItem(features, row, column);
-                if (item !== null && item.classList.length === 0) {
-                    item.style.height = `${getRowHeight(features, row)}px`;
-                }
-            }
-        }
-    }
-    setupGrid();
-    let rowsNow = getRows(features);
-    let columnsNow = getColumns(features);
-    let width = innerWidth;
-    addEventListener("resize", async () => {
-        let rows = getRows(features);
-        let columns = getColumns(features);
-        if (rows !== rowsNow || columns !== columnsNow) {
-            if ((innerWidth < width && innerWidth <= 1000) || (innerWidth > width && innerWidth > 1000)) {
+                replacement.remove();
                 await delay(500);
-            }
-            Array.from(features.children).forEach(item => {
-                if (item.classList.length === 0)
-                    item.remove();
+                feature.classList.remove("closing");
             });
-            setupGrid();
-            rowsNow = getRows(features);
-            columnsNow = getColumns(features);
         }
-        else {
-            recalcPlaceholders();
-        }
-        width = innerWidth;
     });
     // Make "Download" button directly download the file
     try {
