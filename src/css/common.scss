@@ -3,6 +3,7 @@
 @use "common/components";
 @import "common/mixins";
 @import "common/colors";
+@import "common/markdown";
 
 @import url(../res/fonts/montserrat/index.css);
 @import url(../res/fonts/material-symbols/index.css);
@@ -135,4 +136,44 @@ body.hasHover .toucheffect:hover {
 
 .toucheffect:active {
     background-color: $active-color;
+}
+
+body::before {
+    position: fixed;
+    width: 100dvw;
+    height: 100dvh;
+    content: '';
+    backdrop-filter: blur(30px) brightness(0.8);
+    display: block;
+    opacity: 1;
+    z-index: 1000;
+    transition: opacity 0.5s ease;
+}
+
+body::after {
+    content: '';
+    width: 70px;
+    height: 70px;
+    font-weight: 500;
+    border-top: $spinner-thickness solid $spinner-color;
+    border-right: $spinner-thickness solid $spinner-color;
+    border-bottom: $spinner-thickness solid transparent;
+    border-left: $spinner-thickness solid transparent;
+    border-radius: 50%;
+    position: fixed;
+    animation: rotate 1s ease;
+    animation-iteration-count: infinite;
+    opacity: 1;
+    z-index: 1001;
+    transition: opacity 0.5s ease;
+    left: calc(50% - 70px / 2);
+    top: calc(50dvh - 70px / 2);
+}
+
+body.loaded::before, body.loaded::after {
+    opacity: 0;
+}
+
+body.full_loaded::before, body.full_loaded::after {
+    display: none;
 }

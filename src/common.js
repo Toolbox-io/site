@@ -359,3 +359,8 @@ export var Components;
     document.addEventListener('mousemove', enableHover, true);
     enableHover();
 })();
+window.addEventListener("load", async () => {
+    document.body.classList.add("loaded");
+    await Utils.delay(500);
+    document.body.classList.add("full_loaded");
+});
