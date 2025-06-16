@@ -1,0 +1,3 @@
+server.toolbox-io.ru {
+    reverse_proxy localhost:8000
+}

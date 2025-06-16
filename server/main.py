@@ -55,7 +55,7 @@ if __name__ == "__main__":
     import uvicorn
     import os
 
-    port = 80  # Default port
+    port = 8000  # Default port
     config_path = os.path.join(os.path.dirname(__file__), 'server.properties')
     if os.path.isfile(config_path):
         with open(config_path) as f:

@@ -55,11 +55,12 @@ jobs:
       - name: Configure server
         working-directory: /root/site/server
         run: |
-          echo "port=80" > server.properties
+          echo "port=8000" > server.properties
       - name: Set up the service
         working-directory: /root/site/server
         run: |
           cp -f server.service /etc/systemd/system/server.service
+          cp -f caddy.service /etc/systemd/system/caddy.service
           systemctl daemon-reload
       - name: Prepare content
         working-directory: /root/site/src
@@ -69,6 +70,8 @@ jobs:
       - name: Start the server
         run: |
           systemctl restart server
+          systemctl restart caddy
           sleep 3
           systemctl status server
+          systemctl status caddy
           cat /var/log/server.log
