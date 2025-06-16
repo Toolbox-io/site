@@ -1,4 +1,4 @@
-# Simple workflow for deploying static content to GitHub Pages
+# Simple workflow for deploying to the self-hosted server
 name: Deploy to server
 
 on:
@@ -15,6 +15,10 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+defaults:
+  run:
+    working-directory: "/home/denis0001-dev/Toolbox-io"
+
 jobs:
   deploy:
     runs-on: self-hosted
@@ -25,11 +29,12 @@ jobs:
         run: |
           git config --global --add safe.directory /home/denis0001-dev/Toolbox-io
       - name: Update repository
-        run: |
-          cd /home/denis0001-dev/Toolbox-io
-          git pull
+        run: git pull
+      - name: Configure server
+        run: echo "port=80" > server/server.properties
       - name: Start the server
         run: |
           systemctl restart server
           sleep 3
           systemctl status server
+          cat /var/log/server.log

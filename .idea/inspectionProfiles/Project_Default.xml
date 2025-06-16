@@ -43,6 +43,13 @@
     <inspection_tool class="JSIgnoredPromiseFromCall" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="MarkdownUnresolvedFileReference" enabled="true" level="TEXT ATTRIBUTES" enabled_by_default="true" editorAttributes="WRONG_REFERENCES_ATTRIBUTES" />
     <inspection_tool class="PyBroadExceptionInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+    <inspection_tool class="PyPep8Inspection" enabled="true" level="INFORMATION" enabled_by_default="true">
+      <option name="ignoredErrors">
+        <list>
+          <option value="E402" />
+        </list>
+      </option>
+    </inspection_tool>
     <inspection_tool class="ShellCheck" enabled="true" level="ERROR" enabled_by_default="true">
       <shellcheck_settings value="SC2038" />
     </inspection_tool>

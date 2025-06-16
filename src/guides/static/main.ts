@@ -3,9 +3,21 @@
 import {Utils} from "../../common.js";
 
 import delay = Utils.delay;
-import {GuideJSON} from "./api.js";
 import loadMarkdown = Utils.loadMarkdown;
 import setUpTabs = Utils.setUpTabs;
+import changeUrl = Utils.changeUrl;
+
+export type GuideHeader = {
+    "DisplayName": string,
+    "Icon": string
+}
+
+export type GuideEntry = {
+    name: string,
+    header: GuideHeader
+}
+
+export type GuideJSON = GuideEntry[];
 
 await (async () => {
     let _currentPage: 0 | 1 = 0;
@@ -48,6 +60,12 @@ await (async () => {
         sizeElements();
     }
 
+    async function fetchGuidesList(): Promise<GuideJSON> {
+        const response = await fetch("/guides/list");
+        if (!response.ok) throw new Error("Failed to fetch guides list");
+        return await response.json();
+    }
+
     setUpTabs();
     sizeElements();
 
@@ -56,13 +74,25 @@ await (async () => {
     document.getElementById("guide_back")!!.addEventListener("click", async () => {
         await switchPage(0);
         document.getElementById("guide")!!.innerHTML = "";
+        changeUrl("/guides");
     });
 
-    async function fetchGuidesList(): Promise<GuideJSON> {
-        const response = await fetch("/guides/list");
-        if (!response.ok) throw new Error("Failed to fetch guides list");
-        return await response.json();
-    }
+    window.addEventListener("popstate", async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedGuide = urlParams.get('guide');
+        if (selectedGuide !== null) {
+            try {
+                await loadMarkdown(selectedGuide, document.getElementById("guide")!!);
+            } catch (e) {
+                await loadMarkdown("ERROR.md", document.getElementById("guide")!!);
+            }
+            await switchPage(1);
+        } else {
+            // If no guide param, go back to the list view
+            await switchPage(0);
+            document.getElementById("guide")!!.innerHTML = "";
+        }
+    });
 
     // Render guides list
     const guidesList = await fetchGuidesList();
@@ -80,6 +110,8 @@ await (async () => {
         guide.appendChild(title);
         guides.appendChild(guide);
         guide.addEventListener("click", async () => {
+            changeUrl(`/guides/?guide=${entry.name}`);
+
             await loadMarkdown(entry.name, document.getElementById("guide")!!);
             await switchPage(1);
         });

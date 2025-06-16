@@ -212,6 +212,10 @@ export namespace Utils {
         return header
     }
 
+    export function changeUrl(newUrl: string) {
+        window.history.pushState({}, "", newUrl);
+    }
+
     hljs.registerLanguage("xml", xml);
 }
 

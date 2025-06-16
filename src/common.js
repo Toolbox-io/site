@@ -183,6 +183,10 @@ export var Utils;
         return header;
     }
     Utils.loadMarkdown = loadMarkdown;
+    function changeUrl(newUrl) {
+        window.history.pushState({}, "", newUrl);
+    }
+    Utils.changeUrl = changeUrl;
     hljs.registerLanguage("xml", xml);
 })(Utils || (Utils = {}));
 // noinspection JSUnusedGlobalSymbols

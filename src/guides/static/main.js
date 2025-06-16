@@ -3,6 +3,7 @@ import { Utils } from "../../common.js";
 var delay = Utils.delay;
 var loadMarkdown = Utils.loadMarkdown;
 var setUpTabs = Utils.setUpTabs;
+var changeUrl = Utils.changeUrl;
 await (async () => {
     let _currentPage = 0;
     function sizeElements() {
@@ -39,19 +40,38 @@ await (async () => {
         _currentPage = page;
         sizeElements();
     }
-    setUpTabs();
-    sizeElements();
-    const guides = document.getElementById("guides_list");
-    document.getElementById("guide_back").addEventListener("click", async () => {
-        await switchPage(0);
-        document.getElementById("guide").innerHTML = "";
-    });
     async function fetchGuidesList() {
         const response = await fetch("/guides/list");
         if (!response.ok)
             throw new Error("Failed to fetch guides list");
         return await response.json();
     }
+    setUpTabs();
+    sizeElements();
+    const guides = document.getElementById("guides_list");
+    document.getElementById("guide_back").addEventListener("click", async () => {
+        await switchPage(0);
+        document.getElementById("guide").innerHTML = "";
+        changeUrl("/guides");
+    });
+    window.addEventListener("popstate", async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedGuide = urlParams.get('guide');
+        if (selectedGuide !== null) {
+            try {
+                await loadMarkdown(selectedGuide, document.getElementById("guide"));
+            }
+            catch (e) {
+                await loadMarkdown("ERROR.md", document.getElementById("guide"));
+            }
+            await switchPage(1);
+        }
+        else {
+            // If no guide param, go back to the list view
+            await switchPage(0);
+            document.getElementById("guide").innerHTML = "";
+        }
+    });
     // Render guides list
     const guidesList = await fetchGuidesList();
     guides.innerHTML = "";
@@ -68,6 +88,7 @@ await (async () => {
         guide.appendChild(title);
         guides.appendChild(guide);
         guide.addEventListener("click", async () => {
+            changeUrl(`/guides/?guide=${entry.name}`);
             await loadMarkdown(entry.name, document.getElementById("guide"));
             await switchPage(1);
         });
