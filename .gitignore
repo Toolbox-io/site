@@ -1,3 +1,6 @@
 .venv
 package-lock.json
 server.properties
+node_modules
+__pycache__
+out

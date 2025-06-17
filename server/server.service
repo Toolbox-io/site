@@ -1,11 +1,31 @@
 [Unit]
 Description=Toolbox.io website server
 After=multi-user.target
+Wants=network-online.target
+After=network-online.target
+StartLimitIntervalSec=60
+StartLimitBurst=3
 
 [Service]
 Type=simple
-ExecStart=/bin/bash -c "touch /var/log/server.log && ./.venv/bin/python3 main.py > /var/log/server.log"
-WorkingDirectory=/root/site/server
+User=root
+Group=root
+ExecStartPre=/bin/bash -c "docker stop toolbox-io || true && docker rm toolbox-io || true"
+ExecStart=/bin/bash -c "mkdir -p /root/site && cd /root/site && docker run --rm --name toolbox-io -p 80:80 -p 443:443 site"
+WorkingDirectory=/root/
+Restart=always
+RestartSec=10
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/var/log
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=toolbox-io
 
 [Install]
 WantedBy=multi-user.target

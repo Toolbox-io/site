@@ -1,4 +1,4 @@
-# Simple workflow for deploying to the self-hosted server
+# Enhanced workflow for deploying to the self-hosted server
 name: Deploy to server
 
 on:
@@ -25,7 +25,7 @@ jobs:
     env:
       HOME: "/root"
     steps:
-      - name: Setup
+      - name: Setup environment
         run: |
           git config --global url.https://github.com/.insteadOf git://github.com/
       - name: Checkout
@@ -33,45 +33,32 @@ jobs:
           REPO_URL: ${{ github.repositoryUrl }}
           REF: ${{ github.ref_name }}
         run: |
-          echo "Going to the site directory"
           mkdir -p site
           cd site
-          echo "Initializing repo"
           git init
-          echo "Adding origin URL"
           git config remote.origin.url >&- || git remote add origin $REPO_URL
-          echo "Fetching"
           git fetch --all
-          echo "Checkout"
           git reset --hard origin/$REF
-      - name: Set up Python environment
-        working-directory: /root/site/server
-        run: |
-          python3 -m venv .venv
-          ./.venv/bin/pip3 install -r requirements.txt
-      - name: Set up frontend dependencies
-        working-directory: /root/site/src
-        run: npm install
-      - name: Configure server
-        working-directory: /root/site/server
-        run: |
-          echo "port=8000" > server.properties
+          echo "Checked out commit: $(git rev-parse HEAD)"
+      - name: Build container
+        working-directory: /root/site
+        env:
+          DOCKER_BUILDKIT: 1
+        run: docker build -t site --progress=plain .
       - name: Set up the service
         working-directory: /root/site/server
         run: |
           cp -f server.service /etc/systemd/system/server.service
-          cp -f caddy.service /etc/systemd/system/caddy.service
           systemctl daemon-reload
-      - name: Prepare content
-        working-directory: /root/site/src
-        run: |
-          chmod +x ./minify.sh
-          ./minify.sh
       - name: Start the server
         run: |
+          # Stop existing container
+          pkill $(sudo lsof -ti :80) > /dev/null || true
+          pkill $(sudo lsof -ti :443) > /dev/null || true
+          docker rm -fv $(docker ps -aq)
+          
+          # Start new service
           systemctl restart server
-          systemctl restart caddy
+          
           sleep 3
           systemctl status server
-          systemctl status caddy
-          cat /var/log/server.log

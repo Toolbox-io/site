@@ -1,18 +1,21 @@
 {
-  "name": "untitled",
+  "name": "toolbox-io-frontend",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:ts && npm run build:scss",
+    "build:ts": "tsc && find . -name '*.js' -not -path './node_modules/*' -not -path './lib/*' -exec terser {} -o {} -m \\;",
+    "build:scss": "sass css:css --no-source-map -s compressed && postcss css/*.css --use autoprefixer --no-map -d css",
+    "clean": "find . -name '*.js' -not -path './node_modules/*' -delete && find css -name '*.css' -delete"
+  },
   "dependencies": {
     "@highlightjs/cdn-assets": "^11.11.1",
     "highlight.js": "^11.11.1",
     "marked": "^15.0.8"
   },
-  "type": "module",
   "devDependencies": {
     "@types/jquery": "^3.5.32",
-    "esbuild": "0.25.2",
-    "typescript": "^5.8.3",
-    "webpack": "^5.99.5",
-    "webpack-cli": "^6.0.1"
+    "typescript": "^5.8.3"
   }
 }

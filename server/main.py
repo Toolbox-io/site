@@ -1,4 +1,5 @@
 import mimetypes
+import logging
 
 from fastapi import HTTPException, Request
 from fastapi.responses import FileResponse, RedirectResponse
@@ -6,6 +7,13 @@ from fastapi.responses import FileResponse, RedirectResponse
 from app import app
 from constants import *
 from utils import find_file
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 # Import routes after app is defined
 # noinspection PyUnresolvedReferences
@@ -17,8 +25,13 @@ import routes.guides
 async def serve_files(path: str, request: Request):
     """Serve .mdpage.md files first, then files from the content directory with various fallbacks."""
     mdpath = path.upper()
+    
+    # Log request for monitoring
+    logger.info(f"Serving request: {request.method} {request.url.path} from {request.client.host}")
+    
     # 1. Try to serve .mdpage.md file first
     if (CONTENT_PATH / f"{mdpath}.page.md").resolve().is_file():
+        logger.info(f"Serving markdown page: {mdpath}.page.md")
         return templates.TemplateResponse(
             "mdpage.html",
             {"request": request, "file": f"{mdpath}.page.md"}
@@ -36,16 +49,26 @@ async def serve_files(path: str, request: Request):
                 redirect_url += f"&{query_string}"
             else:
                 redirect_url += f"?{query_string}"
+        logger.info(f"Redirecting to: {redirect_url}")
         return RedirectResponse(url=redirect_url)
     
     if not file_path:
+        logger.warning(f"File not found: {path}")
         raise HTTPException(status_code=404, detail="File not found")
 
-    if file_path.is_file() and file_path.name.endswith(".ts"):
+    if file_path.is_file() and (
+        file_path.name.endswith(".ts") or
+        file_path.name.endswith(".scss") or
+        file_path.name == "minify.sh" or
+        file_path.name == "package.json" or
+        file_path.name == "tsconfig.json" or
+        file_path.parent.resolve() == (CONTENT_PATH / "templates").resolve()
+    ):
+        logger.warning(f"Access denied to: {file_path}")
         raise HTTPException(status_code=403, detail="Access denied")
     
     mime_type, _ = mimetypes.guess_type(str(file_path))
-    print("Serving file:", file_path)
+    logger.info(f"Serving file: {file_path} (type: {mime_type})")
     return FileResponse(
         path=file_path,
         media_type=mime_type
@@ -53,18 +76,5 @@ async def serve_files(path: str, request: Request):
 
 if __name__ == "__main__":
     import uvicorn
-    import os
-
-    port = 8000  # Default port
-    config_path = os.path.join(os.path.dirname(__file__), 'server.properties')
-    if os.path.isfile(config_path):
-        with open(config_path) as f:
-            for line in f:
-                line = line.strip()
-                if line.startswith("port="):
-                    try:
-                        port = int(line.split("=", 1)[1])
-                    except ValueError:
-                        pass
-                    break
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    logger.info("Starting Toolbox.io server...")
+    uvicorn.run(app, host="0.0.0.0", port=8000)
