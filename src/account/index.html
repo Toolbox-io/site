@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta lang="en" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Account - Toolbox.io</title>
+        <link rel="icon" href="../res/favicon.svg" />
+
+        <link rel="stylesheet" href="../css/style.css" />
+        <link rel="stylesheet" href="../css/common.css" />
+        <link rel="stylesheet" href="../css/accounts/account.css" />
+
+        <script src="../lib/jquery.js"></script>
+        <script type="module" src="../common.js"></script>
+        <script type="module" src="main.js"></script>
+    </head>
+    <body>
+        <tio-header class="top" tab="0"></tio-header>
+        <div class="wrapper">
+            <div id="main" class="automargin">
+                <div class="account-container">
+                    <h1>Account</h1>
+                    
+                    <div id="user-info" class="user-info" style="display: none;">
+                        <div class="infocard">
+                            <div class="info-group">
+                                <label>Username:</label>
+                                <span id="username-display"></span>
+                            </div>
+                            <div class="info-group">
+                                <label>Email:</label>
+                                <span id="email-display"></span>
+                            </div>
+                            <div class="info-group">
+                                <label>Member since:</label>
+                                <span id="created-at-display"></span>
+                            </div>
+                        </div>
+
+                        <button id="change-password-btn" class="account-button">Change Password</button>
+                        <button id="logout-btn" class="account-button secondary">Logout</button>
+                    </div>
+                    
+                    <div id="loading" class="loading">Loading account information...</div>
+                    <div id="error-message" class="error-message" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Password Change Dialog -->
+        <div id="password-dialog" class="dialog-overlay" style="display: none;">
+            <div class="dialog-content">
+                <h2>Change Password</h2>
+                <form id="password-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="current-password">Current Password</label>
+                        <input type="password" id="current-password" name="current-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-password">New Password</label>
+                        <input type="password" id="new-password" name="new-password" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirm-password">Confirm New Password</label>
+                        <input type="password" id="confirm-password" name="confirm-password" required>
+                    </div>
+                    <div class="dialog-buttons">
+                        <button type="button" id="cancel-btn" class="dialog-button secondary">Cancel</button>
+                        <button type="submit" class="dialog-button">Change Password</button>
+                    </div>
+                </form>
+                <div id="dialog-error" class="error-message" style="display: none;"></div>
+            </div>
+        </div>
+    </body>
+</html> 

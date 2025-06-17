@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "build": "npm run build:ts && npm run build:scss",
-    "build:ts": "tsc && find . -name '*.js' -not -path './node_modules/*' -not -path './lib/*' -exec terser {} -o {} -m \\;",
+    "build:ts": "npm run compile:ts && npm run minify:ts",
+    "compile:ts": "tsc",
+    "minify:ts": "find . -name '*.js' -not -path './node_modules/*' -not -path './lib/*' -exec terser {} -o {} -m \\;",
     "build:scss": "sass css:css --no-source-map -s compressed && postcss css/*.css --use autoprefixer --no-map -d css",
     "clean": "find . -name '*.js' -not -path './node_modules/*' -delete && find css -name '*.css' -delete"
   },

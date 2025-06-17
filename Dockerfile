@@ -58,6 +58,10 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     apt install -y caddy python3 && \
     apt clean
 
+# 3. Create database directory and set permissions
+RUN mkdir -p /root/site/server/data && \
+    chmod 755 /root/site/server/data
+
 # 4. Final command
 WORKDIR /root/site/server
 
@@ -65,5 +69,5 @@ WORKDIR /root/site/server
 EXPOSE 80
 EXPOSE 443
 
-# This command runs the server along with the reverse proxy for HTTPS
-CMD ["bash", "-c", "/root/.venv/bin/python3 main.py & caddy run"]
+# Initialize database and start server
+CMD ["bash", "-c", "python3 init_db.py && /root/.venv/bin/python3 main.py & caddy run"]

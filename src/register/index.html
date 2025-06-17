@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta lang="en" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Register - Toolbox.io</title>
+        <link rel="icon" href="../res/favicon.svg" />
+
+        <link rel="stylesheet" href="../css/style.css" />
+        <link rel="stylesheet" href="../css/common.css" />
+        <link rel="stylesheet" href="../css/accounts/register.css" />
+
+        <script src="../lib/jquery.js"></script>
+        <script type="module" src="../common.js"></script>
+    </head>
+    <body>
+        <tio-header class="top" tab="0"></tio-header>
+        <div class="wrapper">
+            <div id="main" class="automargin">
+                <div class="auth-container">
+                    <h1>Register</h1>
+                    <form id="registerForm" class="auth-form">
+                        <div class="form-group">
+                            <label for="username">Username</label>
+                            <input type="text" id="username" name="username" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password">Confirm Password</label>
+                            <input type="password" id="confirm-password" name="confirm-password" required>
+                        </div>
+                        <button type="submit" class="auth-button">Register</button>
+                    </form>
+                    <div class="auth-links">
+                        <a href="/login">Already have an account? Login</a>
+                        <br>
+                        <a href="/">Back to Home</a>
+                    </div>
+                    <div id="error-message" class="error-message" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+
+        <script src="main.js" type="module"></script>
+    </body>
+</html> 

@@ -10,16 +10,20 @@ from utils import find_file
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
+    level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
 
+logger.info("Starting Toolbox.io server initialization...")
+
 # Import routes after app is defined
+logger.debug("Importing route modules...")
 # noinspection PyUnresolvedReferences
 import routes.core
 # noinspection PyUnresolvedReferences
-import routes.guides
+import routes.auth
+logger.debug("Route modules imported successfully")
 
 @app.get("/{path:path}")
 async def serve_files(path: str, request: Request):
@@ -38,6 +42,7 @@ async def serve_files(path: str, request: Request):
         )
 
     # 2. Fallback to regular file logic
+    logger.debug(f"Looking up file for path: {path}")
     file_path, redirect_path = find_file(path)
     
     if redirect_path:
@@ -77,4 +82,5 @@ async def serve_files(path: str, request: Request):
 if __name__ == "__main__":
     import uvicorn
     logger.info("Starting Toolbox.io server...")
+    logger.info(f"Server will run on host: 0.0.0.0, port: 8000")
     uvicorn.run(app, host="0.0.0.0", port=8000)

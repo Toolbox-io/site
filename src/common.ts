@@ -215,6 +215,14 @@ export namespace Utils {
         window.history.pushState({}, "", newUrl);
     }
 
+    export function id(id: string) {
+        return document.getElementById(id)!!
+    }
+
+    export function query(query: string) {
+        return document.querySelector(query)!! as HTMLElement;
+    }
+
     hljs.registerLanguage("xml", xml);
 }
 
@@ -285,10 +293,36 @@ export namespace Components {
                     <div class="tab" id="download">Скачать</div>
                     <div class="tab" id="guides">Гайды</div>
                 </div>
+                <div class="auth-link" id="auth-link">Login</div>
             `;
             this.shadowRoot!!.querySelector(".icon.appicon")!!.addEventListener("click", () => {
                 open("/", "_self");
             });
+            
+            // Add auth link functionality
+            const authLink = this.shadowRoot!!.querySelector("#auth-link") as HTMLElement;
+            authLink.addEventListener("click", () => {
+                const token = localStorage.getItem('authToken');
+                if (token) {
+                    open("/account", "_self");
+                } else {
+                    open("/login", "_self");
+                }
+            });
+            
+            // Update auth link text based on authentication status
+            this.updateAuthLink();
+            
+            // Listen for storage changes to update auth link
+            window.addEventListener('storage', () => {
+                this.updateAuthLink();
+            });
+            
+            // Also listen for custom events for same-origin updates
+            window.addEventListener('authStateChanged', () => {
+                this.updateAuthLink();
+            });
+            
             this.internals = this.attachInternals();
             try {
                 $(window).on('scroll', () => {
@@ -300,6 +334,16 @@ export namespace Components {
                 });
             } catch (e) {
                 console.log(e);
+            }
+        }
+
+        private updateAuthLink() {
+            const authLink = this.shadowRoot!!.querySelector("#auth-link") as HTMLElement;
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                authLink.textContent = "Account";
+            } else {
+                authLink.textContent = "Login";
             }
         }
 
