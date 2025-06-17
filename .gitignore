@@ -4,3 +4,6 @@ server.properties
 node_modules
 __pycache__
 out
+*.db
+server/data
+.idea/dataSources

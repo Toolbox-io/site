@@ -52,13 +52,17 @@ jobs:
           systemctl daemon-reload
       - name: Start the server
         run: |
-          # Stop existing container
-          pkill $(sudo lsof -ti :80) > /dev/null || true
-          pkill $(sudo lsof -ti :443) > /dev/null || true
-          docker rm -fv $(docker ps -aq)
-          
-          # Start new service
-          systemctl restart server
-          
+          echo "Killing old processes"
+          pkill $(sudo lsof -ti :80) 2>/dev/null || true
+          pkill $(sudo lsof -ti :443) 2>/dev/null || true
+          docker rm -fv $(docker ps -aq) 2>/dev/null || true
+          echo "Starting"
+          if ! systemctl restart server; then
+            echo "Start failed, status:"
+            systemctl status server
+            journalctl -xeu server
+            echo "Halting"
+            exit 1
+          fi
           sleep 3
           systemctl status server

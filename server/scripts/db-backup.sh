@@ -4,7 +4,7 @@
 # This script backs up the SQLite database to ensure data persistence
 
 set -e
-cd "$(dirname $0)/../server"
+cd "$(dirname $0)/../"
 
 # Configuration
 BACKUP_DIR="./backups"
