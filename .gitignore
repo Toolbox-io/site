@@ -6,4 +6,5 @@ __pycache__
 out
 *.db
 server/data
+server/certs
 .idea/dataSources

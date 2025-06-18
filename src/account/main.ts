@@ -1,183 +1,422 @@
-// Account page functionality
+/**
+ * Account Management Script
+ * Detects the current page and runs appropriate functionality
+ */
+
+'use strict';
+
+// Types and interfaces
 import {Utils} from "../common.js";
 import id = Utils.id;
-import delay = Utils.delay;
 
-class AccountManager {
-    private readonly passwordDialog = id("password-dialog");
-    private readonly loading = id("loading");
-    private readonly errorMessage = id("error-message");
-    private readonly usernameDisplay = id("username-display");
-    private readonly emailDisplay = id("email-display");
-    private readonly createdAtDisplay = id("created-at-display");
-    private readonly userInfo = id("user-info");
-    private readonly logoutBtn = id("logout-btn");
-    private readonly changePasswordBtn = id("change-password-btn");
-    private readonly cancelBtn = id("cancel-btn");
-    private readonly passwordForm = id("password-form") as HTMLFormElement;
-    private readonly currentPassword = id("current-password") as HTMLInputElement;
-    private readonly newPassword = id("new-password") as HTMLInputElement;
-    private readonly confirmPassword = id("confirm-password") as HTMLInputElement;
-    private readonly dialogError = id("dialog-error");
-    private readonly submitButton = document.querySelector('.dialog-button:not(.secondary)') as HTMLButtonElement;
+interface UserData {
+    username: string;
+    email: string;
+    created_at: string;
+}
 
-    private readonly token: string | null;
+interface LoginCredentials {
+    username: string;
+    password: string;
+}
 
-    constructor() {
-        this.token = localStorage.getItem('authToken');
-        this.init();
+interface RegisterData {
+    username: string;
+    email: string;
+    password: string;
+}
+
+interface PasswordChangeData {
+    current_password: string;
+    new_password: string;
+}
+
+interface ApiResponse<T = any> {
+    data?: T;
+    error?: string;
+    message?: string;
+    access_token?: string;
+    token_type?: string;
+}
+
+type PageType = 'login' | 'register' | 'account';
+
+(() => {
+    /**
+     * Detect which page we're on based on URL path
+     */
+    function detectPage(): PageType {
+        const path = window.location.pathname;
+        if (path.includes('/login')) return 'login';
+        if (path.includes('/register')) return 'register';
+        return 'account'; // Default to account dashboard
     }
 
-    private async init(): Promise<void> {
-        if (!this.token) {
-            window.location.href = '/login';
-            return;
+    /**
+     * Initialize the appropriate functionality based on current page
+     */
+    function init(): void {
+        const currentPage = detectPage();
+        
+        switch (currentPage) {
+            case 'login':
+                initLogin();
+                break;
+            case 'register':
+                initRegister();
+                break;
+            case 'account':
+                initAccount();
+                break;
         }
-
-        await this.loadUserInfo();
-        this.setupEventListeners();
     }
 
-    private async loadUserInfo(): Promise<void> {
-        try {
-            const response = await fetch('/api/auth/me', {
-                headers: {
-                    'Authorization': `Bearer ${this.token}`
+    /**
+     * Initialize login page functionality
+     */
+    function initLogin(): void {
+        const loginForm = id('loginForm') as HTMLFormElement;
+        const errorMessage = id('error-message');
+
+        loginForm.addEventListener('submit', async (e: Event) => {
+            e.preventDefault();
+
+            const formData = new FormData(loginForm);
+            const credentials: LoginCredentials = {
+                username: formData.get('username') as string,
+                password: formData.get('password') as string
+            };
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(credentials),
+                });
+
+                const data: ApiResponse = await response.json();
+
+                if (response.ok) {
+                    localStorage.setItem('authToken', data.access_token || '');
+                    window.location.href = '/account';
+                } else {
+                    showError(errorMessage, data.error || 'Login failed');
+                }
+            } catch (error) {
+                showError(errorMessage, 'Network error. Please try again.');
+            }
+        });
+    }
+
+    /**
+     * Initialize register page functionality
+     */
+    function initRegister(): void {
+        const registerForm = document.getElementById('registerForm') as HTMLFormElement;
+        const errorMessage = document.getElementById('error-message') as HTMLDivElement;
+
+        if (registerForm) {
+            registerForm.addEventListener('submit', async (e: Event) => {
+                e.preventDefault();
+                
+                const formData = new FormData(registerForm);
+                const password = formData.get('password') as string;
+                const confirmPassword = formData.get('confirm-password') as string;
+
+                if (password !== confirmPassword) {
+                    showError(errorMessage, 'Passwords do not match');
+                    return;
+                }
+
+                const registerData: RegisterData = {
+                    username: formData.get('username') as string,
+                    email: formData.get('email') as string,
+                    password: password
+                };
+
+                try {
+                    const response = await fetch('/api/auth/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(registerData),
+                    });
+
+                    const data: ApiResponse = await response.json();
+
+                    if (response.ok) {
+                        window.location.href = '/account/login';
+                    } else {
+                        showError(errorMessage, data.error || 'Registration failed');
+                    }
+                } catch (error) {
+                    showError(errorMessage, 'Network error. Please try again.');
                 }
             });
+        }
+    }
+
+    /**
+     * Initialize account dashboard functionality
+     */
+    async function initAccount(): Promise<void> {
+        // Check if user is logged in
+        const isLoggedIn = await checkAuthStatus();
+        
+        if (!isLoggedIn) {
+            window.location.href = '/account/login';
+            return;
+        }
+
+        setupEventListeners();
+        await loadUserInfo();
+    }
+
+    /**
+     * Check if user is authenticated
+     */
+    async function checkAuthStatus(): Promise<boolean> {
+        const token = localStorage.getItem('authToken');
+        try {
+            const response = await fetch('/api/auth/check-auth', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            return response.ok;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    /**
+     * Load and display user information
+     */
+    async function loadUserInfo(): Promise<void> {
+        const token = localStorage.getItem('authToken');
+        try {
+            const response = await fetch('/api/auth/user-info', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const userData: UserData = await response.json();
 
             if (response.ok) {
-                const user = await response.json();
-                
-                this.usernameDisplay.textContent = user.username;
-                this.emailDisplay.textContent = user.email;
-                this.createdAtDisplay.textContent = new Date(user.created_at).toLocaleDateString();
-                
-                this.loading.style.display = 'none';
-                this.userInfo.style.display = 'block';
-            } else {
-                // Token is invalid, redirect to login
-                localStorage.removeItem('authToken');
-                window.location.href = '/login';
+                const usernameDisplay = document.getElementById('username-display') as HTMLElement;
+                const emailDisplay = document.getElementById('email-display') as HTMLElement;
+                const createdAtDisplay = document.getElementById('created-at-display') as HTMLElement;
+                const loading = document.getElementById('loading') as HTMLElement;
+                const userInfo = document.getElementById('user-info') as HTMLElement;
+
+                if (usernameDisplay) usernameDisplay.textContent = userData.username;
+                if (emailDisplay) emailDisplay.textContent = userData.email;
+                if (createdAtDisplay) {
+                    createdAtDisplay.textContent = new Date(userData.created_at).toLocaleDateString();
+                }
+
+                // Show user info and hide loading
+                if (loading) loading.style.display = 'none';
+                if (userInfo) userInfo.style.display = 'block';
             }
         } catch (error) {
-            this.errorMessage.textContent = 'Failed to load account information';
-            this.errorMessage.style.display = 'block';
-            this.loading.style.display = 'none';
+            console.error('Failed to load user info:', error);
+            showError(
+                document.getElementById('error-message') as HTMLDivElement,
+                'Failed to load account information'
+            );
         }
     }
 
-    private setupEventListeners(): void {
-        // Logout functionality
-        this.logoutBtn.addEventListener('click', () => {
-            localStorage.removeItem('authToken');
-            window.dispatchEvent(new Event('authStateChanged'));
-            window.location.href = '/';
-        });
+    /**
+     * Setup event listeners for account dashboard
+     */
+    function setupEventListeners(): void {
+        const logoutBtn = document.getElementById('logout-btn') as HTMLButtonElement;
+        const changePasswordBtn = document.getElementById('change-password-btn') as HTMLButtonElement;
+        const passwordDialog = document.getElementById('password-dialog') as HTMLDivElement;
+        const cancelBtn = document.getElementById('cancel-btn') as HTMLButtonElement;
+        const passwordForm = document.getElementById('password-form') as HTMLFormElement;
 
-        // Password change dialog
-        this.changePasswordBtn.addEventListener('click', () => {
-            this.openPasswordDialog();
-        });
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', handleLogout);
+        }
 
-        this.cancelBtn.addEventListener('click', () => {
-            this.closePasswordDialog();
-        });
+        if (changePasswordBtn) {
+            changePasswordBtn.addEventListener('click', () => {
+                openPasswordDialog();
+            });
+        }
+
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                closePasswordDialog();
+            });
+        }
+
+        if (passwordForm) {
+            passwordForm.addEventListener('submit', (e: Event) => {
+                e.preventDefault();
+                handlePasswordChange();
+            });
+        }
 
         // Close dialog when clicking outside
-        this.passwordDialog.addEventListener('click', (e) => {
-            if (e.target === e.currentTarget) {
-                this.closePasswordDialog();
-            }
-        });
-
-        // Password change form submission
-        this.passwordForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handlePasswordChange();
-        });
-    }
-
-    private async closePasswordDialog() {
-        this.passwordDialog.style.opacity = "0";
-        await delay(500);
-        this.passwordDialog.style.display = 'none';
-        this.passwordForm.reset();
-        this.dialogError.style.display = 'none';
-    }
-
-    private async openPasswordDialog() {
-        this.passwordDialog.style.display = 'flex';
-        await delay(1);
-        this.passwordDialog.style.opacity = "1";
-    }
-
-    private async handlePasswordChange(): Promise<void> {
-        const currentPassword = this.currentPassword.value;
-        const newPassword = this.newPassword.value;
-        const confirmPassword = this.confirmPassword.value;
-        
-        // Clear previous error
-        this.dialogError.style.display = 'none';
-        
-        // Validate passwords match
-        if (newPassword !== confirmPassword) {
-            this.dialogError.textContent = 'New passwords do not match';
-            this.dialogError.style.display = 'block';
-            return;
+        if (passwordDialog) {
+            passwordDialog.addEventListener('click', (e: Event) => {
+                if (e.target === passwordDialog) {
+                    closePasswordDialog();
+                }
+            });
         }
-        
-        // Validate password length
-        if (newPassword.length < 6) {
-            this.dialogError.textContent = 'New password must be at least 6 characters long';
-            this.dialogError.style.display = 'block';
-            return;
-        }
-        
-        this.submitButton.disabled = true;
-        this.submitButton.textContent = 'Changing...';
-        
+    }
+
+    /**
+     * Handle logout
+     */
+    async function handleLogout(): Promise<void> {
         try {
+            const response = await fetch('/api/auth/logout', { method: 'POST' });
+            if (response.ok) {
+                localStorage.removeItem('authToken');
+                window.location.href = '/account/login';
+            }
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
+    }
+
+    /**
+     * Open password change dialog
+     */
+    async function openPasswordDialog(): Promise<void> {
+        const passwordDialog = document.getElementById('password-dialog') as HTMLDivElement;
+        if (passwordDialog) {
+            passwordDialog.style.display = 'flex';
+            await delay(1);
+            passwordDialog.style.opacity = '1';
+        }
+    }
+
+    /**
+     * Close password change dialog
+     */
+    async function closePasswordDialog(): Promise<void> {
+        const passwordDialog = document.getElementById('password-dialog') as HTMLDivElement;
+        const passwordForm = document.getElementById('password-form') as HTMLFormElement;
+        const dialogError = document.getElementById('dialog-error') as HTMLDivElement;
+
+        if (passwordDialog) {
+            passwordDialog.style.opacity = '0';
+            await delay(500);
+            passwordDialog.style.display = 'none';
+        }
+
+        if (passwordForm) passwordForm.reset();
+        if (dialogError) dialogError.style.display = 'none';
+    }
+
+    /**
+     * Handle password change
+     */
+    async function handlePasswordChange(): Promise<void> {
+        const currentPassword = (document.getElementById('current-password') as HTMLInputElement)?.value;
+        const newPassword = (document.getElementById('new-password') as HTMLInputElement)?.value;
+        const confirmPassword = (document.getElementById('confirm-password') as HTMLInputElement)?.value;
+        const dialogError = document.getElementById('dialog-error') as HTMLDivElement;
+        const submitButton = document.querySelector('.dialog-button:not(.secondary)') as HTMLButtonElement;
+
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            showDialogError(dialogError, 'All fields are required');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            showDialogError(dialogError, 'New passwords do not match');
+            return;
+        }
+
+        if (newPassword.length < 6) {
+            showDialogError(dialogError, 'New password must be at least 6 characters long');
+            return;
+        }
+
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Changing...';
+        }
+
+        try {
+            const passwordData: PasswordChangeData = {
+                current_password: currentPassword,
+                new_password: newPassword
+            };
+
             const response = await fetch('/api/auth/change-password', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.token}`
                 },
-                body: JSON.stringify({
-                    current_password: currentPassword,
-                    new_password: newPassword
-                })
+                body: JSON.stringify(passwordData),
             });
-            
-            const data = await response.json();
-            
+
+            const data: ApiResponse = await response.json();
+
             if (response.ok) {
-                // Show success message
-                this.dialogError.textContent = 'Password changed successfully!';
-                this.dialogError.className = 'success-message';
-                this.dialogError.style.display = 'block';
-                
-                // Close dialog after 2 seconds
+                showDialogError(dialogError, 'Password changed successfully!', 'success');
                 setTimeout(() => {
-                    this.closePasswordDialog();
-                    this.dialogError.className = 'error-message';
+                    closePasswordDialog();
                 }, 2000);
             } else {
-                this.dialogError.textContent = data.detail || 'Failed to change password';
-                this.dialogError.style.display = 'block';
+                showDialogError(dialogError, data.error || 'Failed to change password');
             }
         } catch (error) {
-            this.dialogError.textContent = 'Network error. Please try again.';
-            this.dialogError.style.display = 'block';
+            showDialogError(dialogError, 'Network error. Please try again.');
         } finally {
-            this.submitButton.disabled = false;
-            this.submitButton.textContent = 'Change Password';
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Change Password';
+            }
         }
     }
-}
 
-// Initialize account manager when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    new AccountManager();
-}); 
+    /**
+     * Show error message with animation
+     */
+    function showError(element: HTMLElement, message: string): void {
+        element.textContent = message;
+        element.style.display = 'block';
+        element.classList.add('error-show');
+
+        setTimeout(() => {
+            element.classList.remove('error-show');
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 300);
+        }, 3000);
+    }
+
+    /**
+     * Show dialog error message
+     */
+    function showDialogError(element: HTMLDivElement | null, message: string, type: 'error' | 'success' = 'error'): void {
+        if (element) {
+            element.textContent = message;
+            element.className = type === 'success' ? 'success-message' : 'error-message';
+            element.style.display = 'block';
+        }
+    }
+
+    /**
+     * Utility function for delays
+     */
+    function delay(ms: number): Promise<void> {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', init);
+})(); 

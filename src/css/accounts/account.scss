@@ -1,20 +1,6 @@
-@import "../common/colors";
+@import "common";
 
-.account-container {
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 2rem;
-    background: $color-surface;
-    border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
-    h1 {
-        margin-top: 0;
-        margin-bottom: 2rem;
-        color: $color-onSurface;
-    }
-}
-
+// Account-specific styles
 .user-info {
     display: flex;
     flex-direction: column;
@@ -26,217 +12,77 @@
         margin-bottom: 20px;
 
         .info-group {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
 
-        label {
-            font-weight: 600;
-            color: $color-onSurface;
-        }
+            label {
+                font-weight: 600;
+                color: $color-onSurface;
+            }
 
-        span {
-            color: $color-onSurfaceVariant;
-        }
-    }
-    }
-
-    .account-button {
-        padding: 0.75rem 1.5rem;
-        background: $color-primaryContainer;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.2s ease, transform 0.25s ease;
-
-        &:hover {
-            background: $color-primaryContainerDarkened;
-        }
-
-        &:active {
-            transform: scale(0.95);
-        }
-
-        &.secondary {
-            background: $color-secondaryContainer;
-            color: $color-onSurface;
-
-            &:hover {
-                background: $color-secondaryContainerDarkened;
+            span {
+                color: $color-onSurfaceVariant;
             }
         }
     }
 }
 
-.loading {
-    text-align: center;
-    color: $color-onSurfaceVariant;
-    font-style: italic;
-}
-
-.error-message {
-    margin-top: 1rem;
-    padding: 0.75rem;
-    background: #fee;
-    color: #c33;
-    border: 1px solid #fcc;
-    border-radius: 8px;
-    text-align: center;
-}
-
+// Enhanced error/success message animations
+.error-message,
 .success-message {
     margin-top: 1rem;
     padding: 0.75rem;
+    border-radius: 8px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    
+    &.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.error-message {
+    background: #fee;
+    color: #c33;
+    border: 1px solid #fcc;
+}
+
+.success-message {
     background: #efe;
     color: #3c3;
     border: 1px solid #cfc;
-    border-radius: 8px;
-    text-align: center;
 }
 
-/* Dialog Styles */
-.dialog-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    backdrop-filter: blur(15px);
-    opacity: 0;
-    transition: opacity 0.5s ease;
+.account-button {
+    padding: 0.75rem 1.5rem;
+    background: $color-primaryContainer;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.25s ease;
 
-    .dialog-content {
-        background: $color-surface;
-        padding: 2rem;
-        border-radius: 12px;
-        max-width: 400px;
-        width: 90%;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        transform: scale(0.9);
-        transition: transform 0.3s ease;
-        
-        h2 {
-            margin-top: 0;
-            margin-bottom: 1.5rem;
-            color: $color-onSurface;
-        }
-
-        .auth-form {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-
-            .form-group {
-                display: flex;
-                flex-direction: column;
-                gap: 0.5rem;
-                
-                label {
-                    font-weight: 600;
-                    color: $color-onSurface;
-                }
-                
-                input {
-                    padding: 0.75rem;
-                    border: 2px solid $color-outline;
-                    border-radius: 8px;
-                    font-size: 1rem;
-                    background: $color-surface;
-                    color: $color-onSurface;
-                    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-                    
-                    &:focus {
-                        outline: none;
-                        border-color: $color-primary;
-                        box-shadow: 0 0 0 3px rgba($color-primary, 0.1);
-                    }
-
-                    &:hover {
-                        border-color: $color-onSurfaceVariant;
-                    }
-                }
-            }
-
-            .dialog-buttons {
-                display: flex;
-                gap: 1rem;
-                margin-top: 1.5rem;
-
-                .dialog-button {
-                    flex: 1;
-                    padding: 0.75rem 1.5rem;
-                    background: $color-primaryContainer;
-                    color: white;
-                    border: none;
-                    border-radius: 8px;
-                    font-size: 1rem;
-                    font-weight: 600;
-                    cursor: pointer;
-                    transform-origin: center;
-                    transition: background-color 0.2s ease, transform 0.25s ease;
-                    
-                    &:hover {
-                        background: $color-primaryContainerDarkened;
-                    }
-
-                    &:active {
-                        transform: scale(0.95);
-                    }
-                    
-                    &.secondary {
-                        background: $color-secondaryContainer;
-                        color: $color-onSurface;
-                        
-                        &:hover {
-                            background: $color-secondaryContainerDarkened;
-                        }
-                    }
-
-                    &:disabled {
-                        opacity: 0.6;
-                        cursor: not-allowed;
-                        transform: none;
-                        
-                        &:hover {
-                            transform: none;
-                        }
-                    }
-                }
-            }
-        }
-
-        .error-message,
-        .success-message {
-            margin-top: 1rem;
-            padding: 0.75rem;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .error-message {
-            background: #fee;
-            color: #c33;
-            border: 1px solid #fcc;
-        }
-
-        .success-message {
-            background: #efe;
-            color: #3c3;
-            border: 1px solid #cfc;
-        }
+    &:hover {
+        background: $color-primaryContainerDarkened;
     }
 
-    // Animation states
-    &[style*="opacity: 1"] .dialog-content {
-        transform: scale(1);
+    &:active {
+        transform: scale(0.95);
     }
-} 
+
+    &.secondary {
+        background: $color-secondaryContainer;
+        color: $color-onSurface;
+
+        &:hover {
+            background: $color-secondaryContainerDarkened;
+        }
+    }
+}

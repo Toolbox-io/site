@@ -12,6 +12,7 @@
       <excludeFolder url="file://$MODULE_DIR$/src/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/server/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/.idea/dataSources" />
+      <excludeFolder url="file://$MODULE_DIR$/server/data" />
     </content>
     <content url="file://$MODULE_DIR$/src/node_modules" />
     <orderEntry type="jdk" jdkName="Python 3.13 virtualenv at ~/PycharmProjects/Toolbox-io/server/.venv" jdkType="Python SDK" />

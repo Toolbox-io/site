@@ -1,13 +1,15 @@
 import bcrypt
 import logging
+import re
 from datetime import datetime, timedelta
 from typing import Optional
 from jose import JWTError, jwt
 from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
-from database import get_db, User
+from database import get_db, User, get_session_factory
 import os
+from models import UserCreate, UserLogin, UserResponse, Token, PasswordChange, Message
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -18,7 +20,57 @@ SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
+# Common passwords to block
+COMMON_PASSWORDS = {
+    "password", "123456", "123456789", "qwerty", "abc123", "password123",
+    "admin", "letmein", "welcome", "monkey", "dragon", "master", "hello",
+    "freedom", "whatever", "qazwsx", "trustno1", "jordan", "harley",
+    "ranger", "iwantu", "jennifer", "hunter", "buster", "soccer",
+    "baseball", "tiger", "charlie", "andrew", "michelle", "love",
+    "sunshine", "jessica", "asshole", "696969", "amanda", "access",
+    "computer", "cookie", "mickey", "shadow", "maggie", "654321",
+    "superman", "1qaz2wsx", "7777777", "121212", "buster", "butter",
+    "dragon", "joshua", "blowme", "fishing", "dolphin", "baseball",
+    "stupid", "shit", "saturn", "gemini", "apples", "august", "canon",
+    "blake", "cumming", "hunting", "kitty", "rainbow", "arthur",
+    "cream", "calvin", "shaved", "surfer", "samson", "kelly", "paul"
+}
+
 security = HTTPBearer()
+
+def validate_password(password: str) -> tuple[bool, str]:
+    """
+    Validate password strength
+    Returns: (is_valid, error_message)
+    """
+    if len(password) < 10:
+        return False, "Password must be at least 10 characters long"
+    
+    if len(password) > 128:
+        return False, "Password must be less than 128 characters"
+    
+    # Check for common passwords
+    if password.lower() in COMMON_PASSWORDS:
+        return False, "Password is too common, please choose a stronger password"
+    
+    # Check for character variety
+    has_upper = any(c.isupper() for c in password)
+    has_lower = any(c.islower() for c in password)
+    has_digit = any(c.isdigit() for c in password)
+    has_special = any(c in "!@#$%^&*()_+-=[]{}|;:,.<>?" for c in password)
+    
+    if not (has_upper and has_lower and has_digit and has_special):
+        return False, "Password must contain uppercase, lowercase, digit, and special character"
+    
+    # Check for repeated characters
+    if re.search(r'(.)\1{2,}', password):
+        return False, "Password cannot contain more than 2 repeated characters in a row"
+    
+    # Check for sequential characters
+    if re.search(r'(abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz|123|234|345|456|567|678|789|890)', password.lower()):
+        return False, "Password cannot contain sequential characters"
+    
+    return True, ""
 
 def hash_password(password: str) -> str:
     """Hash a password using bcrypt"""

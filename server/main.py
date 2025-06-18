@@ -12,7 +12,7 @@ from fastapi.responses import FileResponse, RedirectResponse
 from app import app
 from constants import *
 from utils import find_file
-from database import init_db, SessionLocal, User
+from database import init_db, get_session_factory, User
 from auth_api import hash_password
 
 # Configure logging
@@ -54,39 +54,19 @@ def setup_mysql_data_directory():
             logger.info("MySQL is already running, skipping data directory setup")
             return "external"  # Indicate external MySQL
         
-        # Determine data directory based on environment
+        # In container, MySQL will use default data directory
+        # In local environment, use ./data
         if os.path.exists('/root/site/server/data'):
-            # Docker environment
-            data_dir = "/root/site/server/data"
+            # Docker environment - MySQL will handle this
+            logger.info("Docker environment detected, MySQL will use default data directory")
+            return "default"
         else:
             # Local environment
             data_dir = "./data"
+            os.makedirs(data_dir, exist_ok=True)
+            logger.info(f"Local environment, using data directory: {data_dir}")
+            return data_dir
         
-        # Create data directory if it doesn't exist
-        os.makedirs(data_dir, exist_ok=True)
-        
-        # Set permissions (only in Docker environment)
-        if data_dir.startswith('/root'):
-            subprocess.run(['chown', '-R', 'mysql:mysql', data_dir], check=True)
-            logger.info("MySQL data directory permissions set")
-        
-        # Check if data directory is empty
-        if not os.listdir(data_dir):
-            logger.info("Data directory is empty, initializing MySQL...")
-            subprocess.run([
-                'mysqld', '--initialize', 
-                '--datadir=' + data_dir, 
-                '--user=mysql'
-            ], check=True)
-            logger.info("MySQL data directory initialized successfully")
-        else:
-            logger.info("Data directory already contains data, skipping initialization")
-        
-        return data_dir
-        
-    except subprocess.CalledProcessError as e:
-        logger.error(f"Failed to setup MySQL data directory: {e}")
-        return None
     except Exception as e:
         logger.error(f"Error setting up MySQL data directory: {e}")
         return None
@@ -96,11 +76,18 @@ def start_mysql_server(data_dir):
     try:
         logger.info("Starting MySQL server...")
         
-        # Start MySQL in background
-        subprocess.run([
-            'mysqld', '--daemonize', 
-            '--datadir=' + data_dir
-        ], check=True)
+        if data_dir == "default":
+            # Use default MySQL data directory
+            subprocess.run([
+                'mysqld', '--daemonize', 
+                '--user=mysql'
+            ], check=True)
+        else:
+            # Use custom data directory
+            subprocess.run([
+                'mysqld', '--daemonize', 
+                '--datadir=' + data_dir
+            ], check=True)
         
         logger.info("MySQL server started")
         return True
@@ -147,7 +134,7 @@ def create_database_and_user():
         # Create database and user using mysql command
         sql_commands = [
             "CREATE DATABASE IF NOT EXISTS toolbox_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-            "CREATE USER IF NOT EXISTS 'toolbox_user'@'%' IDENTIFIED BY 'toolbox_password';",
+            f"CREATE USER IF NOT EXISTS 'toolbox_user'@'%' IDENTIFIED BY '{os.getenv("DB_PASSWORD")}';",
             "GRANT ALL PRIVILEGES ON toolbox_db.* TO 'toolbox_user'@'%';",
             "FLUSH PRIVILEGES;"
         ]
@@ -173,7 +160,7 @@ def create_database_and_user():
 def create_test_user():
     """Create a test user if it doesn't exist"""
     try:
-        db = SessionLocal()
+        db = get_session_factory()()
         
         # Check if test user already exists
         logger.debug("Checking if test user already exists...")
@@ -197,6 +184,7 @@ def create_test_user():
         
     except Exception as e:
         logger.error(f"Error creating test user: {e}")
+        # noinspection PyUnboundLocalVariable
         db.rollback()
         raise
     finally:

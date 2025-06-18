@@ -1,10 +1,14 @@
 import logging
-from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.security import HTTPBearer
-from sqlalchemy.orm import Session
 from datetime import timedelta
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from starlette.requests import Request
+
+from auth_api import hash_password, authenticate_user, create_access_token, get_current_user, verify_password, \
+    ACCESS_TOKEN_EXPIRE_MINUTES, validate_password
 from database import get_db, User
-from auth_api import hash_password, authenticate_user, create_access_token, get_current_user, verify_password, ACCESS_TOKEN_EXPIRE_MINUTES
+from limiter import limiter
 from models import UserCreate, UserLogin, UserResponse, Token, PasswordChange, Message
 
 # Configure logging
@@ -12,12 +16,24 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
+
+# noinspection PyUnusedLocal
 @router.post("/register", response_model=UserResponse)
-def register(user: UserCreate, db: Session = Depends(get_db)):
+@limiter.limit("3/minute")  # Limit registration attempts
+def register(request: Request, user: UserCreate, db: Session = Depends(get_db)):
     """Register a new user"""
     logger.info(f"Registration attempt for username: {user.username}, email: {user.email}")
     
     try:
+        # Validate password strength
+        is_valid, error_message = validate_password(user.password)
+        if not is_valid:
+            logger.warning(f"Registration failed - weak password for user: {user.username}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=error_message
+            )
+        
         # Check if username already exists
         logger.debug(f"Checking if username exists: {user.username}")
         db_user = db.query(User).filter(User.username == user.username).first()
@@ -63,7 +79,8 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
         )
 
 @router.post("/login", response_model=Token)
-def login(user_credentials: UserLogin, db: Session = Depends(get_db)):
+@limiter.limit("5/minute")  # Limit login attempts
+def login(request: Request, user_credentials: UserLogin, db: Session = Depends(get_db)):
     """Login user and return access token"""
     logger.info(f"Login attempt for username: {user_credentials.username}")
     
@@ -142,4 +159,44 @@ def change_password(
 def health_check():
     """Health check endpoint for authentication system"""
     logger.debug("Health check request received")
-    return {"status": "healthy", "service": "authentication"} 
+    return {"status": "healthy", "service": "authentication"}
+
+@router.get("/check-auth")
+def check_auth_status(current_user: User = Depends(get_current_user)):
+    """Check if user is authenticated"""
+    logger.debug(f"Auth check for user: {current_user.username}")
+    return {"authenticated": True, "user": current_user.username}
+
+@router.get("/user-info", response_model=UserResponse)
+def get_user_info(current_user: User = Depends(get_current_user)):
+    """Get current user information"""
+    logger.debug(f"Getting user info for: {current_user.username}")
+    return current_user
+
+@router.post("/logout")
+def logout():
+    """Logout user (client-side token removal)"""
+    logger.debug("Logout request received")
+    return {"message": "Logged out successfully"}
+
+@router.delete("/delete-account")
+def delete_account(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Delete user account"""
+    logger.info(f"Account deletion request for user: {current_user.username}")
+    
+    try:
+        db.delete(current_user)
+        db.commit()
+        logger.info(f"Account deleted successfully for user: {current_user.username}")
+        return {"message": "Account deleted successfully"}
+        
+    except Exception as e:
+        logger.error(f"Failed to delete account: {e}")
+        db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to delete account"
+        ) 

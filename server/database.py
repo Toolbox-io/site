@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 DB_HOST = os.getenv('DB_HOST', 'localhost')
 DB_PORT = os.getenv('DB_PORT', '3306')
 DB_USER = os.getenv('DB_USER', 'toolbox_user')
-DB_PASSWORD = os.getenv('DB_PASSWORD', 'toolbox_password')
+DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_NAME = os.getenv('DB_NAME', 'toolbox_db')
 
 # Create MySQL connection string
@@ -59,11 +59,24 @@ def create_engine_with_retry(max_retries=5, retry_delay=2):
     
     raise Exception("Failed to create database engine")
 
-# Create engine with retry
-engine = create_engine_with_retry()
+# Global variables for engine and session factory
+_engine = None
+_SessionLocal = None
 
-# Create session factory
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+def get_engine():
+    """Get or create database engine"""
+    global _engine
+    if _engine is None:
+        _engine = create_engine_with_retry()
+    return _engine
+
+def get_session_factory():
+    """Get or create session factory"""
+    global _SessionLocal
+    if _SessionLocal is None:
+        engine = get_engine()
+        _SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    return _SessionLocal
 
 # Create base class
 Base = declarative_base()
@@ -83,6 +96,7 @@ def init_db():
     """Initialize the database tables"""
     try:
         logger.info("Creating database tables...")
+        engine = get_engine()
         Base.metadata.create_all(bind=engine)
         logger.info("Database tables created successfully")
     except Exception as e:
@@ -91,6 +105,7 @@ def init_db():
 
 def get_db():
     """Get database session"""
+    SessionLocal = get_session_factory()
     db = SessionLocal()
     try:
         yield db

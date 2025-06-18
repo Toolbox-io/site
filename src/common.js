@@ -1,1 +1,378 @@
-import{marked}from"/node_modules/marked/lib/marked.esm.js";import hljs from"/node_modules/@highlightjs/cdn-assets/es/core.js";import xml from"/node_modules/@highlightjs/cdn-assets/es/languages/xml.min.js";window.marked=marked;window.hljs=hljs;export var exports={};export const token="gi"+"thu"+"b_p"+"at_11BPW3Z"+"7Y0M847x0i"+"90jER_DKs"+"vP8tQQwkRCvQd"+"0MCf7hc5"+"K9QVvtF"+"8eoI5eM9Drg"+"oVWG5FHXPIsg4HeMh";export var Utils;(function(e){function t(e){const t=/---\n((?:[^:\n]+:[^:\n]+\n)+)---/;const n=e.match(t);if(!n){return{}}const o=n[1];const s=o.split("\n");const i={};for(const e of s){const[t,n]=e.split(":").map((e=>e.trim()));i[t]=n}return i}e.getMarkdownHeader=t;function n(e){return window.scrollY+document.querySelector(e).getBoundingClientRect().top}e.getElementY=n;function o(e,t){const o=window.scrollY;const s=n(e);const i=document.body.scrollHeight-s<window.innerHeight?document.body.scrollHeight-window.innerHeight:s;const a=i-o;const l=function(e){return e<.5?4*e*e*e:(e-1)*(2*e-2)*(2*e-2)+1};let r;if(!a)return;window.requestAnimationFrame((function e(n){if(!r)r=n;const s=n-r;let i=Math.min(s/t,1);i=l(i);window.scrollTo(0,o+a*i);if(s<t){window.requestAnimationFrame(e)}}))}e.doScrolling=o;function s(e){return new Promise((t=>setTimeout(t,e)))}e.delay=s;async function i(e){switch(e){case 0:open("/","_self");break;case 1:open(`/#download_h`,"_self");break;case 2:open(`/guides`,"_self");break}}e.switchTab=i;function a(){const e=document.querySelector("tio-header");e.tabs[0].addEventListener("click",(()=>i(0)));e.tabs[1].addEventListener("click",(()=>i(1)));e.tabs[2].addEventListener("click",(()=>i(2)))}e.setUpTabs=a;function l(e,t){return e.exec(t)!==null}e.regexMatches=l;async function r(e,t,n,o=5){const i=document.getElementById("status");const a=i.querySelector(".progress > .progress_bar");const l=i.querySelector(".head > .message_headline");const r=i.querySelector(".message");const c=i.querySelector(".head > .close");i.classList.remove("hidden","success","error");i.classList.add(e);l.textContent=t;r.textContent=n;a.style.transitionDuration=`${o}s`;a.style.width="100%";c.addEventListener("click",d);async function d(){i.classList.add("hidden");a.style.width="0";a.style.transitionDuration="";await s(250);i.classList.remove(e);l.textContent="";r.textContent=""}await s((o||5)*1e3);await d()}e.notification=r;async function c(e,n=document.body){if(e===""||!e.endsWith(".md")){throw new SyntaxError(`Invalid file ${e}`)}let o=await(await fetch(e)).text();console.log(o);const s=t(o);o=o.replace(/^---(.|\n)*?^---/gm,"");console.log(o);o=o.replace(/^([\t ]*)> \[!(IMPORTANT|TIP|NOTE|WARNING)]\n((\s*>.*)*)/gm,`$1> [!$2]\n$1>\n$3`);console.log(o);n.innerHTML=await marked.parse(o);n.querySelectorAll("blockquote > p:first-child").forEach((e=>{const t=e.innerHTML.match(/^\[!(IMPORTANT|TIP|WARNING|NOTE)]$/);if(t!=null){const n=t[1].toLowerCase();e.classList.add(n);if(n==="tip"){e.innerHTML="Совет"}else if(n==="important"){e.innerHTML="Важно"}else if(n==="note"){e.innerHTML="Примечание"}else if(n==="warning"){e.innerHTML="Внимание"}const o=document.createElement("span");o.classList.add("material-symbols");if(n==="tip"){o.textContent="lightbulb_2"}else if(n==="important"){o.textContent="feedback"}else if(n==="note"){o.textContent="info"}else if(n==="warning"){o.textContent="warning"}e.insertAdjacentElement("afterbegin",o)}}));n.querySelectorAll("img").forEach((e=>{e.loading="lazy";e.addEventListener("load",(()=>{e.classList.add("loaded")}))}));n.querySelectorAll("table").forEach((e=>{const t=document.createElement("div");e.insertAdjacentElement("beforebegin",t);t.appendChild(e)}));hljs.highlightAll();return s}e.loadMarkdown=c;function d(e){window.history.pushState({},"",e)}e.changeUrl=d;function u(e){return document.getElementById(e)}e.id=u;function h(e){return document.querySelector(e)}e.query=h;hljs.registerLanguage("xml",xml)})(Utils||(Utils={}));export var Cookies;(function(e){function t(e){const t=`; ${document.cookie}`;const n=t.split(`; ${e}=`);if(n.length===2){const e=n.pop()?.split(";").shift();if(e===undefined){return null}else{return decodeURIComponent(e)}}return null}e.get=t;function n(e,t,n=7){const o=new Date;o.setTime(o.getTime()+n*24*60*60*1e3);const s=`expires=${o.toUTCString()}`;document.cookie=`${e}=${encodeURIComponent(t)};${s};path=/`}e.set=n;function o(e){document.cookie=`${e}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`}e.deleteCookie=o;function s(){const e={};const t=document.cookie.split(";");for(let n=0;n<t.length;n++){const o=t[n].split("=");if(o.length===2){e[o[0].trim()]=decodeURIComponent(o[1].trim())}}return e}e.getAll=s})(Cookies||(Cookies={}));export var Components;(function(e){let t=false;class n extends HTMLElement{static observedAttributes=["tab"];internals;get tabs(){return Array.from(this.shadowRoot.querySelector("#tabs").children)}constructor(){super();const e=this.attachShadow({mode:"open"});e.innerHTML=`\n                <style>@import url(/css/components/header.css);</style>\n                <div class="icon appicon"></div>\n                <div class="title">Toolbox.io</div>\n                <div class="separator"></div>\n                <div id="tabs">\n                    <div class="tab" id="home">Главная</div>\n                    <div class="tab" id="download">Скачать</div>\n                    <div class="tab" id="guides">Гайды</div>\n                </div>\n                <div class="auth-link" id="auth-link">Login</div>\n            `;this.shadowRoot.querySelector(".icon.appicon").addEventListener("click",(()=>{open("/","_self")}));const t=this.shadowRoot.querySelector("#auth-link");t.addEventListener("click",(()=>{const e=localStorage.getItem("authToken");if(e){open("/account","_self")}else{open("/login","_self")}}));this.updateAuthLink();window.addEventListener("storage",(()=>{this.updateAuthLink()}));window.addEventListener("authStateChanged",(()=>{this.updateAuthLink()}));this.internals=this.attachInternals();try{$(window).on("scroll",(()=>{if($(window).scrollTop()+$(window).height()>=0&&$(window).scrollTop()!==0){this.internals.states.add("scrolled")}else{this.internals.states.delete("scrolled")}}))}catch(e){console.log(e)}}updateAuthLink(){const e=this.shadowRoot.querySelector("#auth-link");const t=localStorage.getItem("authToken");if(t){e.textContent="Account"}else{e.textContent="Login"}}attributeChangedCallback(e,t,n){console.log(`Attribute ${e} has changed.`);switch(e){case"tab":{const e=this.shadowRoot.querySelector("#tabs").children;e[Number(t)].classList.remove("selected");e[Number(n)].classList.add("selected")}}}}e.TioHeader=n;class o extends HTMLElement{constructor(){super();const e=this.attachShadow({mode:"open"});e.innerHTML=`\n                <style>@import url(/css/components/footer.css);</style>\n                <div class="footer_column">\n                    <div class="footer_title">Toolbox.io</div>\n                    <a href="/" draggable="false">Главная</a>\n                    <a href="/guides" draggable="false">Гайды</a>\n                    <a href="/compatibility" draggable="false">Совместимость</a>\n                </div>\n                <div class="footer_column">\n                    <div class="footer_title">Документы</div>\n                    <a href="/privacy" draggable="false">Политика конфиденциальности</a>\n                    <a href="https://github.com/Toolbox-io/Toolbox-io/tree/main/LICENSE" draggable="false">Лицензия</a>\n                </div>\n                <div class="footer_column">\n                    <div class="footer_title">Ресурсы</div>\n                    <a href="https://github.com/Toolbox-io/Toolbox-io" draggable="false">Репозиторий на GitHub</a>\n                    <a href="https://github.com/orgs/Toolbox-io/projects/1" draggable="false">Проект на GitHub</a>\n                </div>\n            `;e.querySelectorAll(".footer_column a").forEach((e=>{const t=e;console.log(t);const n=/^(?!\/)(.+?)\/*$/;if(t.href.replace(n,"$1/")===location.href.replace(n,"$1/")){t.classList.add("selected");t.addEventListener("click",(e=>e.preventDefault()))}}))}}e.TioFooter=o;if(!t){customElements.define("tio-header",n);customElements.define("tio-footer",o);t=true}})(Components||(Components={}));(()=>{let e=false;const t=document.body;let n=0;function o(){if(new Date-n<500)return;if(e)return;t.className+=" hasHover";e=true}function s(){if(!e)return;t.className=t.className.replace(" hasHover","");e=false}function i(){n=new Date}document.addEventListener("touchstart",i,true);document.addEventListener("touchstart",s,true);document.addEventListener("mousemove",o,true);o()})();window.addEventListener("load",(async()=>{document.body.classList.add("loaded");await Utils.delay(500);document.body.classList.add("full_loaded")}));
+import { marked } from "/node_modules/marked/lib/marked.esm.js";
+import hljs from '/node_modules/@highlightjs/cdn-assets/es/core.js';
+import xml from '/node_modules/@highlightjs/cdn-assets/es/languages/xml.min.js';
+window.marked = marked;
+window.hljs = hljs;
+export var exports = {};
+export const token = "gi" + "thu" + "b_p" + "at_11BPW3Z" + "7Y0M847x0i" + "90jER_DKs" +
+    "vP8tQQwkRCvQd" + "0MCf7hc5" + "K9QVvtF" + "8eoI5eM9Drg" + "oVWG5FHXPIsg4HeMh";
+export var Utils;
+(function (Utils) {
+    function getMarkdownHeader(markdown) {
+        const headerRegex = /---\n((?:[^:\n]+:[^:\n]+\n)+)---/;
+        const match = markdown.match(headerRegex);
+        if (!match) {
+            return {};
+        }
+        const headerContent = match[1];
+        const lines = headerContent.split('\n');
+        const properties = {};
+        for (const line of lines) {
+            const [key, value] = line.split(':').map(part => part.trim());
+            properties[key] = value;
+        }
+        return properties;
+    }
+    Utils.getMarkdownHeader = getMarkdownHeader;
+    function getElementY(query) {
+        return window.scrollY + document.querySelector(query).getBoundingClientRect().top;
+    }
+    Utils.getElementY = getElementY;
+    function doScrolling(element, duration) {
+        const startingY = window.scrollY;
+        const elementY = getElementY(element);
+        const targetY = document.body.scrollHeight - elementY < window.innerHeight ? document.body.scrollHeight - window.innerHeight : elementY;
+        const diff = targetY - startingY;
+        const easing = function (t) {
+            return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
+        };
+        let start;
+        if (!diff)
+            return;
+        window.requestAnimationFrame(function step(timestamp) {
+            if (!start)
+                start = timestamp;
+            const time = timestamp - start;
+            let percent = Math.min(time / duration, 1);
+            percent = easing(percent);
+            window.scrollTo(0, startingY + diff * percent);
+            if (time < duration) {
+                window.requestAnimationFrame(step);
+            }
+        });
+    }
+    Utils.doScrolling = doScrolling;
+    function delay(millis) {
+        return new Promise(resolve => setTimeout(resolve, millis));
+    }
+    Utils.delay = delay;
+    async function switchTab(tab) {
+        switch (tab) {
+            case 0:
+                open("/", "_self");
+                break;
+            case 1:
+                open(`/#download_h`, "_self");
+                break;
+            case 2:
+                open(`/guides`, "_self");
+                break;
+        }
+    }
+    Utils.switchTab = switchTab;
+    function setUpTabs() {
+        const header = document.querySelector("tio-header");
+        header.tabs[0].addEventListener("click", () => switchTab(0));
+        header.tabs[1].addEventListener("click", () => switchTab(1));
+        header.tabs[2].addEventListener("click", () => switchTab(2));
+    }
+    Utils.setUpTabs = setUpTabs;
+    function regexMatches(regex, string) {
+        return regex.exec(string) !== null;
+    }
+    Utils.regexMatches = regexMatches;
+    async function notification(type, _headline, _message, durationSec = 5) {
+        const status = document.getElementById("status");
+        const progress = status.querySelector(".progress > .progress_bar");
+        const headline = status.querySelector(".head > .message_headline");
+        const message = status.querySelector(".message");
+        const close = status.querySelector(".head > .close");
+        status.classList.remove("hidden", "success", "error");
+        status.classList.add(type);
+        headline.textContent = _headline;
+        message.textContent = _message;
+        progress.style.transitionDuration = `${durationSec}s`;
+        progress.style.width = "100%";
+        close.addEventListener("click", hide);
+        async function hide() {
+            status.classList.add("hidden");
+            progress.style.width = "0";
+            progress.style.transitionDuration = "";
+            await delay(250);
+            status.classList.remove(type);
+            headline.textContent = "";
+            message.textContent = "";
+        }
+        await delay((durationSec || 5) * 1000);
+        await hide();
+    }
+    Utils.notification = notification;
+    async function loadMarkdown(file, element = document.body) {
+        if (file === "" || !file.endsWith(".md")) {
+            throw new SyntaxError(`Invalid file ${file}`);
+        }
+        let text = await (await fetch(file)).text();
+        console.log(text);
+        const header = getMarkdownHeader(text);
+        text = text.replace(/^---(.|\n)*?^---/gm, '');
+        console.log(text);
+        text = text.replace(/^([\t ]*)> \[!(IMPORTANT|TIP|NOTE|WARNING)]\n((\s*>.*)*)/gm, `$1> [!$2]\n$1>\n$3`);
+        console.log(text);
+        element.innerHTML = await marked.parse(text);
+        element.querySelectorAll("blockquote > p:first-child").forEach((element) => {
+            const match = element.innerHTML.match(/^\[!(IMPORTANT|TIP|WARNING|NOTE)]$/);
+            if (match != null) {
+                const label = match[1].toLowerCase();
+                element.classList.add(label);
+                if (label === "tip") {
+                    element.innerHTML = "Совет";
+                }
+                else if (label === "important") {
+                    element.innerHTML = "Важно";
+                }
+                else if (label === "note") {
+                    element.innerHTML = "Примечание";
+                }
+                else if (label === "warning") {
+                    element.innerHTML = "Внимание";
+                }
+                const icon = document.createElement("span");
+                icon.classList.add("material-symbols");
+                if (label === "tip") {
+                    icon.textContent = "lightbulb_2";
+                }
+                else if (label === "important") {
+                    icon.textContent = "feedback";
+                }
+                else if (label === "note") {
+                    icon.textContent = "info";
+                }
+                else if (label === "warning") {
+                    icon.textContent = "warning";
+                }
+                element.insertAdjacentElement("afterbegin", icon);
+            }
+        });
+        element.querySelectorAll("img").forEach((element) => {
+            element.loading = "lazy";
+            element.addEventListener("load", () => {
+                element.classList.add("loaded");
+            });
+        });
+        element.querySelectorAll("table").forEach((el) => {
+            const div = document.createElement("div");
+            el.insertAdjacentElement("beforebegin", div);
+            div.appendChild(el);
+        });
+        hljs.highlightAll();
+        return header;
+    }
+    Utils.loadMarkdown = loadMarkdown;
+    function changeUrl(newUrl) {
+        window.history.pushState({}, "", newUrl);
+    }
+    Utils.changeUrl = changeUrl;
+    function id(id) {
+        return document.getElementById(id);
+    }
+    Utils.id = id;
+    function query(query) {
+        return document.querySelector(query);
+    }
+    Utils.query = query;
+    hljs.registerLanguage("xml", xml);
+})(Utils || (Utils = {}));
+export var Cookies;
+(function (Cookies) {
+    function get(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) {
+            const result = parts.pop()?.split(';').shift();
+            if (result === undefined) {
+                return null;
+            }
+            else {
+                return decodeURIComponent(result);
+            }
+        }
+        return null;
+    }
+    Cookies.get = get;
+    function set(name, value, expiresDays = 7) {
+        const date = new Date();
+        date.setTime(date.getTime() + (expiresDays * 24 * 60 * 60 * 1000));
+        const expires = `expires=${date.toUTCString()}`;
+        document.cookie = `${name}=${encodeURIComponent(value)};${expires};path=/`;
+    }
+    Cookies.set = set;
+    function deleteCookie(name) {
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    }
+    Cookies.deleteCookie = deleteCookie;
+    function getAll() {
+        const cookies = {};
+        const cookieArray = document.cookie.split(';');
+        for (let i = 0; i < cookieArray.length; i++) {
+            const cookiePair = cookieArray[i].split('=');
+            if (cookiePair.length === 2) {
+                cookies[cookiePair[0].trim()] = decodeURIComponent(cookiePair[1].trim());
+            }
+        }
+        return cookies;
+    }
+    Cookies.getAll = getAll;
+})(Cookies || (Cookies = {}));
+export var Components;
+(function (Components) {
+    let _applied = false;
+    class TioHeader extends HTMLElement {
+        static observedAttributes = ["tab"];
+        internals;
+        get tabs() {
+            return Array.from(this.shadowRoot.querySelector("#tabs").children);
+        }
+        constructor() {
+            super();
+            const shadow = this.attachShadow({ mode: "open" });
+            shadow.innerHTML = `
+                <style>@import url(/css/components/header.css);</style>
+                <div class="icon appicon"></div>
+                <div class="title">Toolbox.io</div>
+                <div class="separator"></div>
+                <div id="tabs">
+                    <div class="tab" id="home">Главная</div>
+                    <div class="tab" id="download">Скачать</div>
+                    <div class="tab" id="guides">Гайды</div>
+                </div>
+                <div class="auth-link" id="auth-link">Login</div>
+            `;
+            this.shadowRoot.querySelector(".icon.appicon").addEventListener("click", () => {
+                open("/", "_self");
+            });
+            const authLink = this.shadowRoot.querySelector("#auth-link");
+            authLink.addEventListener("click", () => {
+                const token = localStorage.getItem('authToken');
+                if (token) {
+                    open("/account", "_self");
+                }
+                else {
+                    open("/login", "_self");
+                }
+            });
+            this.updateAuthLink();
+            window.addEventListener('storage', () => {
+                this.updateAuthLink();
+            });
+            window.addEventListener('authStateChanged', () => {
+                this.updateAuthLink();
+            });
+            this.internals = this.attachInternals();
+            try {
+                $(window).on('scroll', () => {
+                    if ($(window).scrollTop() + $(window).height() >= 0 && $(window).scrollTop() !== 0) {
+                        this.internals.states.add("scrolled");
+                    }
+                    else {
+                        this.internals.states.delete("scrolled");
+                    }
+                });
+            }
+            catch (e) {
+                console.log(e);
+            }
+        }
+        updateAuthLink() {
+            const authLink = this.shadowRoot.querySelector("#auth-link");
+            const token = localStorage.getItem('authToken');
+            if (token) {
+                authLink.textContent = "Account";
+            }
+            else {
+                authLink.textContent = "Login";
+            }
+        }
+        attributeChangedCallback(name, oldValue, newValue) {
+            console.log(`Attribute ${name} has changed.`);
+            switch (name) {
+                case "tab": {
+                    const tabs = this.shadowRoot.querySelector("#tabs").children;
+                    tabs[Number(oldValue)].classList.remove("selected");
+                    tabs[Number(newValue)].classList.add("selected");
+                }
+            }
+        }
+    }
+    Components.TioHeader = TioHeader;
+    class TioFooter extends HTMLElement {
+        constructor() {
+            super();
+            const shadow = this.attachShadow({ mode: "open" });
+            shadow.innerHTML = `
+                <style>@import url(/css/components/footer.css);</style>
+                <div class="footer_column">
+                    <div class="footer_title">Toolbox.io</div>
+                    <a href="/" draggable="false">Главная</a>
+                    <a href="/guides" draggable="false">Гайды</a>
+                    <a href="/compatibility" draggable="false">Совместимость</a>
+                </div>
+                <div class="footer_column">
+                    <div class="footer_title">Документы</div>
+                    <a href="/privacy" draggable="false">Политика конфиденциальности</a>
+                    <a href="https://github.com/Toolbox-io/Toolbox-io/tree/main/LICENSE" draggable="false">Лицензия</a>
+                </div>
+                <div class="footer_column">
+                    <div class="footer_title">Ресурсы</div>
+                    <a href="https://github.com/Toolbox-io/Toolbox-io" draggable="false">Репозиторий на GitHub</a>
+                    <a href="https://github.com/orgs/Toolbox-io/projects/1" draggable="false">Проект на GitHub</a>
+                </div>
+            `;
+            shadow.querySelectorAll(".footer_column a").forEach((el) => {
+                const a = el;
+                console.log(a);
+                const regex = /^(?!\/)(.+?)\/*$/;
+                if (a.href.replace(regex, "$1/") === location.href.replace(regex, "$1/")) {
+                    a.classList.add("selected");
+                    a.addEventListener("click", (e) => e.preventDefault());
+                }
+            });
+        }
+    }
+    Components.TioFooter = TioFooter;
+    if (!_applied) {
+        customElements.define("tio-header", TioHeader);
+        customElements.define("tio-footer", TioFooter);
+        _applied = true;
+    }
+})(Components || (Components = {}));
+(() => {
+    let hasHoverClass = false;
+    const container = document.body;
+    let lastTouchTime = 0;
+    function enableHover() {
+        if (new Date() - lastTouchTime < 500)
+            return;
+        if (hasHoverClass)
+            return;
+        container.className += ' hasHover';
+        hasHoverClass = true;
+    }
+    function disableHover() {
+        if (!hasHoverClass)
+            return;
+        container.className = container.className.replace(' hasHover', '');
+        hasHoverClass = false;
+    }
+    function updateLastTouchTime() {
+        lastTouchTime = new Date();
+    }
+    document.addEventListener('touchstart', updateLastTouchTime, true);
+    document.addEventListener('touchstart', disableHover, true);
+    document.addEventListener('mousemove', enableHover, true);
+    enableHover();
+})();
+window.addEventListener("load", async () => {
+    document.body.classList.add("loaded");
+    await Utils.delay(500);
+    document.body.classList.add("full_loaded");
+});

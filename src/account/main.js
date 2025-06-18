@@ -1,1 +1,299 @@
-import{Utils}from"../common.js";var id=Utils.id;var delay=Utils.delay;class AccountManager{passwordDialog=id("password-dialog");loading=id("loading");errorMessage=id("error-message");usernameDisplay=id("username-display");emailDisplay=id("email-display");createdAtDisplay=id("created-at-display");userInfo=id("user-info");logoutBtn=id("logout-btn");changePasswordBtn=id("change-password-btn");cancelBtn=id("cancel-btn");passwordForm=id("password-form");currentPassword=id("current-password");newPassword=id("new-password");confirmPassword=id("confirm-password");dialogError=id("dialog-error");submitButton=document.querySelector(".dialog-button:not(.secondary)");token;constructor(){this.token=localStorage.getItem("authToken");this.init()}async init(){if(!this.token){window.location.href="/login";return}await this.loadUserInfo();this.setupEventListeners()}async loadUserInfo(){try{const t=await fetch("/api/auth/me",{headers:{Authorization:`Bearer ${this.token}`}});if(t.ok){const s=await t.json();this.usernameDisplay.textContent=s.username;this.emailDisplay.textContent=s.email;this.createdAtDisplay.textContent=new Date(s.created_at).toLocaleDateString();this.loading.style.display="none";this.userInfo.style.display="block"}else{localStorage.removeItem("authToken");window.location.href="/login"}}catch(t){this.errorMessage.textContent="Failed to load account information";this.errorMessage.style.display="block";this.loading.style.display="none"}}setupEventListeners(){this.logoutBtn.addEventListener("click",(()=>{localStorage.removeItem("authToken");window.dispatchEvent(new Event("authStateChanged"));window.location.href="/"}));this.changePasswordBtn.addEventListener("click",(()=>{this.openPasswordDialog()}));this.cancelBtn.addEventListener("click",(()=>{this.closePasswordDialog()}));this.passwordDialog.addEventListener("click",(t=>{if(t.target===t.currentTarget){this.closePasswordDialog()}}));this.passwordForm.addEventListener("submit",(t=>{t.preventDefault();this.handlePasswordChange()}))}async closePasswordDialog(){this.passwordDialog.style.opacity="0";await delay(500);this.passwordDialog.style.display="none";this.passwordForm.reset();this.dialogError.style.display="none"}async openPasswordDialog(){this.passwordDialog.style.display="flex";await delay(1);this.passwordDialog.style.opacity="1"}async handlePasswordChange(){const t=this.currentPassword.value;const s=this.newPassword.value;const e=this.confirmPassword.value;this.dialogError.style.display="none";if(s!==e){this.dialogError.textContent="New passwords do not match";this.dialogError.style.display="block";return}if(s.length<6){this.dialogError.textContent="New password must be at least 6 characters long";this.dialogError.style.display="block";return}this.submitButton.disabled=true;this.submitButton.textContent="Changing...";try{const e=await fetch("/api/auth/change-password",{method:"POST",headers:{"Content-Type":"application/json",Authorization:`Bearer ${this.token}`},body:JSON.stringify({current_password:t,new_password:s})});const a=await e.json();if(e.ok){this.dialogError.textContent="Password changed successfully!";this.dialogError.className="success-message";this.dialogError.style.display="block";setTimeout((()=>{this.closePasswordDialog();this.dialogError.className="error-message"}),2e3)}else{this.dialogError.textContent=a.detail||"Failed to change password";this.dialogError.style.display="block"}}catch(t){this.dialogError.textContent="Network error. Please try again.";this.dialogError.style.display="block"}finally{this.submitButton.disabled=false;this.submitButton.textContent="Change Password"}}}document.addEventListener("DOMContentLoaded",(()=>{new AccountManager}));
+'use strict';
+import { Utils } from "../common.js";
+var id = Utils.id;
+(() => {
+    function detectPage() {
+        const path = window.location.pathname;
+        if (path.includes('/login'))
+            return 'login';
+        if (path.includes('/register'))
+            return 'register';
+        return 'account';
+    }
+    function init() {
+        const currentPage = detectPage();
+        switch (currentPage) {
+            case 'login':
+                initLogin();
+                break;
+            case 'register':
+                initRegister();
+                break;
+            case 'account':
+                initAccount();
+                break;
+        }
+    }
+    function initLogin() {
+        const loginForm = id('loginForm');
+        const errorMessage = id('error-message');
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(loginForm);
+            const credentials = {
+                username: formData.get('username'),
+                password: formData.get('password')
+            };
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(credentials),
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    localStorage.setItem('authToken', data.access_token || '');
+                    window.location.href = '/account';
+                }
+                else {
+                    showError(errorMessage, data.error || 'Login failed');
+                }
+            }
+            catch (error) {
+                showError(errorMessage, 'Network error. Please try again.');
+            }
+        });
+    }
+    function initRegister() {
+        const registerForm = document.getElementById('registerForm');
+        const errorMessage = document.getElementById('error-message');
+        if (registerForm) {
+            registerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const formData = new FormData(registerForm);
+                const password = formData.get('password');
+                const confirmPassword = formData.get('confirm-password');
+                if (password !== confirmPassword) {
+                    showError(errorMessage, 'Passwords do not match');
+                    return;
+                }
+                const registerData = {
+                    username: formData.get('username'),
+                    email: formData.get('email'),
+                    password: password
+                };
+                try {
+                    const response = await fetch('/api/auth/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(registerData),
+                    });
+                    const data = await response.json();
+                    if (response.ok) {
+                        window.location.href = '/account/login';
+                    }
+                    else {
+                        showError(errorMessage, data.error || 'Registration failed');
+                    }
+                }
+                catch (error) {
+                    showError(errorMessage, 'Network error. Please try again.');
+                }
+            });
+        }
+    }
+    async function initAccount() {
+        const isLoggedIn = await checkAuthStatus();
+        if (!isLoggedIn) {
+            window.location.href = '/account/login';
+            return;
+        }
+        setupEventListeners();
+        await loadUserInfo();
+    }
+    async function checkAuthStatus() {
+        const token = localStorage.getItem('authToken');
+        try {
+            const response = await fetch('/api/auth/check-auth', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            return response.ok;
+        }
+        catch (error) {
+            return false;
+        }
+    }
+    async function loadUserInfo() {
+        const token = localStorage.getItem('authToken');
+        try {
+            const response = await fetch('/api/auth/user-info', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            const userData = await response.json();
+            if (response.ok) {
+                const usernameDisplay = document.getElementById('username-display');
+                const emailDisplay = document.getElementById('email-display');
+                const createdAtDisplay = document.getElementById('created-at-display');
+                const loading = document.getElementById('loading');
+                const userInfo = document.getElementById('user-info');
+                if (usernameDisplay)
+                    usernameDisplay.textContent = userData.username;
+                if (emailDisplay)
+                    emailDisplay.textContent = userData.email;
+                if (createdAtDisplay) {
+                    createdAtDisplay.textContent = new Date(userData.created_at).toLocaleDateString();
+                }
+                if (loading)
+                    loading.style.display = 'none';
+                if (userInfo)
+                    userInfo.style.display = 'block';
+            }
+        }
+        catch (error) {
+            console.error('Failed to load user info:', error);
+            showError(document.getElementById('error-message'), 'Failed to load account information');
+        }
+    }
+    function setupEventListeners() {
+        const logoutBtn = document.getElementById('logout-btn');
+        const changePasswordBtn = document.getElementById('change-password-btn');
+        const passwordDialog = document.getElementById('password-dialog');
+        const cancelBtn = document.getElementById('cancel-btn');
+        const passwordForm = document.getElementById('password-form');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', handleLogout);
+        }
+        if (changePasswordBtn) {
+            changePasswordBtn.addEventListener('click', () => {
+                openPasswordDialog();
+            });
+        }
+        if (cancelBtn) {
+            cancelBtn.addEventListener('click', () => {
+                closePasswordDialog();
+            });
+        }
+        if (passwordForm) {
+            passwordForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                handlePasswordChange();
+            });
+        }
+        if (passwordDialog) {
+            passwordDialog.addEventListener('click', (e) => {
+                if (e.target === passwordDialog) {
+                    closePasswordDialog();
+                }
+            });
+        }
+    }
+    async function handleLogout() {
+        try {
+            const response = await fetch('/api/auth/logout', { method: 'POST' });
+            if (response.ok) {
+                localStorage.removeItem('authToken');
+                window.location.href = '/account/login';
+            }
+        }
+        catch (error) {
+            console.error('Logout failed:', error);
+        }
+    }
+    async function openPasswordDialog() {
+        const passwordDialog = document.getElementById('password-dialog');
+        if (passwordDialog) {
+            passwordDialog.style.display = 'flex';
+            await delay(1);
+            passwordDialog.style.opacity = '1';
+        }
+    }
+    async function closePasswordDialog() {
+        const passwordDialog = document.getElementById('password-dialog');
+        const passwordForm = document.getElementById('password-form');
+        const dialogError = document.getElementById('dialog-error');
+        if (passwordDialog) {
+            passwordDialog.style.opacity = '0';
+            await delay(500);
+            passwordDialog.style.display = 'none';
+        }
+        if (passwordForm)
+            passwordForm.reset();
+        if (dialogError)
+            dialogError.style.display = 'none';
+    }
+    async function handlePasswordChange() {
+        const currentPassword = document.getElementById('current-password')?.value;
+        const newPassword = document.getElementById('new-password')?.value;
+        const confirmPassword = document.getElementById('confirm-password')?.value;
+        const dialogError = document.getElementById('dialog-error');
+        const submitButton = document.querySelector('.dialog-button:not(.secondary)');
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            showDialogError(dialogError, 'All fields are required');
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            showDialogError(dialogError, 'New passwords do not match');
+            return;
+        }
+        if (newPassword.length < 6) {
+            showDialogError(dialogError, 'New password must be at least 6 characters long');
+            return;
+        }
+        if (submitButton) {
+            submitButton.disabled = true;
+            submitButton.textContent = 'Changing...';
+        }
+        try {
+            const passwordData = {
+                current_password: currentPassword,
+                new_password: newPassword
+            };
+            const response = await fetch('/api/auth/change-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(passwordData),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                showDialogError(dialogError, 'Password changed successfully!', 'success');
+                setTimeout(() => {
+                    closePasswordDialog();
+                }, 2000);
+            }
+            else {
+                showDialogError(dialogError, data.error || 'Failed to change password');
+            }
+        }
+        catch (error) {
+            showDialogError(dialogError, 'Network error. Please try again.');
+        }
+        finally {
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Change Password';
+            }
+        }
+    }
+    function showError(element, message) {
+        element.textContent = message;
+        element.style.display = 'block';
+        element.classList.add('error-show');
+        setTimeout(() => {
+            element.classList.remove('error-show');
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 300);
+        }, 3000);
+    }
+    function showDialogError(element, message, type = 'error') {
+        if (element) {
+            element.textContent = message;
+            element.className = type === 'success' ? 'success-message' : 'error-message';
+            element.style.display = 'block';
+        }
+    }
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+    document.addEventListener('DOMContentLoaded', init);
+})();

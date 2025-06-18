@@ -1,7 +1,4 @@
 [mysqld]
-# Data directory
-datadir = /root/site/server/data
-
 # Basic settings
 user = mysql
 pid-file = /var/run/mysqld/mysqld.pid
