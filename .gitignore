@@ -1,5 +1,4 @@
 .venv
-package-lock.json
 server.properties
 node_modules
 __pycache__
@@ -8,3 +7,4 @@ out
 server/data
 server/certs
 .idea/dataSources
+package-lock.json

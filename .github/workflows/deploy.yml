@@ -5,8 +5,6 @@ on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["server"]
-
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
@@ -15,47 +13,30 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
-defaults:
-  run:
-    working-directory: "/root"
-
 jobs:
   deploy:
     runs-on: self-hosted
     env:
       HOME: "/root"
     steps:
-      - name: Setup environment
-        run: |
-          git config --global url.https://github.com/.insteadOf git://github.com/
       - name: Checkout
-        env:
-          REPO_URL: ${{ github.repositoryUrl }}
-          REF: ${{ github.ref_name }}
-        run: |
-          mkdir -p site
-          cd site
-          git init
-          git config remote.origin.url >&- || git remote add origin $REPO_URL
-          git fetch --all
-          git reset --hard origin/$REF
-          echo "Checked out commit: $(git rev-parse HEAD)"
+        uses: actions/checkout@v4
       - name: Build container
-        working-directory: /root/site
         env:
-          DOCKER_BUILDKIT: 1
-        run: docker build -t site --progress=plain .
+          NORUN: true
+          PROGRESS: true
+          NODEBUG: true
+        run: ./build.sh
       - name: Set up the service
-        working-directory: /root/site/server
         run: |
-          cp -f server.service /etc/systemd/system/server.service
+          cp -f server/server.service /etc/systemd/system/server.service
           systemctl daemon-reload
       - name: Start the server
         run: |
           journalctl --vacuum-time=0
           journalctl --rotate
           
-          if ! systemctl restart server && sleep 3 && systemctl status server; then
+          if ! systemctl restart server && sleep 10 && systemctl status server; then
             systemctl status server
             journalctl -xeu --no-pager server
             exit 1

@@ -1,5 +1,4 @@
-# Main domain - try HTTPS, fallback to HTTP
-server.toolbox-io.ru {
+beta.toolbox-io.ru {
     reverse_proxy localhost:8000
 
     # Security headers

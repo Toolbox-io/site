@@ -27,6 +27,7 @@ src/yarn-debug.log*
 src/yarn-error.log*
 src/.npm
 src/.eslintcache
+node_modules
 
 # Build artifacts
 src/*.js
@@ -56,3 +57,5 @@ docker-compose*.yml
 
 # Documentation
 LICENSE
+
+package-lock.json

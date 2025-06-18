@@ -14,9 +14,7 @@ if ! $DEBUG; then
   docker rm -fv "$(docker ps -aq)" 2>/dev/null || true
 fi
 
-# Initialize
-mkdir -p "data"
-mkdir -p "certs"
+# Backup
 ./scripts/db-backup.sh || true
 
 # Run
@@ -29,7 +27,9 @@ cmd="docker run \
   -p 3306:3306 \
   $(test ! "$DEBUG" || echo "-p 8000:8000")
   -v site_data:/var/lib/mysql \
-  -v site_certs:/root/site/certs site"
+  -v site_certs:/root/site/certs \
+  site \
+  $*"
 
 echo "$cmd"
 

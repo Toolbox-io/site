@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Database configuration
-DB_HOST = os.getenv('DB_HOST', 'localhost')
+DB_HOST = os.getenv('DB_HOST', '95.165.0.162')
 DB_PORT = os.getenv('DB_PORT', '3306')
 DB_USER = os.getenv('DB_USER', 'toolbox_user')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
