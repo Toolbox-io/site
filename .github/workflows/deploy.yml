@@ -56,13 +56,15 @@ jobs:
           pkill $(sudo lsof -ti :80) 2>/dev/null || true
           pkill $(sudo lsof -ti :443) 2>/dev/null || true
           docker rm -fv $(docker ps -aq) 2>/dev/null || true
+          journalctl --vacuum-time=0
+          journalctl --rotate
+          
           echo "Starting"
-          if ! systemctl restart server; then
-            echo "Start failed, status:"
+          if ! systemctl restart server && sleep 3 && systemctl status server; then
             systemctl status server
-            journalctl -xeu server
-            echo "Halting"
+            journalctl -xeu --no-pager server
             exit 1
+          else
+            systemctl status server || true
+            journalctl --no-pager -xeu server || true
           fi
-          sleep 3
-          systemctl status server
