@@ -33,7 +33,7 @@ COPY src /root/site/src
 
 # 3. Install npm dependencies and build
 WORKDIR /root/site/src
-RUN --mount=type=cache,target=/root/.npm npm install
+RUN --mount=type=cache,target=/root/site/src/node_modules npm install
 
 # 4. Prepare the server content
 RUN npm run build && \

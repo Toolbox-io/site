@@ -257,7 +257,7 @@ export var Components;
                     open("/account", "_self");
                 }
                 else {
-                    open("/login", "_self");
+                    open("/account/login", "_self");
                 }
             });
             this.updateAuthLink();

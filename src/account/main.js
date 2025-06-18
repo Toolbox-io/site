@@ -24,7 +24,11 @@ var id = Utils.id;
                 break;
         }
     }
-    function initLogin() {
+    async function initLogin() {
+        if (await checkAuthStatus()) {
+            window.location.href = '/account/';
+            return;
+        }
         const loginForm = id('loginForm');
         const errorMessage = id('error-message');
         loginForm.addEventListener('submit', async (e) => {
@@ -56,7 +60,11 @@ var id = Utils.id;
             }
         });
     }
-    function initRegister() {
+    async function initRegister() {
+        if (await checkAuthStatus()) {
+            window.location.href = '/account/';
+            return;
+        }
         const registerForm = document.getElementById('registerForm');
         const errorMessage = document.getElementById('error-message');
         if (registerForm) {
@@ -97,8 +105,7 @@ var id = Utils.id;
         }
     }
     async function initAccount() {
-        const isLoggedIn = await checkAuthStatus();
-        if (!isLoggedIn) {
+        if (!await checkAuthStatus()) {
             window.location.href = '/account/login';
             return;
         }

@@ -306,7 +306,7 @@ export namespace Components {
                 if (token) {
                     open("/account", "_self");
                 } else {
-                    open("/login", "_self");
+                    open("/account/login", "_self");
                 }
             });
             

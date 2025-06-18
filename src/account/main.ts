@@ -74,7 +74,12 @@ type PageType = 'login' | 'register' | 'account';
     /**
      * Initialize login page functionality
      */
-    function initLogin(): void {
+    async function initLogin() {
+        if (await checkAuthStatus()) {
+            window.location.href = '/account/';
+            return;
+        }
+
         const loginForm = id('loginForm') as HTMLFormElement;
         const errorMessage = id('error-message');
 
@@ -113,7 +118,12 @@ type PageType = 'login' | 'register' | 'account';
     /**
      * Initialize register page functionality
      */
-    function initRegister(): void {
+    async function initRegister() {
+        if (await checkAuthStatus()) {
+            window.location.href = '/account/';
+            return;
+        }
+
         const registerForm = document.getElementById('registerForm') as HTMLFormElement;
         const errorMessage = document.getElementById('error-message') as HTMLDivElement;
 
@@ -163,10 +173,7 @@ type PageType = 'login' | 'register' | 'account';
      * Initialize account dashboard functionality
      */
     async function initAccount(): Promise<void> {
-        // Check if user is logged in
-        const isLoggedIn = await checkAuthStatus();
-        
-        if (!isLoggedIn) {
+        if (!await checkAuthStatus()) {
             window.location.href = '/account/login';
             return;
         }

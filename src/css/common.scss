@@ -177,3 +177,43 @@ body.loaded::before, body.loaded::after {
 body.full_loaded::before, body.full_loaded::after {
     display: none;
 }
+
+button.big-button {
+    padding: 0.75rem 1.5rem;
+    background: $color-primaryContainer;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transform-origin: center;
+    transition: background-color 0.2s ease, transform 0.25s ease;
+
+    &:hover {
+        background: $color-primaryContainerDarkened;
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+
+    &.secondary {
+        background: $color-secondaryContainer;
+        color: $color-onSurface;
+
+        &:hover {
+            background: $color-secondaryContainerDarkened;
+        }
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+
+        &:hover {
+            transform: none;
+        }
+    }
+}
