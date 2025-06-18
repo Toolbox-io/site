@@ -6,6 +6,7 @@
 # 1. The image runs as root because it needs to use privileged ports
 # 2. minify.sh is external because it will be used outside of the container
 # 3. .venv files are needed to run the server
+#
 
 FROM ubuntu:24.10 AS build
 
@@ -46,27 +47,31 @@ LABEL authors="denis0001-dev"
 COPY --from=build /root/site /root/site
 COPY --from=build /root/.venv /root/.venv
 
-# 2. Install runtime dependencies only
+# 2. Install runtime dependencies
 RUN apt update && \
     apt upgrade -y && \
     apt install -y --no-install-recommends \
-        caddy python3 ca-certificates && \
+        caddy python3 ca-certificates mysql-server mysql-client && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
-# 3. Create database directory and set permissions
+# 3. Create data directory and set permissions
 RUN mkdir -p /root/site/server/data && \
     chmod 755 /root/site/server/data
 
-# 5. Install the CA certificates
+# 4. Create MySQL configuration
+RUN mkdir -p /etc/mysql/mysql.conf.d
+COPY server/mysql.cnf /etc/mysql/mysql.conf.d/mysqld.cnf
+
+# 5. Create necessary MySQL directories
+RUN mkdir -p /var/run/mysqld /var/log/mysql && \
+    chown -R mysql:mysql /var/run/mysqld /var/log/mysql && \
+    chmod 755 /var/run/mysqld /var/log/mysql
+
+# 6. Install the CA certificates
 RUN update-ca-certificates
 
-# 4. Final command
+# 7. Final command
 WORKDIR /root/site/server
-
-# Expose HTTP and HTTPS ports
-EXPOSE 80
-EXPOSE 443
-
-# Initialize database and start server
-CMD ["bash", "-c", "/root/.venv/bin/python3 init_db.py && /root/.venv/bin/python3 main.py & caddy run"]
+EXPOSE 80 443 3306
+CMD ["bash", "-c", "/root/.venv/bin/python3 main.py & caddy run"]
