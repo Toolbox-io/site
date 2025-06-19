@@ -309,9 +309,79 @@ export var Components;
         }
     }
     Components.TioFooter = TioFooter;
+    class TioInput extends HTMLElement {
+        static observedAttributes = ['type', 'label', 'name', 'value', 'required'];
+        input;
+        toggleBtn = null;
+        icon = null;
+        constructor() {
+            super();
+            const shadow = this.attachShadow({ mode: "open" });
+            const type = this.getAttribute('type') || 'text';
+            const label = this.getAttribute('label') || '';
+            const name = this.getAttribute('name') || '';
+            const value = this.getAttribute('value') || '';
+            const required = this.hasAttribute('required');
+            shadow.innerHTML = `
+                <style>@import url(/css/components/input.css);</style>
+                <div class="input-group">
+                  <input type="${type}" name="${name}" ${required ? 'required' : ''} value="${value}" placeholder="${label}">
+                  ${type === 'password' ? `
+                  <button type="button" class="toggle-password" tabindex="-1" aria-label="Show password">
+                    <span class="material-symbols filled">visibility</span>
+                  </button>` : ''}
+                </div>
+            `;
+            this.input = shadow.querySelector('input');
+            if (type === 'password') {
+                this.toggleBtn = shadow.querySelector('.toggle-password');
+                this.icon = this.toggleBtn?.querySelector('.material-symbols.filled') || null;
+                if (this.toggleBtn && this.icon) {
+                    this.toggleBtn.addEventListener('click', () => {
+                        if (this.input.type === 'password') {
+                            this.input.type = 'text';
+                            this.icon.textContent = 'visibility_off';
+                        }
+                        else {
+                            this.input.type = 'password';
+                            this.icon.textContent = 'visibility';
+                        }
+                    });
+                }
+            }
+        }
+        attributeChangedCallback(name, _oldValue, newValue) {
+            if (!this.shadowRoot)
+                return;
+            if (name === 'type') {
+                this.input.type = newValue;
+            }
+            else if (name === 'label') {
+                const labelEl = this.shadowRoot.querySelector('label');
+                if (labelEl)
+                    labelEl.textContent = newValue;
+            }
+            else if (name === 'name') {
+                this.input.name = newValue;
+            }
+            else if (name === 'value') {
+                this.input.value = newValue;
+            }
+            else if (name === 'required') {
+                if (this.hasAttribute('required'))
+                    this.input.setAttribute('required', '');
+                else
+                    this.input.removeAttribute('required');
+            }
+        }
+        get value() { return this.input.value; }
+        set value(val) { this.input.value = val; }
+    }
+    Components.TioInput = TioInput;
     if (!_applied) {
         customElements.define("tio-header", TioHeader);
         customElements.define("tio-footer", TioFooter);
+        customElements.define("tio-input", TioInput);
         _applied = true;
     }
 })(Components || (Components = {}));

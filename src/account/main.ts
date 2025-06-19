@@ -81,30 +81,19 @@ type PageType = 'login' | 'register' | 'account';
             window.location.href = '/account/';
             return;
         }
-
-        const loginForm = id('loginForm') as HTMLFormElement;
+        const loginBtn = id('login-btn') as HTMLButtonElement;
         const errorMessage = id('error-message');
-
-        loginForm.addEventListener('submit', async (e: Event) => {
-            e.preventDefault();
-
-            const formData = new FormData(loginForm);
-            const credentials: LoginCredentials = {
-                username: formData.get('username') as string,
-                password: formData.get('password') as string
-            };
-
+        loginBtn.addEventListener('click', async () => {
+            const username = (id('username') as HTMLInputElement).value;
+            const password = (id('password') as HTMLInputElement).value;
+            const credentials: LoginCredentials = { username, password };
             try {
                 const response = await fetch('/api/auth/login', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(credentials),
                 });
-
                 const data: ApiResponse = await response.json();
-
                 if (response.ok) {
                     localStorage.setItem('authToken', data.access_token || '');
                     window.location.href = '/account';
@@ -125,52 +114,34 @@ type PageType = 'login' | 'register' | 'account';
             window.location.href = '/account/';
             return;
         }
-
-        const registerForm = id('registerForm') as HTMLFormElement;
+        const registerBtn = id('register-btn') as HTMLButtonElement;
         const errorMessage = id('error-message');
-
-        if (registerForm) {
-            registerForm.addEventListener('submit', async (e: Event) => {
-                e.preventDefault();
-                
-                const formData = new FormData(registerForm);
-                const password = formData.get('password') as string;
-                const confirmPassword = formData.get('confirm-password') as string;
-                const username = (formData.get("username") as string).trim();
-                const email = (formData.get("email") as string).trim();
-
-                if (password !== confirmPassword) {
-                    showError(errorMessage, 'Passwords do not match');
-                    return;
+        registerBtn.addEventListener('click', async () => {
+            const username = (id('username') as HTMLInputElement).value.trim();
+            const email = (id('email') as HTMLInputElement).value.trim();
+            const password = (id('password') as HTMLInputElement).value;
+            const confirmPassword = (id('confirm-password') as HTMLInputElement).value;
+            if (password !== confirmPassword) {
+                showError(errorMessage, 'Passwords do not match');
+                return;
+            }
+            const registerData: RegisterData = { username, email, password };
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(registerData),
+                });
+                const data: ApiResponse = await response.json();
+                if (response.ok) {
+                    window.location.href = '/account/login';
+                } else {
+                    showError(errorMessage, data.error || 'Registration failed');
                 }
-
-                const registerData: RegisterData = {
-                    username: username,
-                    email: email,
-                    password: password
-                };
-
-                try {
-                    const response = await fetch('/api/auth/register', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(registerData),
-                    });
-
-                    const data: ApiResponse = await response.json();
-
-                    if (response.ok) {
-                        window.location.href = '/account/login';
-                    } else {
-                        showError(errorMessage, data.error || 'Registration failed');
-                    }
-                } catch (error) {
-                    showError(errorMessage, 'Network error. Please try again.');
-                }
-            });
-        }
+            } catch (error) {
+                showError(errorMessage, 'Network error. Please try again.');
+            }
+        });
     }
 
     /**
@@ -181,7 +152,6 @@ type PageType = 'login' | 'register' | 'account';
             window.location.href = '/account/login';
             return;
         }
-
         setupEventListeners();
         await loadUserInfo();
     }
@@ -250,39 +220,30 @@ type PageType = 'login' | 'register' | 'account';
         const changePasswordBtn = id('change-password-btn') as HTMLButtonElement;
         const passwordDialog = id('password-dialog');
         const cancelBtn = id('cancel-btn') as HTMLButtonElement;
-        const passwordForm = id('password-form') as HTMLFormElement;
+        const changePasswordSubmitBtn = id('change-password-btn2') as HTMLButtonElement;
 
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', handleLogout);
-        }
+        logoutBtn.addEventListener('click', handleLogout);
 
-        if (changePasswordBtn) {
-            changePasswordBtn.addEventListener('click', () => {
-                openPasswordDialog();
-            });
-        }
+        changePasswordBtn.addEventListener('click', () => {
+            openPasswordDialog();
+        });
 
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', () => {
-                closePasswordDialog();
-            });
-        }
+        cancelBtn.addEventListener('click', () => {
+            closePasswordDialog();
+        });
 
-        if (passwordForm) {
-            passwordForm.addEventListener('submit', (e: Event) => {
-                e.preventDefault();
-                handlePasswordChange();
-            });
-        }
+        changePasswordSubmitBtn.addEventListener('click', (e: Event) => {
+            e.preventDefault();
+            console.log("called!!!");
+            handlePasswordChange();
+        });
 
         // Close dialog when clicking outside
-        if (passwordDialog) {
-            passwordDialog.addEventListener('click', (e: Event) => {
-                if (e.target === passwordDialog) {
-                    closePasswordDialog();
-                }
-            });
-        }
+        passwordDialog.addEventListener('click', (e: Event) => {
+            if (e.target === passwordDialog) {
+                closePasswordDialog();
+            }
+        });
     }
 
     /**
@@ -317,8 +278,6 @@ type PageType = 'login' | 'register' | 'account';
      */
     async function closePasswordDialog(): Promise<void> {
         const passwordDialog = id('password-dialog');
-        const passwordForm = id('password-form') as HTMLFormElement;
-        const dialogError = id('dialog-error');
 
         if (passwordDialog) {
             passwordDialog.style.opacity = '0';
@@ -326,8 +285,9 @@ type PageType = 'login' | 'register' | 'account';
             passwordDialog.style.display = 'none';
         }
 
-        if (passwordForm) passwordForm.reset();
-        if (dialogError) dialogError.style.display = 'none';
+        (id('current-password') as HTMLInputElement).value = '';
+        (id('new-password') as HTMLInputElement).value = '';
+        (id('confirm-password') as HTMLInputElement).value = '';
     }
 
     /**
@@ -338,20 +298,20 @@ type PageType = 'login' | 'register' | 'account';
         const newPassword = (id('new-password') as HTMLInputElement)?.value;
         const confirmPassword = (id('confirm-password') as HTMLInputElement)?.value;
         const dialogError = id('dialog-error');
-        const submitButton = document.querySelector('.dialog-button:not(.secondary)') as HTMLButtonElement;
+        const submitButton = id('change-password-btn') as HTMLButtonElement;
 
         if (!currentPassword || !newPassword || !confirmPassword) {
-            showDialogError(dialogError, 'All fields are required');
+            await showDialogError(dialogError, 'All fields are required');
             return;
         }
 
         if (newPassword !== confirmPassword) {
-            showDialogError(dialogError, 'New passwords do not match');
+            await showDialogError(dialogError, 'New passwords do not match');
             return;
         }
 
         if (newPassword.length < 6) {
-            showDialogError(dialogError, 'New password must be at least 6 characters long');
+            await showDialogError(dialogError, 'New password must be at least 6 characters long');
             return;
         }
 
@@ -366,10 +326,12 @@ type PageType = 'login' | 'register' | 'account';
                 new_password: newPassword
             };
 
+            const token = localStorage.getItem('authToken');
             const response = await fetch('/api/auth/change-password', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify(passwordData),
             });
@@ -377,15 +339,15 @@ type PageType = 'login' | 'register' | 'account';
             const data: ApiResponse = await response.json();
 
             if (response.ok) {
-                showDialogError(dialogError, 'Password changed successfully!', 'success');
+                await showDialogError(dialogError, 'Password changed successfully!', 'success');
                 setTimeout(() => {
                     closePasswordDialog();
                 }, 2000);
             } else {
-                showDialogError(dialogError, data.error || 'Failed to change password');
+                await showDialogError(dialogError, data.error || 'Failed to change password');
             }
         } catch (error) {
-            showDialogError(dialogError, 'Network error. Please try again.');
+            await showDialogError(dialogError, 'Network error. Please try again.');
         } finally {
             if (submitButton) {
                 submitButton.disabled = false;
@@ -413,10 +375,19 @@ type PageType = 'login' | 'register' | 'account';
     /**
      * Show dialog error message
      */
-    function showDialogError(element: HTMLElement, message: string, type: 'error' | 'success' = 'error'): void {
+    async function showDialogError(element: HTMLElement, message: string, type: 'error' | 'success' = 'error'): Promise<void> {
+        console.debug('[DialogError] showDialogError called:', { message, type });
         element.textContent = message;
         element.className = type === 'success' ? 'success-message' : 'error-message';
-        element.style.display = 'block';
+        // Animate height
+        element.classList.add('visible');
+        console.debug('[DialogError] .visible class added');
+        // Remove after 3s if error
+        if (type === 'error') {
+            await delay(3000);
+            element.classList.remove('visible');
+            console.debug('[DialogError] .visible class removed');
+        }
     }
 
     /**

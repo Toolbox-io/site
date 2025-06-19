@@ -4,7 +4,6 @@ from datetime import timedelta
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from starlette.requests import Request
-from starlette.responses import RedirectResponse
 
 from auth_api import hash_password, authenticate_user, create_access_token, get_current_user, verify_password, \
     ACCESS_TOKEN_EXPIRE_MINUTES, validate_password

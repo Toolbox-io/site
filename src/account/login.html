@@ -20,17 +20,17 @@
             <div id="main" class="automargin">
                 <div class="auth-container">
                     <h1>Login</h1>
-                    <form id="loginForm" class="auth-form">
+                    <div class="auth-form">
                         <div class="form-group">
-                            <label for="username">Username</label>
-                            <input type="text" id="username" name="username" required>
+                            <label>Username</label>
+                            <tio-input type="text" id="username" name="username" label="Username" required></tio-input>
                         </div>
                         <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" id="password" name="password" required>
+                            <label>Password</label>
+                            <tio-input type="password" id="password" name="password" label="Password" required></tio-input>
                         </div>
-                        <button type="submit" class="auth-button big-button">Login</button>
-                    </form>
+                        <button id="login-btn" class="auth-button big-button">Login</button>
+                    </div>
                     <div class="auth-links">
                         <a href="/account/register">Don't have an account? Register</a>
                         <a href="/">Back to Home</a>

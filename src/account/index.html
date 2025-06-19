@@ -52,25 +52,25 @@
         <div id="password-dialog" class="dialog-overlay" style="display: none;">
             <div class="dialog-content">
                 <h2>Change Password</h2>
-                <form id="password-form" class="auth-form">
+                <div class="auth-form">
                     <div class="form-group">
-                        <label for="current-password">Current Password</label>
-                        <input type="password" id="current-password" name="current-password" required>
+                        <label>Current Password</label>
+                        <tio-input type="password" id="current-password" name="current-password" label="Current Password" required></tio-input>
                     </div>
                     <div class="form-group">
-                        <label for="new-password">New Password</label>
-                        <input type="password" id="new-password" name="new-password" required>
+                        <label>New Password</label>
+                        <tio-input type="password" id="new-password" name="new-password" label="New Password" required></tio-input>
                     </div>
                     <div class="form-group">
-                        <label for="confirm-password">Confirm New Password</label>
-                        <input type="password" id="confirm-password" name="confirm-password" required>
+                        <label>Confirm New Password</label>
+                        <tio-input type="password" id="confirm-password" name="confirm-password" label="Confirm New Password" required></tio-input>
                     </div>
                     <div class="dialog-buttons">
                         <button type="button" id="cancel-btn" class="dialog-button big-button secondary">Cancel</button>
-                        <button type="submit" class="dialog-button big-button">Change Password</button>
+                        <button id="change-password-btn2" class="dialog-button big-button">Change Password</button>
                     </div>
-                </form>
-                <div id="dialog-error" class="error-message" style="display: none;"></div>
+                </div>
+                <div id="dialog-error" class="error-message"></div>
             </div>
         </div>
     </body>

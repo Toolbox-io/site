@@ -31,7 +31,6 @@
 .auth-form {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
 
     .form-group {
         display: flex;
@@ -87,7 +86,6 @@
 // Common message styles
 .error-message,
 .success-message {
-    margin-top: 1rem;
     padding: 0.75rem;
     border-radius: 8px;
     text-align: center;
@@ -159,4 +157,4 @@
     &[style*="opacity: 1"] .dialog-content {
         transform: scale(1);
     }
-} 
+}

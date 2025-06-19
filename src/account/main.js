@@ -31,21 +31,16 @@ var setUpTabs = Utils.setUpTabs;
             window.location.href = '/account/';
             return;
         }
-        const loginForm = id('loginForm');
+        const loginBtn = id('login-btn');
         const errorMessage = id('error-message');
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(loginForm);
-            const credentials = {
-                username: formData.get('username'),
-                password: formData.get('password')
-            };
+        loginBtn.addEventListener('click', async () => {
+            const username = id('username').value;
+            const password = id('password').value;
+            const credentials = { username, password };
             try {
                 const response = await fetch('/api/auth/login', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(credentials),
                 });
                 const data = await response.json();
@@ -67,46 +62,36 @@ var setUpTabs = Utils.setUpTabs;
             window.location.href = '/account/';
             return;
         }
-        const registerForm = id('registerForm');
+        const registerBtn = id('register-btn');
         const errorMessage = id('error-message');
-        if (registerForm) {
-            registerForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const formData = new FormData(registerForm);
-                const password = formData.get('password');
-                const confirmPassword = formData.get('confirm-password');
-                const username = formData.get("username").trim();
-                const email = formData.get("email").trim();
-                if (password !== confirmPassword) {
-                    showError(errorMessage, 'Passwords do not match');
-                    return;
+        registerBtn.addEventListener('click', async () => {
+            const username = id('username').value.trim();
+            const email = id('email').value.trim();
+            const password = id('password').value;
+            const confirmPassword = id('confirm-password').value;
+            if (password !== confirmPassword) {
+                showError(errorMessage, 'Passwords do not match');
+                return;
+            }
+            const registerData = { username, email, password };
+            try {
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(registerData),
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    window.location.href = '/account/login';
                 }
-                const registerData = {
-                    username: username,
-                    email: email,
-                    password: password
-                };
-                try {
-                    const response = await fetch('/api/auth/register', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(registerData),
-                    });
-                    const data = await response.json();
-                    if (response.ok) {
-                        window.location.href = '/account/login';
-                    }
-                    else {
-                        showError(errorMessage, data.error || 'Registration failed');
-                    }
+                else {
+                    showError(errorMessage, data.error || 'Registration failed');
                 }
-                catch (error) {
-                    showError(errorMessage, 'Network error. Please try again.');
-                }
-            });
-        }
+            }
+            catch (error) {
+                showError(errorMessage, 'Network error. Please try again.');
+            }
+        });
     }
     async function initAccount() {
         if (!await checkAuthStatus()) {
@@ -168,33 +153,24 @@ var setUpTabs = Utils.setUpTabs;
         const changePasswordBtn = id('change-password-btn');
         const passwordDialog = id('password-dialog');
         const cancelBtn = id('cancel-btn');
-        const passwordForm = id('password-form');
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', handleLogout);
-        }
-        if (changePasswordBtn) {
-            changePasswordBtn.addEventListener('click', () => {
-                openPasswordDialog();
-            });
-        }
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', () => {
+        const changePasswordSubmitBtn = id('change-password-btn2');
+        logoutBtn.addEventListener('click', handleLogout);
+        changePasswordBtn.addEventListener('click', () => {
+            openPasswordDialog();
+        });
+        cancelBtn.addEventListener('click', () => {
+            closePasswordDialog();
+        });
+        changePasswordSubmitBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log("called!!!");
+            handlePasswordChange();
+        });
+        passwordDialog.addEventListener('click', (e) => {
+            if (e.target === passwordDialog) {
                 closePasswordDialog();
-            });
-        }
-        if (passwordForm) {
-            passwordForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                handlePasswordChange();
-            });
-        }
-        if (passwordDialog) {
-            passwordDialog.addEventListener('click', (e) => {
-                if (e.target === passwordDialog) {
-                    closePasswordDialog();
-                }
-            });
-        }
+            }
+        });
     }
     async function handleLogout() {
         try {
@@ -218,34 +194,31 @@ var setUpTabs = Utils.setUpTabs;
     }
     async function closePasswordDialog() {
         const passwordDialog = id('password-dialog');
-        const passwordForm = id('password-form');
-        const dialogError = id('dialog-error');
         if (passwordDialog) {
             passwordDialog.style.opacity = '0';
             await delay(500);
             passwordDialog.style.display = 'none';
         }
-        if (passwordForm)
-            passwordForm.reset();
-        if (dialogError)
-            dialogError.style.display = 'none';
+        id('current-password').value = '';
+        id('new-password').value = '';
+        id('confirm-password').value = '';
     }
     async function handlePasswordChange() {
         const currentPassword = id('current-password')?.value;
         const newPassword = id('new-password')?.value;
         const confirmPassword = id('confirm-password')?.value;
         const dialogError = id('dialog-error');
-        const submitButton = document.querySelector('.dialog-button:not(.secondary)');
+        const submitButton = id('change-password-btn');
         if (!currentPassword || !newPassword || !confirmPassword) {
-            showDialogError(dialogError, 'All fields are required');
+            await showDialogError(dialogError, 'All fields are required');
             return;
         }
         if (newPassword !== confirmPassword) {
-            showDialogError(dialogError, 'New passwords do not match');
+            await showDialogError(dialogError, 'New passwords do not match');
             return;
         }
         if (newPassword.length < 6) {
-            showDialogError(dialogError, 'New password must be at least 6 characters long');
+            await showDialogError(dialogError, 'New password must be at least 6 characters long');
             return;
         }
         if (submitButton) {
@@ -257,26 +230,28 @@ var setUpTabs = Utils.setUpTabs;
                 current_password: currentPassword,
                 new_password: newPassword
             };
+            const token = localStorage.getItem('authToken');
             const response = await fetch('/api/auth/change-password', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify(passwordData),
             });
             const data = await response.json();
             if (response.ok) {
-                showDialogError(dialogError, 'Password changed successfully!', 'success');
+                await showDialogError(dialogError, 'Password changed successfully!', 'success');
                 setTimeout(() => {
                     closePasswordDialog();
                 }, 2000);
             }
             else {
-                showDialogError(dialogError, data.error || 'Failed to change password');
+                await showDialogError(dialogError, data.error || 'Failed to change password');
             }
         }
         catch (error) {
-            showDialogError(dialogError, 'Network error. Please try again.');
+            await showDialogError(dialogError, 'Network error. Please try again.');
         }
         finally {
             if (submitButton) {
@@ -296,10 +271,17 @@ var setUpTabs = Utils.setUpTabs;
             }, 300);
         }, 3000);
     }
-    function showDialogError(element, message, type = 'error') {
+    async function showDialogError(element, message, type = 'error') {
+        console.debug('[DialogError] showDialogError called:', { message, type });
         element.textContent = message;
         element.className = type === 'success' ? 'success-message' : 'error-message';
-        element.style.display = 'block';
+        element.classList.add('visible');
+        console.debug('[DialogError] .visible class added');
+        if (type === 'error') {
+            await delay(3000);
+            element.classList.remove('visible');
+            console.debug('[DialogError] .visible class removed');
+        }
     }
     function delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));

@@ -20,25 +20,25 @@
             <div id="main" class="automargin">
                 <div class="auth-container">
                     <h1>Register</h1>
-                    <form id="registerForm" class="auth-form">
+                    <div class="auth-form">
                         <div class="form-group">
-                            <label for="username">Username</label>
-                            <input type="text" id="username" name="username" required>
+                            <label>Username</label>
+                            <tio-input type="text" id="username" name="username" label="Username" required></tio-input>
                         </div>
                         <div class="form-group">
-                            <label for="email">Email</label>
-                            <input type="email" id="email" name="email" required>
+                            <label>Email</label>
+                            <tio-input type="email" id="email" name="email" label="Email" required></tio-input>
                         </div>
                         <div class="form-group">
-                            <label for="password">Password</label>
-                            <input type="password" id="password" name="password" required>
+                            <label>Password</label>
+                            <tio-input type="password" id="password" name="password" label="Password" required></tio-input>
                         </div>
                         <div class="form-group">
-                            <label for="confirm-password">Confirm Password</label>
-                            <input type="password" id="confirm-password" name="confirm-password" required>
+                            <label>Confirm Password</label>
+                            <tio-input type="password" id="confirm-password" name="confirm-password" label="Confirm Password" required></tio-input>
                         </div>
-                        <button type="submit" class="auth-button big-button">Register</button>
-                    </form>
+                        <button id="register-btn" class="auth-button big-button">Register</button>
+                    </div>
                     <div class="auth-links">
                         <a href="/account/login">Already have an account? Login</a>
                         <a href="/">Back to Home</a>
