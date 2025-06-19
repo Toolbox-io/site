@@ -99,11 +99,11 @@ export namespace Utils {
         header.tabs[2].addEventListener("click", () => switchTab(2));
     }
 
-    export function regexMatches(regex: RegExp, string: string): boolean {
+    /*export function regexMatches(regex: RegExp, string: string): boolean {
         return regex.exec(string) !== null;
-    }
+    }*/
 
-    export async function notification(
+    /*export async function notification(
         type: 'error' | 'success',
         _headline: string,
         _message: string,
@@ -137,7 +137,7 @@ export namespace Utils {
 
         await delay((durationSec || 5) * 1000);
         await hide();
-    }
+    }*/
 
     export async function loadMarkdown(file: string, element: HTMLElement = document.body): Promise<any> {
         if (file === "" || !file.endsWith(".md")) {
@@ -219,6 +219,7 @@ export namespace Utils {
         return document.getElementById(id)!!
     }
 
+    // noinspection JSUnusedGlobalSymbols
     export function query(query: string) {
         return document.querySelector(query)!! as HTMLElement;
     }
@@ -347,6 +348,7 @@ export namespace Components {
             }
         }
 
+        // noinspection JSUnusedGlobalSymbols
         attributeChangedCallback(name: string, oldValue: string, newValue: string) {
             console.log(`Attribute ${name} has changed.`);
             switch (name) {

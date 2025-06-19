@@ -40,7 +40,4 @@ jobs:
             systemctl status server
             journalctl -xeu --no-pager server
             exit 1
-          else
-            systemctl status server || true
-            journalctl --no-pager -xeu server || true
           fi

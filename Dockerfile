@@ -58,9 +58,9 @@ RUN mkdir -p /root/site/server/data /var/run/mysqld /var/log/mysql && \
     chown -R mysql:mysql /var/run/mysqld /var/log/mysql /root/site/server/data
 
 # 3.3. Copy content
+COPY --from=backend /root/.venv /root/.venv
 COPY server /root/site/server
 COPY --from=frontend /root/site/src /root/site/src
-COPY --from=backend /root/.venv /root/.venv
 
 # 4. Final command
 # 4.1. Environment variables

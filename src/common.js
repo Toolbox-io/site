@@ -77,36 +77,6 @@ export var Utils;
         header.tabs[2].addEventListener("click", () => switchTab(2));
     }
     Utils.setUpTabs = setUpTabs;
-    function regexMatches(regex, string) {
-        return regex.exec(string) !== null;
-    }
-    Utils.regexMatches = regexMatches;
-    async function notification(type, _headline, _message, durationSec = 5) {
-        const status = document.getElementById("status");
-        const progress = status.querySelector(".progress > .progress_bar");
-        const headline = status.querySelector(".head > .message_headline");
-        const message = status.querySelector(".message");
-        const close = status.querySelector(".head > .close");
-        status.classList.remove("hidden", "success", "error");
-        status.classList.add(type);
-        headline.textContent = _headline;
-        message.textContent = _message;
-        progress.style.transitionDuration = `${durationSec}s`;
-        progress.style.width = "100%";
-        close.addEventListener("click", hide);
-        async function hide() {
-            status.classList.add("hidden");
-            progress.style.width = "0";
-            progress.style.transitionDuration = "";
-            await delay(250);
-            status.classList.remove(type);
-            headline.textContent = "";
-            message.textContent = "";
-        }
-        await delay((durationSec || 5) * 1000);
-        await hide();
-    }
-    Utils.notification = notification;
     async function loadMarkdown(file, element = document.body) {
         if (file === "" || !file.endsWith(".md")) {
             throw new SyntaxError(`Invalid file ${file}`);

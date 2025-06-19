@@ -8,6 +8,7 @@
 // Types and interfaces
 import {Utils} from "../common.js";
 import id = Utils.id;
+import setUpTabs = Utils.setUpTabs;
 
 interface UserData {
     username: string;
@@ -56,6 +57,7 @@ type PageType = 'login' | 'register' | 'account';
      * Initialize the appropriate functionality based on current page
      */
     function init(): void {
+        setUpTabs();
         const currentPage = detectPage();
         
         switch (currentPage) {
@@ -124,8 +126,8 @@ type PageType = 'login' | 'register' | 'account';
             return;
         }
 
-        const registerForm = document.getElementById('registerForm') as HTMLFormElement;
-        const errorMessage = document.getElementById('error-message') as HTMLDivElement;
+        const registerForm = id('registerForm') as HTMLFormElement;
+        const errorMessage = id('error-message');
 
         if (registerForm) {
             registerForm.addEventListener('submit', async (e: Event) => {
@@ -134,6 +136,8 @@ type PageType = 'login' | 'register' | 'account';
                 const formData = new FormData(registerForm);
                 const password = formData.get('password') as string;
                 const confirmPassword = formData.get('confirm-password') as string;
+                const username = (formData.get("username") as string).trim();
+                const email = (formData.get("email") as string).trim();
 
                 if (password !== confirmPassword) {
                     showError(errorMessage, 'Passwords do not match');
@@ -141,8 +145,8 @@ type PageType = 'login' | 'register' | 'account';
                 }
 
                 const registerData: RegisterData = {
-                    username: formData.get('username') as string,
-                    email: formData.get('email') as string,
+                    username: username,
+                    email: email,
                     password: password
                 };
 
@@ -213,11 +217,11 @@ type PageType = 'login' | 'register' | 'account';
             const userData: UserData = await response.json();
 
             if (response.ok) {
-                const usernameDisplay = document.getElementById('username-display') as HTMLElement;
-                const emailDisplay = document.getElementById('email-display') as HTMLElement;
-                const createdAtDisplay = document.getElementById('created-at-display') as HTMLElement;
-                const loading = document.getElementById('loading') as HTMLElement;
-                const userInfo = document.getElementById('user-info') as HTMLElement;
+                const usernameDisplay = id('username-display');
+                const emailDisplay = id('email-display');
+                const createdAtDisplay = id('created-at-display');
+                const loading = id('loading');
+                const userInfo = id('user-info');
 
                 if (usernameDisplay) usernameDisplay.textContent = userData.username;
                 if (emailDisplay) emailDisplay.textContent = userData.email;
@@ -232,7 +236,7 @@ type PageType = 'login' | 'register' | 'account';
         } catch (error) {
             console.error('Failed to load user info:', error);
             showError(
-                document.getElementById('error-message') as HTMLDivElement,
+                id('error-message'),
                 'Failed to load account information'
             );
         }
@@ -242,11 +246,11 @@ type PageType = 'login' | 'register' | 'account';
      * Setup event listeners for account dashboard
      */
     function setupEventListeners(): void {
-        const logoutBtn = document.getElementById('logout-btn') as HTMLButtonElement;
-        const changePasswordBtn = document.getElementById('change-password-btn') as HTMLButtonElement;
-        const passwordDialog = document.getElementById('password-dialog') as HTMLDivElement;
-        const cancelBtn = document.getElementById('cancel-btn') as HTMLButtonElement;
-        const passwordForm = document.getElementById('password-form') as HTMLFormElement;
+        const logoutBtn = id('logout-btn') as HTMLButtonElement;
+        const changePasswordBtn = id('change-password-btn') as HTMLButtonElement;
+        const passwordDialog = id('password-dialog');
+        const cancelBtn = id('cancel-btn') as HTMLButtonElement;
+        const passwordForm = id('password-form') as HTMLFormElement;
 
         if (logoutBtn) {
             logoutBtn.addEventListener('click', handleLogout);
@@ -300,7 +304,7 @@ type PageType = 'login' | 'register' | 'account';
      * Open password change dialog
      */
     async function openPasswordDialog(): Promise<void> {
-        const passwordDialog = document.getElementById('password-dialog') as HTMLDivElement;
+        const passwordDialog = id('password-dialog');
         if (passwordDialog) {
             passwordDialog.style.display = 'flex';
             await delay(1);
@@ -312,9 +316,9 @@ type PageType = 'login' | 'register' | 'account';
      * Close password change dialog
      */
     async function closePasswordDialog(): Promise<void> {
-        const passwordDialog = document.getElementById('password-dialog') as HTMLDivElement;
-        const passwordForm = document.getElementById('password-form') as HTMLFormElement;
-        const dialogError = document.getElementById('dialog-error') as HTMLDivElement;
+        const passwordDialog = id('password-dialog');
+        const passwordForm = id('password-form') as HTMLFormElement;
+        const dialogError = id('dialog-error');
 
         if (passwordDialog) {
             passwordDialog.style.opacity = '0';
@@ -330,10 +334,10 @@ type PageType = 'login' | 'register' | 'account';
      * Handle password change
      */
     async function handlePasswordChange(): Promise<void> {
-        const currentPassword = (document.getElementById('current-password') as HTMLInputElement)?.value;
-        const newPassword = (document.getElementById('new-password') as HTMLInputElement)?.value;
-        const confirmPassword = (document.getElementById('confirm-password') as HTMLInputElement)?.value;
-        const dialogError = document.getElementById('dialog-error') as HTMLDivElement;
+        const currentPassword = (id('current-password') as HTMLInputElement)?.value;
+        const newPassword = (id('new-password') as HTMLInputElement)?.value;
+        const confirmPassword = (id('confirm-password') as HTMLInputElement)?.value;
+        const dialogError = id('dialog-error');
         const submitButton = document.querySelector('.dialog-button:not(.secondary)') as HTMLButtonElement;
 
         if (!currentPassword || !newPassword || !confirmPassword) {
@@ -409,12 +413,10 @@ type PageType = 'login' | 'register' | 'account';
     /**
      * Show dialog error message
      */
-    function showDialogError(element: HTMLDivElement | null, message: string, type: 'error' | 'success' = 'error'): void {
-        if (element) {
-            element.textContent = message;
-            element.className = type === 'success' ? 'success-message' : 'error-message';
-            element.style.display = 'block';
-        }
+    function showDialogError(element: HTMLElement, message: string, type: 'error' | 'success' = 'error'): void {
+        element.textContent = message;
+        element.className = type === 'success' ? 'success-message' : 'error-message';
+        element.style.display = 'block';
     }
 
     /**

@@ -1,6 +1,7 @@
 'use strict';
 import { Utils } from "../common.js";
 var id = Utils.id;
+var setUpTabs = Utils.setUpTabs;
 (() => {
     function detectPage() {
         const path = window.location.pathname;
@@ -11,6 +12,7 @@ var id = Utils.id;
         return 'account';
     }
     function init() {
+        setUpTabs();
         const currentPage = detectPage();
         switch (currentPage) {
             case 'login':
@@ -65,21 +67,23 @@ var id = Utils.id;
             window.location.href = '/account/';
             return;
         }
-        const registerForm = document.getElementById('registerForm');
-        const errorMessage = document.getElementById('error-message');
+        const registerForm = id('registerForm');
+        const errorMessage = id('error-message');
         if (registerForm) {
             registerForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const formData = new FormData(registerForm);
                 const password = formData.get('password');
                 const confirmPassword = formData.get('confirm-password');
+                const username = formData.get("username").trim();
+                const email = formData.get("email").trim();
                 if (password !== confirmPassword) {
                     showError(errorMessage, 'Passwords do not match');
                     return;
                 }
                 const registerData = {
-                    username: formData.get('username'),
-                    email: formData.get('email'),
+                    username: username,
+                    email: email,
                     password: password
                 };
                 try {
@@ -136,11 +140,11 @@ var id = Utils.id;
             });
             const userData = await response.json();
             if (response.ok) {
-                const usernameDisplay = document.getElementById('username-display');
-                const emailDisplay = document.getElementById('email-display');
-                const createdAtDisplay = document.getElementById('created-at-display');
-                const loading = document.getElementById('loading');
-                const userInfo = document.getElementById('user-info');
+                const usernameDisplay = id('username-display');
+                const emailDisplay = id('email-display');
+                const createdAtDisplay = id('created-at-display');
+                const loading = id('loading');
+                const userInfo = id('user-info');
                 if (usernameDisplay)
                     usernameDisplay.textContent = userData.username;
                 if (emailDisplay)
@@ -156,15 +160,15 @@ var id = Utils.id;
         }
         catch (error) {
             console.error('Failed to load user info:', error);
-            showError(document.getElementById('error-message'), 'Failed to load account information');
+            showError(id('error-message'), 'Failed to load account information');
         }
     }
     function setupEventListeners() {
-        const logoutBtn = document.getElementById('logout-btn');
-        const changePasswordBtn = document.getElementById('change-password-btn');
-        const passwordDialog = document.getElementById('password-dialog');
-        const cancelBtn = document.getElementById('cancel-btn');
-        const passwordForm = document.getElementById('password-form');
+        const logoutBtn = id('logout-btn');
+        const changePasswordBtn = id('change-password-btn');
+        const passwordDialog = id('password-dialog');
+        const cancelBtn = id('cancel-btn');
+        const passwordForm = id('password-form');
         if (logoutBtn) {
             logoutBtn.addEventListener('click', handleLogout);
         }
@@ -205,7 +209,7 @@ var id = Utils.id;
         }
     }
     async function openPasswordDialog() {
-        const passwordDialog = document.getElementById('password-dialog');
+        const passwordDialog = id('password-dialog');
         if (passwordDialog) {
             passwordDialog.style.display = 'flex';
             await delay(1);
@@ -213,9 +217,9 @@ var id = Utils.id;
         }
     }
     async function closePasswordDialog() {
-        const passwordDialog = document.getElementById('password-dialog');
-        const passwordForm = document.getElementById('password-form');
-        const dialogError = document.getElementById('dialog-error');
+        const passwordDialog = id('password-dialog');
+        const passwordForm = id('password-form');
+        const dialogError = id('dialog-error');
         if (passwordDialog) {
             passwordDialog.style.opacity = '0';
             await delay(500);
@@ -227,10 +231,10 @@ var id = Utils.id;
             dialogError.style.display = 'none';
     }
     async function handlePasswordChange() {
-        const currentPassword = document.getElementById('current-password')?.value;
-        const newPassword = document.getElementById('new-password')?.value;
-        const confirmPassword = document.getElementById('confirm-password')?.value;
-        const dialogError = document.getElementById('dialog-error');
+        const currentPassword = id('current-password')?.value;
+        const newPassword = id('new-password')?.value;
+        const confirmPassword = id('confirm-password')?.value;
+        const dialogError = id('dialog-error');
         const submitButton = document.querySelector('.dialog-button:not(.secondary)');
         if (!currentPassword || !newPassword || !confirmPassword) {
             showDialogError(dialogError, 'All fields are required');
@@ -293,11 +297,9 @@ var id = Utils.id;
         }, 3000);
     }
     function showDialogError(element, message, type = 'error') {
-        if (element) {
-            element.textContent = message;
-            element.className = type === 'success' ? 'success-message' : 'error-message';
-            element.style.display = 'block';
-        }
+        element.textContent = message;
+        element.className = type === 'success' ? 'success-message' : 'error-message';
+        element.style.display = 'block';
     }
     function delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
