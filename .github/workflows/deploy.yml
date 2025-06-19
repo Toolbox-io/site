@@ -4,7 +4,7 @@ name: Deploy to server
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["server"]
+    branches: ["main"]
   workflow_dispatch:
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
