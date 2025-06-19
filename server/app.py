@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi.errors import RateLimitExceeded
 from limiter import limiter
-from routes import auth
+from routes import auth_api_r
 
 async def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> Response:
     # noinspection PyProtectedMember
@@ -28,4 +28,4 @@ app.add_middleware(
 )
 
 # Include authentication routes
-app.include_router(auth.router, prefix="/api/auth", tags=["authentication"]) 
+app.include_router(auth_api_r.router, prefix="/api/auth", tags=["authentication"])

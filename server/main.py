@@ -29,6 +29,8 @@ logger.debug("Importing route modules...")
 # noinspection PyUnresolvedReferences
 import routes.core
 # noinspection PyUnresolvedReferences
+import routes.auth_api_r
+# noinspection PyUnresolvedReferences
 import routes.auth
 logger.debug("Route modules imported successfully")
 

@@ -15,23 +15,24 @@ for line in $(xargs < secrets.properties); do
   build_args+=" --build-arg $line"
 done
 
-if ! $NODEBUG; then
-  build_args=" --build-arg DEBUG=true"
+if ! [[ $NODEBUG == "true" ]]; then
+  build_args+=" --build-arg DEBUG=true"
 fi
 
-if $PROGRESS; then
+if [[ $PROGRESS == "true" ]]; then
   build_args+=" --progress plain"
 fi
 
+cmd="docker build -t site $build_args ."
+echo "$cmd"
 
+DOCKER_BUILDKIT=1 bash -c "$cmd"
 
-DOCKER_BUILDKIT=1 bash -c "docker build -t site $build_args ."
-
-if ! $NORUN; then
+if ! [[ $NORUN == "true" ]]; then
   cd server/scripts || exit
   chmod +x run.sh
-  if $NODEBUG; then
-    ./run.sh
+  if [[ $NODEBUG == "true" ]]; then
+    ./run.sh "$*"
   else
     DEBUG=true ./run.sh "$*"
   fi

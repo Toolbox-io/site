@@ -11,8 +11,11 @@ def find_file(path: str) -> Tuple[Optional[Path], Optional[str]]:
     """
     Find a file with the given path, handling various cases like directories and extensions.
     Returns a tuple of (file_path, redirect_path).
+    Only matches files whose relative path matches the request path.
     """
-    full_path = CONTENT_PATH / path
+    # Normalize the path
+    norm_path = Path(path)
+    full_path = CONTENT_PATH / norm_path
 
     # Handle directory case
     if full_path.is_dir():
@@ -25,7 +28,10 @@ def find_file(path: str) -> Tuple[Optional[Path], Optional[str]]:
         # Check for <dir>.html in parent directory
         dir_html = full_path.parent / f"{full_path.name}.html"
         if dir_html.is_file():
-            return dir_html, None
+            # Only match if the request path matches the relative path
+            rel = dir_html.relative_to(CONTENT_PATH).with_suffix("").as_posix()
+            if rel == path:
+                return dir_html, None
         return None, None
 
     # Handle file without extension
@@ -33,15 +39,13 @@ def find_file(path: str) -> Tuple[Optional[Path], Optional[str]]:
         return full_path, None
 
     # Handle .html extension
-    html_path = CONTENT_PATH / f"{path}.html"
+    html_path = CONTENT_PATH / f"{norm_path}.html"
     if html_path.is_file():
-        return html_path, None
+        rel = html_path.relative_to(CONTENT_PATH).with_suffix("").as_posix()
+        if rel == path:
+            return html_path, None
 
-    # Search in subdirectories
-    for file_path in CONTENT_PATH.rglob("*"):
-        if file_path.is_file() and file_path.name.startswith(path):
-            return file_path, None
-
+    # Do NOT search in subdirectories by filename only (remove rglob fallback)
     return None, None
 
 

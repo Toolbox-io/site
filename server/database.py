@@ -18,6 +18,10 @@ DB_USER = os.getenv('DB_USER', 'toolbox_user')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_NAME = os.getenv('DB_NAME', 'toolbox_db')
 
+if not DB_PASSWORD:
+    logger.critical("No password")
+    exit(1)
+
 # Create MySQL connection string
 DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
