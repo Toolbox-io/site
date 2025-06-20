@@ -1,15 +1,16 @@
 import re
 from datetime import datetime
 
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr, field_validator
 
 
+# noinspection PyMethodParameters
 class UserCreate(BaseModel):
     username: str
     email: EmailStr
     password: str
-    
-    @validator('username')
+
+    @field_validator('username')
     def validate_username(cls, v):
         if len(v) < 3:
             raise ValueError('Username must be at least 3 characters long')
@@ -19,17 +20,19 @@ class UserCreate(BaseModel):
             raise ValueError('Username can only contain letters, numbers, underscores, and hyphens')
         return v
     
-    @validator('email')
+    @field_validator('email')
     def validate_email(cls, v):
         if len(v) > 254:
             raise ValueError('Email is too long')
         return v.lower()
 
+
+# noinspection PyMethodParameters
 class UserLogin(BaseModel):
     username: str
     password: str
     
-    @validator('username')
+    @field_validator('username')
     def validate_username(cls, v):
         if len(v) < 1:
             raise ValueError('Username cannot be empty')
@@ -50,11 +53,13 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 
+
+# noinspection PyMethodParameters
 class PasswordChange(BaseModel):
     current_password: str
     new_password: str
     
-    @validator('current_password', 'new_password')
+    @field_validator('current_password', 'new_password')
     def validate_password_not_empty(cls, v):
         if len(v) < 1:
             raise ValueError('Password cannot be empty')
