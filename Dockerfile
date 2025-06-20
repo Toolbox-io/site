@@ -48,16 +48,10 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     apt update && \
     apt install -y --no-install-recommends \
-        caddy mysql-server mysql-client && \
+        mysql-client && \
     rm -rf /var/lib/apt/lists/*
 
-# 3.2. Set up MySQL
-COPY server/mysql.cnf /etc/mysql/mysql.conf.d/mysqld.cnf
-RUN mkdir -p /root/site/server/data /var/run/mysqld /var/log/mysql && \
-    chmod 755 /root/site/server/data && \
-    chown -R mysql:mysql /var/run/mysqld /var/log/mysql /root/site/server/data
-
-# 3.3. Copy content
+# 3.2. Copy content
 COPY --from=backend /root/.venv /root/.venv
 COPY server /root/site/server
 COPY --from=frontend /root/site/src /root/site/src
@@ -81,19 +75,10 @@ ENV DB_USER=$DB_USER
 ENV DB_PASSWORD=$DB_PASSWORD
 ENV HOST=$HOST
 ENV PORT=$PORT
-ENV DEBUG=$DEBUG
-ENV XDG_DATA_HOME=/root/site/certs
-ENV XDG_CONFIG_HOME=/root/site/certs
 
 # 4.2. Workdir and ports
 WORKDIR /root/site/server
-EXPOSE 80 443 3306 8000
+EXPOSE 80 443
 
-# 4.3. Run the MySQL daemon, wait 5 seconds and run the server (also starts Caddy if in a production environment)
-CMD mysqld --user=mysql & \
-    sleep 5 && \
-    if $DEBUG; then \
-        /root/.venv/bin/python3 main.py; \
-    else \
-        /root/.venv/bin/python3 main.py & caddy run; \
-    fi
+# 4.3. Run the server
+CMD ["/root/.venv/bin/python3", "main.py"]

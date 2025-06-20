@@ -1,39 +1,22 @@
 #!/bin/bash
 
-dir=$(realpath "$(dirname "$0")/..")
+dir=$(realpath "$(dirname "$0")/../..")
 cd "$dir" || exit
 
-if ! $DEBUG; then
-  # Stop and delete the old container
-  docker stop toolbox-io || true
-  docker rm toolbox-io || true
-  docker stop site || true
-  docker rm site || true
-  pkill "$(lsof -ti :80 | xargs)" 2>/dev/null || true
-  pkill "$(lsof -ti :443)" 2>/dev/null || true
-  docker rm -fv "$(docker ps -aq)" 2>/dev/null || true
-fi
-
-# Backup
-./scripts/db-backup.sh || true
-
 # Run
-# 'test ! "$DEBUG" || echo <args>' means that if $DEBUG is true,
-# echo the text into the command. The '!' sign means the opposite
-# in this case.
-cmd="docker run \
-  -it \
-  --rm \
-  --name toolbox-io \
-  -p 80:80 \
-  -p 443:443 \
-  -p 3306:3306 \
-  $(test ! "$DEBUG" || echo "-p 8000:8000")
-  -v site_data:/var/lib/mysql \
-  $(test "$DEBUG" || echo "-v site_certs:/root/site/certs") \
-  site \
-  $*"
+if [[ $1 == "prod" ]]; then
+  echo "Running production server"
 
-echo "$cmd"
+  # Backup
+  ./server/scripts/db-backup.sh || true
 
-$cmd
+  # Clean up
+  containers=$(docker ps --filter "name=^toolbox" -q)
+  docker stop "$containers"
+  docker rm "$containers"
+  
+  docker compose --profile prod up
+else
+  echo "Running development server"
+  docker compose up
+fi

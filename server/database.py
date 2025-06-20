@@ -54,9 +54,11 @@ def create_engine_with_retry(max_retries=5, retry_delay=2):
             return engine
             
         except OperationalError as e:
-            logger.warning(f"Database connection failed (attempt {attempt + 1}/{max_retries}): {e}")
+            if attempt > 3:
+                logger.warning(f"Database connection failed (attempt {attempt + 1}/{max_retries}): {e}")
             if attempt < max_retries - 1:
-                logger.info(f"Retrying in {retry_delay} seconds...")
+                if attempt > 3:
+                    logger.info(f"Retrying in {retry_delay} seconds...")
                 time.sleep(retry_delay)
             else:
                 logger.error("Failed to connect to database after all retries")

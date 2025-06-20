@@ -1,0 +1,61 @@
+services:
+  db:
+    image: mysql:8
+    container_name: toolbox-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME:-toolbox_db}
+      MYSQL_USER: ${DB_USER:-toolbox_user}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - site_data:/var/lib/mysql
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: toolbox-io
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-toolbox_db}
+      DB_USER: ${DB_USER:-toolbox_user}
+      DB_PASSWORD: ${DB_PASSWORD}
+      HOST: 0.0.0.0
+      PORT: 8000
+      DEBUG: ${DEBUG:-false}
+      XDG_DATA_HOME: /root/site/certs
+      XDG_CONFIG_HOME: /root/site/certs
+    volumes:
+      - site_node_modules:/root/site/src/node_modules
+    ports:
+      - "8000:8000"
+    working_dir: /root/site/server
+
+  caddy:
+    image: caddy:2
+    container_name: toolbox-caddy
+    restart: unless-stopped
+    profiles: ["prod"]
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - site_certs:/root/site/certs
+      - ./server/Caddyfile:/etc/caddy/Caddyfile:ro
+    environment:
+      XDG_DATA_HOME: /root/site/certs
+      XDG_CONFIG_HOME: /root/site/certs
+
+volumes:
+  site_data:
+    name: toolbox-io_site_data
+  site_certs:
+  site_node_modules:
