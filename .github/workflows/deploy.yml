@@ -5,7 +5,19 @@ on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
+    paths:
+      - "Dockerfile"
+      - "build.sh"
+      - ".github/workflows/deploy.yml"
+      - "src/**"
+      - "server/**"
+      - "secrets.properties"
   workflow_dispatch:
+    inputs:
+      noCache:
+        description: "Disable Docker cache"
+        required: false
+        default: false
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
@@ -26,6 +38,7 @@ jobs:
           NORUN: true
           PROGRESS: true
           NODEBUG: true
+          NOCACHE: ${{ inputs.noCache }}
         run: ./build.sh
       - name: Set up the service
         run: |
@@ -33,11 +46,7 @@ jobs:
           systemctl daemon-reload
       - name: Start the server
         run: |
-          journalctl --vacuum-time=0
-          journalctl --rotate
-          
           if ! systemctl restart server && sleep 10 && systemctl status server; then
-            systemctl status server
-            journalctl -xeu --no-pager server
+            journalctl --no-pager -xeu server
             exit 1
           fi
