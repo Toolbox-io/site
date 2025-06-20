@@ -251,7 +251,15 @@ type PageType = 'login' | 'register' | 'account';
      */
     async function handleLogout(): Promise<void> {
         try {
-            const response = await fetch('/api/auth/logout', { method: 'POST' });
+            const response = await fetch(
+                '/api/auth/logout',
+                {
+                    method: 'POST',
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("authToken")}`
+                    }
+                }
+            );
             if (response.ok) {
                 localStorage.removeItem('authToken');
                 window.location.href = '/account/login';

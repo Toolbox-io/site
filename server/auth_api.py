@@ -7,9 +7,10 @@ from jose import JWTError, jwt
 from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
-from database import get_db, User, get_session_factory
+from database import get_db, User, get_session_factory, BlacklistedToken
 import os
 from models import UserCreate, UserLogin, UserResponse, Token, PasswordChange, Message
+from threading import Lock
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -37,6 +38,17 @@ COMMON_PASSWORDS = {
 }
 
 security = HTTPBearer()
+
+# In-memory token blacklist and lock
+# Exported for use in other modules
+
+# Set of blacklisted JWT tokens
+# Note: In-memory only; use Redis/DB for production multi-instance
+
+# Exported for use in other modules
+
+token_blacklist = set()
+blacklist_lock = Lock()
 
 def validate_password(password: str) -> tuple[bool, str]:
     """
@@ -115,9 +127,29 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
         logger.error(f"Error creating access token: {e}")
         raise
 
+def is_token_blacklisted(token: str) -> bool:
+    SessionLocal = get_session_factory()
+    db = SessionLocal()
+    try:
+        return db.query(BlacklistedToken).filter_by(token=token).first() is not None
+    finally:
+        db.close()
+
+def blacklist_token(token: str):
+    SessionLocal = get_session_factory()
+    db = SessionLocal()
+    try:
+        if not db.query(BlacklistedToken).filter_by(token=token).first():
+            db.add(BlacklistedToken(token=token))
+            db.commit()
+    finally:
+        db.close()
+
 def verify_token(token: str) -> Optional[str]:
-    """Verify and decode a JWT token"""
     logger.debug(f"Verifying JWT token, length: {len(token)}")
+    if is_token_blacklisted(token):
+        logger.warning("JWT token is blacklisted")
+        return None
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")

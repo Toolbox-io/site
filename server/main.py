@@ -132,15 +132,16 @@ def create_database_and_user():
     """Create MySQL database and user"""
     try:
         logger.info("Setting up database and user...")
-        
+        db_password = os.getenv("DB_PASSWORD")
         # Create database and user using mysql command
         sql_commands = [
             "CREATE DATABASE IF NOT EXISTS toolbox_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;",
-            f"CREATE USER IF NOT EXISTS 'toolbox_user'@'%' IDENTIFIED BY '{os.getenv("DB_PASSWORD")}';",
+            f"CREATE USER IF NOT EXISTS 'toolbox_user'@'%' IDENTIFIED BY '{db_password}';",
             "GRANT ALL PRIVILEGES ON toolbox_db.* TO 'toolbox_user'@'%';",
+            f"CREATE USER IF NOT EXISTS 'toolbox_local'@'localhost' IDENTIFIED BY '{db_password}';",
+            "GRANT ALL PRIVILEGES ON toolbox_db.* TO 'toolbox_local'@'localhost';",
             "FLUSH PRIVILEGES;"
         ]
-        
         for command in sql_commands:
             result = subprocess.run(
                 ['mysql', '-e', command],
@@ -151,10 +152,8 @@ def create_database_and_user():
                 logger.error(f"Failed to execute: {command}")
                 logger.error(f"Error: {result.stderr}")
                 return False
-        
         logger.info("Database and user created successfully!")
         return True
-        
     except Exception as e:
         logger.error(f"Error creating database and user: {e}")
         return False

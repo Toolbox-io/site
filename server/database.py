@@ -1,11 +1,12 @@
+import logging
 import os
 import time
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text, text
+
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, text
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import func
-from sqlalchemy.exc import OperationalError
-import logging
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -95,6 +96,12 @@ class User(Base):
     hashed_password = Column(String(255), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+class BlacklistedToken(Base):
+    __tablename__ = "blacklisted_tokens"
+    id = Column(Integer, primary_key=True, index=True)
+    token = Column(String(512), unique=True, nullable=False)
+    blacklisted_at = Column(DateTime(timezone=True), server_default=func.now())
 
 def init_db():
     """Initialize the database tables"""

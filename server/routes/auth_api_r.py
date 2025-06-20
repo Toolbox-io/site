@@ -2,11 +2,12 @@ import logging
 from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from starlette.requests import Request
 
 from auth_api import hash_password, authenticate_user, create_access_token, get_current_user, verify_password, \
-    ACCESS_TOKEN_EXPIRE_MINUTES, validate_password
+    ACCESS_TOKEN_EXPIRE_MINUTES, validate_password, blacklist_token, security
 from database import get_db, User
 from limiter import limiter
 from models import UserCreate, UserLogin, UserResponse, Token, PasswordChange, Message
@@ -177,9 +178,12 @@ def get_user_info(current_user: User = Depends(get_current_user)):
     return current_user
 
 @router.post("/logout")
-def logout():
-    """Logout user (client-side token removal)"""
-    logger.debug("Logout request received")
+def logout(
+    credentials: HTTPAuthorizationCredentials = Depends(security)
+):
+    token = credentials.credentials
+    blacklist_token(token)
+    logger.debug("Logout request received, token blacklisted")
     return {"message": "Logged out successfully"}
 
 @router.delete("/delete-account")
