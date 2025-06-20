@@ -18,6 +18,9 @@ fi
 ./scripts/db-backup.sh || true
 
 # Run
+# 'test ! "$DEBUG" || echo <args>' means that if $DEBUG is true,
+# echo the text into the command. The '!' sign means the opposite
+# in this case.
 cmd="docker run \
   -it \
   --rm \
@@ -27,7 +30,7 @@ cmd="docker run \
   -p 3306:3306 \
   $(test ! "$DEBUG" || echo "-p 8000:8000")
   -v site_data:/var/lib/mysql \
-  -v site_certs:/root/site/certs \
+  $(test "$DEBUG" || echo "-v site_certs:/root/site/certs") \
   site \
   $*"
 
