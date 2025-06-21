@@ -38,7 +38,7 @@ services:
     working_dir: /root/site/server
 
   caddy:
-    image: ghcr.io/toolbox-io/server-caddy:1.3
+    image: ghcr.io/toolbox-io/server-caddy
     container_name: toolbox-caddy
     restart: unless-stopped
     profiles: ["prod"]
@@ -47,6 +47,7 @@ services:
       - "443:443"
     volumes:
       - site_certs:/root/site/certs
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
     environment:
       XDG_DATA_HOME: /root/site/certs
       XDG_CONFIG_HOME: /root/site/certs
