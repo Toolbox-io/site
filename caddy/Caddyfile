@@ -12,6 +12,19 @@ beta.toolbox-io.ru {
         Permissions-Policy "geolocation=(), microphone=(), camera=()"
     }
 
+     # Add rate limiting
+    @limited {
+        path /*
+    }
+    rate_limit @limited {
+        zone global {
+            key {remote_ip}
+            window 1m
+            burst 20
+            events 100
+        }
+    }
+
     # Handle different types of errors
     handle_errors {
         @errors {
