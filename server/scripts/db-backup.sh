@@ -23,34 +23,81 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo -e "${GREEN}Starting MySQL volume backup...${NC}"
+red() {
+  echo -e "${RED}$*${NC}"
+}
+
+green() {
+  echo -e "${GREEN}$*${NC}"
+}
+
+yellow() {
+  echo -e "${YELLOW}$*${NC}"
+}
+
+# Functions
+clean() {
+  # Keep only the last 10 backups
+  yellow "Cleaning up old backups..."
+  # shellcheck disable=SC2012
+  ls -t "${BACKUP_DIR}"/mysql_backup_*.tar.gz | tail -n +11 | xargs -r rm
+
+  # Delete all identical backups, keep only one (the most recent)
+  yellow "Removing duplicate backups (identical content)..."
+  declare -A seen_hashes
+  shopt -s nullglob
+  for file in "${BACKUP_DIR}"/mysql_backup_*.tar.gz; do
+    hash=$(sha256sum "$file" | awk '{print $1}')
+    if [[ -n "${seen_hashes[$hash]}" ]]; then
+      rm -f "$file"
+      yellow "Removed duplicate: $file"
+    else
+      seen_hashes[$hash]=1
+    fi
+  done
+  shopt -u nullglob
+}
+
+check_volume() {
+  docker volume inspect "$VOLUME_NAME" > /dev/null 2>&1
+  return $?
+}
+
+backup() {
+  docker run \
+    --rm \
+    -v "$1:/volume" \
+    -v "$2:/backup" \
+    busybox \
+    tar \
+    czf "$3" \
+    -C volume \
+    .
+}
+
+green "Starting MySQL volume backup..."
 
 # Create backup directory if it doesn't exist
 mkdir -p "${BACKUP_DIR}"
 
 # Check if the Docker volume exists
-if ! docker volume inspect "$VOLUME_NAME" > /dev/null 2>&1; then
-    echo -e "${YELLOW}Warning: Docker volume $VOLUME_NAME not found${NC}"
+if ! check_volume; then
+    yellow "Warning: Docker volume $VOLUME_NAME not found"
     exit 0
 fi
 
 # Create backup using busybox tar
-echo -e "${GREEN}Creating backup: ${BACKUP_FILE}${NC}"
-docker run --rm -v "${VOLUME_NAME}:/volume" -v "${BACKUP_DIR}:/backup" busybox \
-    tar czf "/backup/mysql_backup_${TIMESTAMP}.tar.gz" -C /volume .
+green "Creating backup: ${BACKUP_FILE}"
+backup $VOLUME_NAME "$BACKUP_DIR" "/backup/mysql_backup_$TIMESTAMP.tar.gz"
 
 # Verify backup
 if [ -f "${BACKUP_FILE}" ]; then
-    echo -e "${GREEN}Backup created successfully!${NC}"
-    echo -e "${GREEN}Backup size: $(du -h "${BACKUP_FILE}" | cut -f1)${NC}"
-    
-    # Keep only the last 10 backups
-    echo -e "${YELLOW}Cleaning up old backups...${NC}"
-    # shellcheck disable=SC2012
-    ls -t "${BACKUP_DIR}"/mysql_backup_*.tar.gz | tail -n +11 | xargs -r rm
-    
-    echo -e "${GREEN}MySQL volume backup completed successfully!${NC}"
+    green "Backup created successfully!"
+    green "Backup size: $(du -h "${BACKUP_FILE}" | cut -f1)"
+    clean
+
+    green "MySQL volume backup completed successfully!"
 else
-    echo -e "${RED}Backup failed!${NC}"
+    red "Backup failed!"
     exit 1
-fi 
+fi
