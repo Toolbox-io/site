@@ -11,7 +11,7 @@
 
 
 # 1. Backend (Python)
-FROM ubuntu:25.10 AS backend
+FROM ubuntu:25.04 AS backend
 
 RUN apt update && \
     apt upgrade -y --no-install-recommends python3.12 && \
@@ -43,7 +43,7 @@ RUN npm run build && \
     rm -f $(find . -name "package*.json" | xargs)
 
 # 3. Runtime
-FROM ubuntu:25.10 AS runtime
+FROM ubuntu:24.04 AS runtime
 LABEL authors="denis0001-dev"
 
 # 3.1. Install runtime dependencies (preserve cache for reuse)
