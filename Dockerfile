@@ -11,10 +11,11 @@
 
 
 # 1. Backend (Python)
-FROM ubuntu:25.04 AS backend
+FROM ubuntu:24.04 AS backend
 
 RUN apt update && \
-    apt upgrade -y --no-install-recommends python3.12 && \
+    apt upgrade -y --no-install-recommends \
+        python3.12 && \
     rm -rf /var/lib/apt/lists/
 
 WORKDIR /root
