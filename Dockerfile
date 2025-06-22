@@ -13,8 +13,8 @@
 # 1. Backend (Python)
 FROM ubuntu:25.10 AS backend
 
-RUN apt update &&  \
-    apt upgrade -y --no-install-recommends python3.12-full && \
+RUN apt update && \
+    apt upgrade -y --no-install-recommends python3.12 && \
     rm -rf /var/lib/apt/lists/
 
 WORKDIR /root
@@ -52,7 +52,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     apt update && \
     apt install -y --no-install-recommends \
-        mysql-client python3.12-full && \
+        mysql-client python3.12 && \
     rm -rf /var/lib/apt/lists/*
 
 # 3.2. Copy content
