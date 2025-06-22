@@ -11,7 +11,11 @@
 
 
 # 1. Backend (Python)
-FROM ghcr.io/denis0001-dev/python-ubuntu:3.12 AS backend
+FROM ubuntu:25.10 AS backend
+
+RUN apt update &&  \
+    apt upgrade -y --no-install-recommends python3.12-full && \
+    rm -rf /var/lib/apt/lists/
 
 WORKDIR /root
 RUN rm -rf .venv && \
@@ -39,7 +43,7 @@ RUN npm run build && \
     rm -f $(find . -name "package*.json" | xargs)
 
 # 3. Runtime
-FROM ghcr.io/denis0001-dev/python-ubuntu:3.12 AS runtime
+FROM ubuntu:25.10 AS runtime
 LABEL authors="denis0001-dev"
 
 # 3.1. Install runtime dependencies (preserve cache for reuse)
@@ -48,7 +52,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     apt update && \
     apt install -y --no-install-recommends \
-        mysql-client && \
+        mysql-client python3.12-full && \
     rm -rf /var/lib/apt/lists/*
 
 # 3.2. Copy content
