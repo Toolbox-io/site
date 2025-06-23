@@ -13,11 +13,13 @@
 # 1. Backend (Python)
 FROM ubuntu:24.04 AS backend
 
+# 1.1. Install Python
 RUN apt update && \
     apt upgrade -y --no-install-recommends \
         python3.12-full && \
     rm -rf /var/lib/apt/lists/
 
+# 2.2. Create venv and install pip dependencies
 WORKDIR /root
 RUN rm -rf .venv && \
     python3 -m venv .venv
