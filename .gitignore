@@ -6,6 +6,7 @@
 .idea/dataSources
 .vscode/
 .vscode-test
+.idea/dataSources.local.xml
 
 # -----------------------------
 # Logs and Runtime Data

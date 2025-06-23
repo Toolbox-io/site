@@ -38,7 +38,9 @@ services:
     working_dir: /root/site/server
 
   caddy:
-    image: ghcr.io/toolbox-io/server-caddy
+    build:
+      context: ./caddy
+      dockerfile: Dockerfile
     container_name: toolbox-caddy
     restart: unless-stopped
     profiles: ["prod"]
