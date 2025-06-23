@@ -125,6 +125,7 @@ def create_test_user():
         logger.info("Test user created successfully!")
     except Exception as e:
         logger.error(f"Error creating test user: {e}")
+        # noinspection PyUnboundLocalVariable
         db.rollback()
         raise
     finally:

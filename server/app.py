@@ -8,7 +8,7 @@ async def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> Respon
     # noinspection PyProtectedMember
     return await limiter._rate_limit_exceeded_handler(request, exc)
 
-app = FastAPI()
+app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
 # Add rate limiting exception handler
 app.state.limiter = limiter
@@ -19,7 +19,7 @@ app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://server.toolbox-io.ru",
+        "https://beta.toolbox-io.ru",
         "http://localhost:8000"   # For local development
     ],
     allow_credentials=True,
