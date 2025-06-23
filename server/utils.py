@@ -1,11 +1,12 @@
 from pathlib import Path
 from typing import Tuple, Optional
 
+from fastapi import APIRouter
 from starlette.staticfiles import StaticFiles
 
 from constants import CONTENT_PATH
-from app import app
 
+router = APIRouter()
 
 def find_file(path: str) -> Tuple[Optional[Path], Optional[str]]:
     """
@@ -54,4 +55,4 @@ def static(path: str | Path):
         path = Path(path)
     path = str(path.resolve())
 
-    app.mount(path, StaticFiles(directory=path), name=path)
+    router.mount(path, StaticFiles(directory=path), name=path)

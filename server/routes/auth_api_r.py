@@ -17,7 +17,6 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-
 # noinspection PyUnusedLocal
 @router.post("/register", response_model=UserResponse)
 @limiter.limit("3/minute")  # Limit registration attempts

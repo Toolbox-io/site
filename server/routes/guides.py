@@ -1,13 +1,14 @@
 import re
 from pathlib import Path
 
-from fastapi import HTTPException
+from fastapi import HTTPException, APIRouter
 from starlette.requests import Request
 from starlette.responses import FileResponse, JSONResponse, RedirectResponse
 
 from constants import CONTENT_PATH, GUIDES_PATH, exclude_guides, templates
-from app import app
 from utils import find_file
+
+router = APIRouter()
 
 # Utils
 def parse_guide_header(md_path: Path) -> dict:
@@ -28,10 +29,10 @@ def parse_guide_header(md_path: Path) -> dict:
     return header
 
 # Routes
-@app.get("/guides/")
+@router.get("/guides/")
 async def guides(): return FileResponse(CONTENT_PATH / "guides/index.html")
 
-@app.get("/guides/{guide}/raw")
+@router.get("/guides/{guide}/raw")
 async def guides_raw(guide: str, request: Request):
     """Serve the raw guide template for a given guide name (with or without .md)."""
     if not guide.lower().endswith(".md"):
@@ -44,7 +45,7 @@ async def guides_raw(guide: str, request: Request):
         {"request": request, "guide": f"guides/{Path(guide).stem}.md"}
     )
 
-@app.get("/guides/list")
+@router.get("/guides/list")
 async def guides_list():
     """Return a JSON array of all guides (md files) in src/guides."""
     guides2 = []
@@ -57,7 +58,7 @@ async def guides_list():
             })
     return JSONResponse(guides2)
 
-@app.get("/guides/list/{guide}")
+@router.get("/guides/list/{guide}")
 async def guide_info(guide: str):
     """Return JSON info for a single guide (with or without .md)."""
     if not guide.lower().endswith(".md"):
@@ -74,7 +75,7 @@ async def guide_info(guide: str):
     else:
         raise HTTPException(status_code=404, detail="Guide not found")
 
-@app.get("/guides/{subpath:path}")
+@router.get("/guides/{subpath:path}")
 async def guides_handler(subpath: str, request: Request):
     """Handle guide requests with special processing for markdown files (except /raw and /list endpoints)."""
 
