@@ -4,7 +4,8 @@ from slowapi.errors import RateLimitExceeded
 
 import utils
 from limiter import limiter
-from routes import auth, auth_api_r, core, guides
+from routes import auth, auth_api_r, core, guides, mail
+
 
 async def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> Response:
     # noinspection PyProtectedMember
@@ -35,3 +36,4 @@ app.include_router(auth.router)
 app.include_router(core.router)
 app.include_router(guides.router)
 app.include_router(utils.router)
+app.include_router(mail.router)

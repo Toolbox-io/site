@@ -1,7 +1,9 @@
+import os
+from functools import wraps
 from pathlib import Path
 from typing import Tuple, Optional
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from starlette.staticfiles import StaticFiles
 
 from constants import CONTENT_PATH
@@ -56,3 +58,13 @@ def static(path: str | Path):
     path = str(path.resolve())
 
     router.mount(path, StaticFiles(directory=path), name=path)
+
+def debug_only(route_handler):
+    @wraps(route_handler)
+    async def wrapper(*args, **kwargs):
+        debug = os.getenv("DEBUG", "false").lower() == "true"
+        if not debug:
+            # Pass to next handler by raising 404 (FastAPI will continue searching)
+            raise HTTPException(status_code=404)
+        return await route_handler(*args, **kwargs)
+    return wrapper
