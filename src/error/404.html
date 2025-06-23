@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta lang="en" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Ошибка</title>
+        <link rel="icon" href="/res/favicon.svg" />
+
+        <link rel="stylesheet" href="/css/error/404.css" />
+        <link rel="stylesheet" href="/css/common.css" />
+
+        <script src="/lib/jquery.js"></script>
+        <!--suppress ES6ConvertVarToLetConst, JSUnusedGlobalSymbols -->
+        <script type="module" src="/common.js"></script>
+    </head>
+    <body>
+        <tio-header class="top" tab="0"></tio-header>
+        <div class="wrapper">
+            <div id="main" class="automargin">
+                <h1 id="headline">Ой!</h1>
+                <img src="/error/404.png" alt="Ошибка 404" class="error-img" />
+                <p>Кажется, наш котик тоже не может найти эту страницу в своём ноутбуке :(</p>
+                <a href="/">
+                    <md-filled-button>На главную</md-filled-button>
+                </a>
+            </div>
+        </div>
+        <tio-footer></tio-footer>
+        <div id="status_wrapper">
+            <div id="status" class="hidden">
+                <div class="head">
+                    <span class="material-symbols filled success">check</span>
+                    <span class="material-symbols filled error">error</span>
+                    <strong class="message_headline"></strong>
+                    <div class="space"></div>
+                    <md-icon-button class="close">
+                        <div>
+                            <md-icon>close</md-icon>
+                        </div>
+                    </md-icon-button>
+                </div>
+                <p class="message"></p>
+                <div class="progress">
+                    <div class="progress_bar" style="width: 0;"></div>
+                </div>
+            </div>
+        </div>
+        <div id="card_dialog" class="dialog"></div>
+        <script type="module" src="/error/404.js"></script>
+    </body>
+</html>

@@ -25,13 +25,13 @@ beta.toolbox-io.ru {
         }
     }
 
-    # Handle different types of errors
+    # Handle different types of error
     handle_errors {
         @errors {
             expression {err.status_code} >= 400
         }
 
-        # Handle other errors with http.cat reverse proxy
+        # Handle other error with http.cat reverse proxy
         handle @errors {
             rewrite * /{err.status_code}
             reverse_proxy https://http.cat {

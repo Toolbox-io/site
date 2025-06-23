@@ -1,0 +1,16 @@
+.error-img {
+    max-width: 800px;
+    display: block;
+    margin: 0 auto;
+    /* Soft shadow for blending */
+    box-shadow: 0 8px 32px 0 rgba(0,0,0,0.15), 0 1.5px 8px 0 rgba(0,0,0,0.10);
+    /* Optional: rounded corners for softer look */
+    border-radius: 16px;
+    /* Radial mask for all-sides fade */
+    mask-image: 
+      linear-gradient(to top, transparent 0%, black 20%, black 80%, transparent 100%),
+      linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
+    mask-composite: intersect;
+    /* Optional: slight blur for extra softness */
+    /* filter: blur(1px); */
+}

@@ -1,19 +1,21 @@
-import mimetypes
 import logging
-import sys
+import mimetypes
 import os
 import subprocess
+import sys
 import time
-from sqlalchemy.exc import OperationalError
 
 from fastapi import HTTPException, Request
+from fastapi.exception_handlers import http_exception_handler
 from fastapi.responses import FileResponse, RedirectResponse
+from sqlalchemy.exc import OperationalError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app import app
-from constants import *
-from utils import find_file
-from database import init_db, get_session_factory, User
 from auth_api import hash_password
+from constants import *
+from database import init_db, get_session_factory, User
+from utils import find_file
 
 # Configure logging
 logging.basicConfig(
@@ -202,6 +204,13 @@ async def serve_files(path: str, request: Request):
         path=file_path,
         media_type=mime_type
     )
+
+@app.exception_handler(StarletteHTTPException)
+async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
+    path = CONTENT_PATH / "error" / f"{exc.status_code}.html"
+    if path and path.exists():
+        return FileResponse(path=path, status_code=exc.status_code)
+    return await http_exception_handler(request, exc)
 
 if __name__ == "__main__":
     import uvicorn

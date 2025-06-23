@@ -1,10 +1,16 @@
 #!/bin/bash
 
+# 1. cd to the right directory
 dir=$(realpath "$(dirname "$0")/../..")
 cd "$dir" || exit
 
+# 2. Variables
+if [[ -z $DEBUG ]]; then
+  export DEBUG=true
+fi
+
 # Run
-if [[ $1 == "prod" ]]; then
+if [[ $DEBUG != "true" ]]; then
   echo "Running production server"
 
   # Backup

@@ -37,7 +37,7 @@ jobs:
         env:
           NORUN: true
           PROGRESS: true
-          NODEBUG: true
+          DEBUG: false
           NOCACHE: ${{ inputs.noCache }}
         run: ./build.sh
       - name: Set up the service
