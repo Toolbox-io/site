@@ -49,7 +49,6 @@ services:
       - "443:443"
     volumes:
       - site_certs:/root/site/certs
-      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
     environment:
       XDG_DATA_HOME: /root/site/certs
       XDG_CONFIG_HOME: /root/site/certs
