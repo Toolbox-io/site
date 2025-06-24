@@ -1,28 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Request Password Reset</title>
-</head>
-<body>
-    <h2>Request Password Reset</h2>
-    <form id="reset-request-form">
-        <input type="email" name="email" placeholder="Enter your email" required />
-        <button type="submit">Send Reset Link</button>
-    </form>
-    <div id="reset-request-message"></div>
-    <script>
-    document.getElementById('reset-request-form').onsubmit = async function(e) {
-        e.preventDefault();
-        const email = this.email.value;
-        const res = await fetch('/request-reset', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email })
-        });
-        const data = await res.json();
-        document.getElementById('reset-request-message').textContent = data.success ? 'Check your email for a reset link.' : 'Error sending reset link.';
-    };
-    </script>
-</body>
-</html> 
+    <head>
+        <meta charset="UTF-8"/>
+        <meta lang="en" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Request Password Reset - Toolbox.io</title>
+        <link rel="icon" href="../res/favicon.svg" />
+
+        <link rel="stylesheet" href="../css/style.css" />
+        <link rel="stylesheet" href="../css/common.css" />
+        <link rel="stylesheet" href="../css/accounts/common.css" />
+        <link rel="stylesheet" href="../css/accounts/request-reset.css" />
+
+        <script src="../lib/jquery.js"></script>
+        <script type="module" src="../common.js"></script>
+    </head>
+    <body>
+        <tio-header class="top" tab="0"></tio-header>
+        <div class="wrapper">
+            <div id="main" class="automargin">
+                <div class="auth-container">
+                    <h1>Request Password Reset</h1>
+                    <div class="auth-form">
+                        <form id="reset-request-form">
+                            <div class="form-group">
+                                <div>Email</div>
+                                <tio-input type="email" name="email" label="Email" required></tio-input>
+                            </div>
+                            <button type="submit" class="auth-button big-button">Send Reset Link</button>
+                        </form>
+                        <div id="reset-request-message" class="form-message"></div>
+                    </div>
+                    <div class="auth-links">
+                        <a href="/account/login">Back to Login</a>
+                        <a href="/">Back to Home</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="request-reset.js"></script>
+    </body>
+</html>
