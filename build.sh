@@ -1,11 +1,13 @@
 #!/bin/bash
 
-# 1. cd to the right directory
 set -e
+
+# 1. cd to the right directory
 cd "$(dirname "$0")" || exit
 
 # 2. Variables
 if [[ -z $DEBUG ]]; then
+  echo "DEBUG environment variable not set; defaulting to true"
   export DEBUG=true
 fi
 export COMPOSE_BAKE=true

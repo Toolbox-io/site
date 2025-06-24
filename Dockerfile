@@ -31,7 +31,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 FROM node:24 AS frontend
 
 # 2.1. Install global dependencies
-RUN npm install -g autoprefixer sass postcss-cli typescript terser
+RUN npm install -g autoprefixer sass postcss-cli typescript terser html-minifier
 
 # 2.2. Install local dependencies
 COPY src /root/site/src
