@@ -1,5 +1,6 @@
 import logging
 from datetime import timedelta
+import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
@@ -8,9 +9,10 @@ from starlette.requests import Request
 
 from auth_api import hash_password, authenticate_user, create_access_token, get_current_user, verify_password, \
     ACCESS_TOKEN_EXPIRE_MINUTES, validate_password, blacklist_token, security
-from database import get_db, User
+from database import get_db
 from limiter import limiter
-from models import UserCreate, UserLogin, UserResponse, Token, PasswordChange, Message
+from models import UserCreate, UserLogin, UserResponse, Token, PasswordChange, Message, User
+from routes.mail import send_mail
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -23,17 +25,29 @@ router = APIRouter()
 def register(request: Request, user: UserCreate, db: Session = Depends(get_db)):
     """Register a new user"""
     logger.info(f"Registration attempt for username: {user.username}, email: {user.email}")
-    
-    try:
-        # Validate password strength
-        is_valid, error_message = validate_password(user.password)
-        if not is_valid:
-            logger.warning(f"Registration failed - weak password for user: {user.username}")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=error_message
-            )
-        
+
+    # Validate password strength
+    is_valid, error_message = validate_password(user.password)
+    if not is_valid:
+        logger.warning(f"Registration failed - weak password for user: {user.username}")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=error_message
+        )
+
+    db_user = (db
+        .query(User)
+        .filter(
+            User.username == user.username and
+            User.email == user.email and
+            User.is_verified == 0
+        ).first())
+
+    if db_user:
+        logger.info("There is a user with the same data, re-registering")
+        db.delete(db_user)
+        db.commit()
+    else:
         # Check if username already exists
         logger.debug(f"Checking if username exists: {user.username}")
         db_user = db.query(User).filter(User.username == user.username).first()
@@ -43,7 +57,7 @@ def register(request: Request, user: UserCreate, db: Session = Depends(get_db)):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Username already registered"
             )
-        
+
         # Check if email already exists
         logger.debug(f"Checking if email exists: {user.email}")
         db_user = db.query(User).filter(User.email == user.email).first()
@@ -53,32 +67,29 @@ def register(request: Request, user: UserCreate, db: Session = Depends(get_db)):
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Email already registered"
             )
-        
-        # Create new user
-        logger.debug(f"Creating new user: {user.username}")
-        hashed_password = hash_password(user.password)
-        # noinspection PyTypeChecker
-        db_user = User(
-            username=user.username,
-            email=user.email,
-            hashed_password=hashed_password
-        )
-        db.add(db_user)
-        db.commit()
-        db.refresh(db_user)
-        
-        logger.info(f"User registered successfully: {user.username} (ID: {db_user.id})")
-        return db_user
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Unexpected error during registration: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error during registration"
-        )
 
+    # Create new user
+    logger.debug(f"Creating new user: {user.username}")
+    hashed_password = hash_password(user.password)
+    # noinspection PyTypeChecker
+    db_user = User(
+        username=user.username,
+        email=user.email,
+        hashed_password=hashed_password
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+
+    verification_token = str(uuid.uuid4())
+    db_user.verification_token = verification_token
+    db_user.is_verified = False
+    db.commit()
+    db.refresh(db_user)
+    send_mail(str(user.email), "Verify your email", f"Click to verify: https://beta.toolbox-io.ru/verify?token={verification_token}")
+
+    logger.info(f"User registered successfully: {user.username} (ID: {db_user.id})")
+    return db_user
 
 # noinspection PyUnusedLocal
 @router.post("/login", response_model=Token)
@@ -94,6 +105,14 @@ def login(request: Request, user_credentials: UserLogin, db: Session = Depends(g
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect username or password",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        
+        if not user.is_verified:
+            logger.warning(f"Login failed for unverified user: {user.username}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Email not verified",
                 headers={"WWW-Authenticate": "Bearer"},
             )
         
@@ -121,8 +140,11 @@ def get_current_user_info(current_user: User = Depends(get_current_user)):
     logger.debug(f"Getting user info for: {current_user.username} (ID: {current_user.id})")
     return current_user
 
+# noinspection PyUnusedLocal
 @router.post("/change-password", response_model=Message)
+@limiter.limit("1/minute")
 def change_password(
+    request: Request,
     password_change: PasswordChange,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -203,6 +225,6 @@ def delete_account(
         logger.error(f"Failed to delete account: {e}")
         db.rollback()
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=500,
             detail="Failed to delete account"
         )

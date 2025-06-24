@@ -44,7 +44,17 @@
                         <a href="/">Back to Home</a>
                     </div>
                     <div id="error-message" class="error-message" style="display: none;"></div>
+                    <div id="verify-message" style="display:none;color:green;">Registration successful! Please check your email to verify your account.</div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Email Verification Dialog -->
+        <div id="verify-dialog" class="dialog-overlay" style="display: none;">
+            <div class="dialog-content">
+                <h2>Email Verification</h2>
+                <p id="verify-dialog-message"></p>
+                <md-filled-button id="resend-btn">Resend</md-filled-button>
             </div>
         </div>
 

@@ -81,8 +81,11 @@ type PageType = 'login' | 'register' | 'account';
             window.location.href = '/account/';
             return;
         }
+
         const loginBtn = id('login-btn') as HTMLButtonElement;
         const errorMessage = id('error-message');
+        const verifiedDialog = id("verified-dialog");
+
         loginBtn.addEventListener('click', async () => {
             const username = (id('username') as HTMLInputElement).value;
             const password = (id('password') as HTMLInputElement).value;
@@ -104,6 +107,18 @@ type PageType = 'login' | 'register' | 'account';
                 showError(errorMessage, 'Network error. Please try again.');
             }
         });
+
+        // Close dialog when clicking outside
+        verifiedDialog.addEventListener('click', e => {
+            if (e.target === verifiedDialog) {
+                closePasswordDialog();
+            }
+        });
+
+        const params = new URLSearchParams(location.search);
+        if (params.get("verified") === "true") {
+            await openVerifiedDialog();
+        }
     }
 
     /**
@@ -114,8 +129,10 @@ type PageType = 'login' | 'register' | 'account';
             window.location.href = '/account/';
             return;
         }
+
         const registerBtn = id('register-btn') as HTMLButtonElement;
         const errorMessage = id('error-message');
+
         registerBtn.addEventListener('click', async () => {
             const username = (id('username') as HTMLInputElement).value.trim();
             const email = (id('email') as HTMLInputElement).value.trim();
@@ -134,13 +151,40 @@ type PageType = 'login' | 'register' | 'account';
                 });
                 const data: ApiResponse = await response.json();
                 if (response.ok) {
-                    window.location.href = '/account/login';
+                    await showVerifyDialog(email);
                 } else {
                     showError(errorMessage, data.error || 'Registration failed');
                 }
             } catch (error) {
                 showError(errorMessage, 'Network error. Please try again.');
             }
+        });
+    }
+
+    async function showVerifyDialog(email: string) {
+        const dialog = id('verify-dialog')!;
+        const message = id('verify-dialog-message')!;
+        const resendBtn = id('resend-btn')!;
+
+        message.textContent = `Please check your email ${email} for a verification link.`;
+
+        if (dialog) {
+            dialog.style.display = 'flex';
+            await delay(1);
+            dialog.style.opacity = '1';
+        }
+
+        resendBtn.addEventListener("click", async () => {
+            resendBtn.setAttribute('disabled', 'true');
+            resendBtn.textContent = 'Sending...';
+            await fetch('/verify-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            resendBtn.textContent = 'Resend';
+            resendBtn.removeAttribute('disabled');
+            // Optionally show a toast or update the dialog to say "Sent!"
         });
     }
 
@@ -296,6 +340,33 @@ type PageType = 'login' | 'register' | 'account';
         (id('current-password') as HTMLInputElement).value = '';
         (id('new-password') as HTMLInputElement).value = '';
         (id('confirm-password') as HTMLInputElement).value = '';
+    }
+
+    /**
+     * Open password change dialog
+     */
+    async function openVerifiedDialog(): Promise<void> {
+        const verifiedDialog = id('verified-dialog');
+        if (verifiedDialog) {
+            verifiedDialog.style.display = 'flex';
+            await delay(1);
+            verifiedDialog.style.opacity = '1';
+        }
+
+        id("verified-close").addEventListener("click", closeVerifiedDialog);
+    }
+
+    /**
+     * Close password change dialog
+     */
+    async function closeVerifiedDialog(): Promise<void> {
+        const verifiedDialog = id('verified-dialog');
+
+        if (verifiedDialog) {
+            verifiedDialog.style.opacity = '0';
+            await delay(500);
+            verifiedDialog.style.display = 'none';
+        }
     }
 
     /**
