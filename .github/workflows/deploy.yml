@@ -11,7 +11,10 @@ on:
       - ".github/workflows/deploy.yml"
       - "src/**"
       - "server/**"
+      - "caddy/**"
       - "secrets.properties"
+      - "docker-compose.yml"
+      - ".dockerignore"
   workflow_dispatch:
     inputs:
       noCache:

@@ -22,7 +22,7 @@ if [[ $DEBUG == "true" && $NORUN != "true" ]]; then
   fi
 # 3.2. Production
 else
-  docker compose build
+  docker compose --profile prod build
   if [[ $NORUN != "true" ]]; then
     cd server/scripts || exit
     chmod +x run.sh
