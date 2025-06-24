@@ -91,7 +91,6 @@ def register(request: Request, user: UserCreate, db: Session = Depends(get_db)):
     logger.info(f"User registered successfully: {user.username} (ID: {db_user.id})")
     return db_user
 
-
 # noinspection PyUnusedLocal
 @router.post("/login", response_model=Token)
 @limiter.limit("5/minute")  # Limit login attempts
@@ -141,8 +140,11 @@ def get_current_user_info(current_user: User = Depends(get_current_user)):
     logger.debug(f"Getting user info for: {current_user.username} (ID: {current_user.id})")
     return current_user
 
+# noinspection PyUnusedLocal
 @router.post("/change-password", response_model=Message)
+@limiter.limit("1/minute")
 def change_password(
+    request: Request,
     password_change: PasswordChange,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db)
