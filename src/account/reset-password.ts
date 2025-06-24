@@ -24,8 +24,7 @@ import TioInput = Components.TioInput;
             )
         ).ok
     ) {
-        // upcoming
-        location.replace("/error/403or401");
+        location.replace("/error/403or401")
     }
 
     submit.addEventListener("click", async e => {
