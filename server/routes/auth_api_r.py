@@ -1,5 +1,6 @@
 import logging
 from datetime import timedelta
+import uuid
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
@@ -8,9 +9,10 @@ from starlette.requests import Request
 
 from auth_api import hash_password, authenticate_user, create_access_token, get_current_user, verify_password, \
     ACCESS_TOKEN_EXPIRE_MINUTES, validate_password, blacklist_token, security
-from database import get_db, User
+from database import get_db
 from limiter import limiter
-from models import UserCreate, UserLogin, UserResponse, Token, PasswordChange, Message
+from models import UserCreate, UserLogin, UserResponse, Token, PasswordChange, Message, User
+from routes.mail import send_mail
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -67,6 +69,13 @@ def register(request: Request, user: UserCreate, db: Session = Depends(get_db)):
         db.commit()
         db.refresh(db_user)
         
+        verification_token = str(uuid.uuid4())
+        db_user.verification_token = verification_token
+        db_user.is_verified = False
+        db.commit()
+        db.refresh(db_user)
+        send_mail(str(user.email), "Verify your email", f"Click to verify: https://beta.toolbox-io.ru/verify?token={verification_token}")
+        
         logger.info(f"User registered successfully: {user.username} (ID: {db_user.id})")
         return db_user
         
@@ -94,6 +103,14 @@ def login(request: Request, user_credentials: UserLogin, db: Session = Depends(g
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Incorrect username or password",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+        
+        if not user.is_verified:
+            logger.warning(f"Login failed for unverified user: {user.username}")
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Email not verified",
                 headers={"WWW-Authenticate": "Bearer"},
             )
         

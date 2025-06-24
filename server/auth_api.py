@@ -1,16 +1,18 @@
-import bcrypt
 import logging
+import os
 import re
 from datetime import datetime, timedelta
+from threading import Lock
 from typing import Optional
-from jose import JWTError, jwt
+
+import bcrypt
 from fastapi import HTTPException, status, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from jose import JWTError, jwt
 from sqlalchemy.orm import Session
-from database import get_db, User, get_session_factory, BlacklistedToken
-import os
-from models import UserCreate, UserLogin, UserResponse, Token, PasswordChange, Message
-from threading import Lock
+
+from database import get_db, get_session_factory
+from models import User, BlacklistedToken
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -182,7 +184,7 @@ def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(securit
             )
         
         logger.debug(f"Looking up user in database: {username}")
-        user = db.query(User).filter(User.username == username).first()
+        user: User | None = db.query(User).filter(User.username == username).first()
         if user is None:
             logger.warning(f"User not found in database: {username}")
             raise HTTPException(
@@ -207,7 +209,7 @@ def authenticate_user(db: Session, username: str, password: str) -> Optional[Use
     logger.debug(f"Authenticating user: {username}")
     try:
         # Look up user by username
-        user = db.query(User).filter(User.username == username).first()
+        user: User | None = db.query(User).filter(User.username == username).first()
         if not user:
             logger.warning(f"User not found: {username}")
             return None

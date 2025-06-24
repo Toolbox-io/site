@@ -7,6 +7,7 @@ from sqlalchemy.exc import OperationalError
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.sql import func
+from models import Base  # Import the single source of truth for Base
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -85,31 +86,12 @@ def get_session_factory():
         _SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     return _SessionLocal
 
-# Create base class
-Base = declarative_base()
-
-# User model
-class User(Base):
-    __tablename__ = "users"
-
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String(50), unique=True, index=True, nullable=False)
-    email = Column(String(100), unique=True, index=True, nullable=False)
-    hashed_password = Column(String(255), nullable=False)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
-
-class BlacklistedToken(Base):
-    __tablename__ = "blacklisted_tokens"
-    id = Column(Integer, primary_key=True, index=True)
-    token = Column(String(512), unique=True, nullable=False)
-    blacklisted_at = Column(DateTime(timezone=True), server_default=func.now())
-
 def init_db():
     """Initialize the database tables"""
     try:
         logger.info("Creating database tables...")
         engine = get_engine()
+        # This will now create all tables registered with the Base from models.py
         Base.metadata.create_all(bind=engine)
         logger.info("Database tables created successfully")
     except Exception as e:

@@ -1,7 +1,12 @@
 import re
 from datetime import datetime
+from sqlalchemy import Boolean, String, DateTime, Column, Integer
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql import func
 
 from pydantic import BaseModel, EmailStr, field_validator
+
+Base = declarative_base()
 
 
 # noinspection PyMethodParameters
@@ -66,4 +71,23 @@ class PasswordChange(BaseModel):
         return v
 
 class Message(BaseModel):
-    message: str 
+    message: str
+
+class User(Base):
+    __tablename__ = "users"
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(50), unique=True, index=True, nullable=False)
+    email = Column(String(100), unique=True, index=True, nullable=False)
+    hashed_password = Column(String(255), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    is_verified = Column(Boolean, default=False)
+    verification_token = Column(String(128), nullable=True)
+    reset_token = Column(String(128), nullable=True)
+    reset_token_expiry = Column(DateTime, nullable=True) 
+
+class BlacklistedToken(Base):
+    __tablename__ = "blacklisted_tokens"
+    id = Column(Integer, primary_key=True, index=True)
+    token = Column(String(512), unique=True, nullable=False)
+    blacklisted_at = Column(DateTime(timezone=True), server_default=func.now())

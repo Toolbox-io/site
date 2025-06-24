@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Request Password Reset</title>
+</head>
+<body>
+    <h2>Request Password Reset</h2>
+    <form id="reset-request-form">
+        <input type="email" name="email" placeholder="Enter your email" required />
+        <button type="submit">Send Reset Link</button>
+    </form>
+    <div id="reset-request-message"></div>
+    <script>
+    document.getElementById('reset-request-form').onsubmit = async function(e) {
+        e.preventDefault();
+        const email = this.email.value;
+        const res = await fetch('/request-reset', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+        document.getElementById('reset-request-message').textContent = data.success ? 'Check your email for a reset link.' : 'Error sending reset link.';
+    };
+    </script>
+</body>
+</html> 

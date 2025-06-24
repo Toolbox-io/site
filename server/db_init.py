@@ -3,8 +3,9 @@ import time
 import logging
 import subprocess
 from sqlalchemy.exc import OperationalError
-from database import init_db, get_session_factory, User
+from database import init_db, get_session_factory
 from auth_api import hash_password
+from models import User
 
 logger = logging.getLogger(__name__)
 
