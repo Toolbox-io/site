@@ -114,8 +114,10 @@ type PageType = 'login' | 'register' | 'account';
             window.location.href = '/account/';
             return;
         }
+
         const registerBtn = id('register-btn') as HTMLButtonElement;
         const errorMessage = id('error-message');
+
         registerBtn.addEventListener('click', async () => {
             const username = (id('username') as HTMLInputElement).value.trim();
             const email = (id('email') as HTMLInputElement).value.trim();
@@ -134,13 +136,40 @@ type PageType = 'login' | 'register' | 'account';
                 });
                 const data: ApiResponse = await response.json();
                 if (response.ok) {
-                    window.location.href = '/account/login';
+                    await showVerifyDialog(email);
                 } else {
                     showError(errorMessage, data.error || 'Registration failed');
                 }
             } catch (error) {
                 showError(errorMessage, 'Network error. Please try again.');
             }
+        });
+    }
+
+    async function showVerifyDialog(email: string) {
+        const dialog = id('verify-dialog')!;
+        const message = id('verify-dialog-message')!;
+        const resendBtn = id('resend-btn')!;
+
+        message.textContent = `Please check your email ${email} for a verification link.`;
+
+        if (dialog) {
+            dialog.style.display = 'flex';
+            await delay(1);
+            dialog.style.opacity = '1';
+        }
+
+        resendBtn.addEventListener("click", async () => {
+            resendBtn.setAttribute('disabled', 'true');
+            resendBtn.textContent = 'Sending...';
+            await fetch('/verify-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            resendBtn.textContent = 'Resend';
+            resendBtn.removeAttribute('disabled');
+            // Optionally show a toast or update the dialog to say "Sent!"
         });
     }
 

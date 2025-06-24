@@ -82,7 +82,7 @@ var setUpTabs = Utils.setUpTabs;
                 });
                 const data = await response.json();
                 if (response.ok) {
-                    window.location.href = '/account/login';
+                    await showVerifyDialog(email);
                 }
                 else {
                     showError(errorMessage, data.error || 'Registration failed');
@@ -91,6 +91,28 @@ var setUpTabs = Utils.setUpTabs;
             catch (error) {
                 showError(errorMessage, 'Network error. Please try again.');
             }
+        });
+    }
+    async function showVerifyDialog(email) {
+        const dialog = id('verify-dialog');
+        const message = id('verify-dialog-message');
+        const resendBtn = id('resend-btn');
+        message.textContent = `Please check your email ${email} for a verification link.`;
+        if (dialog) {
+            dialog.style.display = 'flex';
+            await delay(1);
+            dialog.style.opacity = '1';
+        }
+        resendBtn.addEventListener("click", async () => {
+            resendBtn.setAttribute('disabled', 'true');
+            resendBtn.textContent = 'Sending...';
+            await fetch('/verify-email', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            });
+            resendBtn.textContent = 'Resend';
+            resendBtn.removeAttribute('disabled');
         });
     }
     async function initAccount() {
