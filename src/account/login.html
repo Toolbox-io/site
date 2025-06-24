@@ -37,8 +37,16 @@
                         <a href="/account/request-reset.html">Forgot password?</a>
                     </div>
                     <div id="error-message" class="error-message" style="display: none;"></div>
-                    <div id="unverified-message" style="display:none;color:red;">Please verify your email before logging in.</div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Password Change Dialog -->
+        <div id="verified-dialog" class="dialog-overlay" style="display: none;">
+            <div class="dialog-content">
+                <h2>Successfully verified</h2>
+                <p>Your email was successfully verified!</p>
+                <md-filled-button id="verified-close">Close and login</md-filled-button>
             </div>
         </div>
 

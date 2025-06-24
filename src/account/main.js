@@ -33,6 +33,7 @@ var setUpTabs = Utils.setUpTabs;
         }
         const loginBtn = id('login-btn');
         const errorMessage = id('error-message');
+        const verifiedDialog = id("verified-dialog");
         loginBtn.addEventListener('click', async () => {
             const username = id('username').value;
             const password = id('password').value;
@@ -56,6 +57,15 @@ var setUpTabs = Utils.setUpTabs;
                 showError(errorMessage, 'Network error. Please try again.');
             }
         });
+        verifiedDialog.addEventListener('click', e => {
+            if (e.target === verifiedDialog) {
+                closePasswordDialog();
+            }
+        });
+        const params = new URLSearchParams(location.search);
+        if (params.get("verified") === "true") {
+            await openVerifiedDialog();
+        }
     }
     async function initRegister() {
         if (await checkAuthStatus()) {
@@ -229,6 +239,23 @@ var setUpTabs = Utils.setUpTabs;
         id('current-password').value = '';
         id('new-password').value = '';
         id('confirm-password').value = '';
+    }
+    async function openVerifiedDialog() {
+        const verifiedDialog = id('verified-dialog');
+        if (verifiedDialog) {
+            verifiedDialog.style.display = 'flex';
+            await delay(1);
+            verifiedDialog.style.opacity = '1';
+        }
+        id("verified-close").addEventListener("click", closeVerifiedDialog);
+    }
+    async function closeVerifiedDialog() {
+        const verifiedDialog = id('verified-dialog');
+        if (verifiedDialog) {
+            verifiedDialog.style.opacity = '0';
+            await delay(500);
+            verifiedDialog.style.display = 'none';
+        }
     }
     async function handlePasswordChange() {
         const currentPassword = id('current-password')?.value;

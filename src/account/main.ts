@@ -81,8 +81,11 @@ type PageType = 'login' | 'register' | 'account';
             window.location.href = '/account/';
             return;
         }
+
         const loginBtn = id('login-btn') as HTMLButtonElement;
         const errorMessage = id('error-message');
+        const verifiedDialog = id("verified-dialog");
+
         loginBtn.addEventListener('click', async () => {
             const username = (id('username') as HTMLInputElement).value;
             const password = (id('password') as HTMLInputElement).value;
@@ -104,6 +107,18 @@ type PageType = 'login' | 'register' | 'account';
                 showError(errorMessage, 'Network error. Please try again.');
             }
         });
+
+        // Close dialog when clicking outside
+        verifiedDialog.addEventListener('click', e => {
+            if (e.target === verifiedDialog) {
+                closePasswordDialog();
+            }
+        });
+
+        const params = new URLSearchParams(location.search);
+        if (params.get("verified") === "true") {
+            await openVerifiedDialog();
+        }
     }
 
     /**
@@ -325,6 +340,33 @@ type PageType = 'login' | 'register' | 'account';
         (id('current-password') as HTMLInputElement).value = '';
         (id('new-password') as HTMLInputElement).value = '';
         (id('confirm-password') as HTMLInputElement).value = '';
+    }
+
+    /**
+     * Open password change dialog
+     */
+    async function openVerifiedDialog(): Promise<void> {
+        const verifiedDialog = id('verified-dialog');
+        if (verifiedDialog) {
+            verifiedDialog.style.display = 'flex';
+            await delay(1);
+            verifiedDialog.style.opacity = '1';
+        }
+
+        id("verified-close").addEventListener("click", closeVerifiedDialog);
+    }
+
+    /**
+     * Close password change dialog
+     */
+    async function closeVerifiedDialog(): Promise<void> {
+        const verifiedDialog = id('verified-dialog');
+
+        if (verifiedDialog) {
+            verifiedDialog.style.opacity = '0';
+            await delay(500);
+            verifiedDialog.style.display = 'none';
+        }
     }
 
     /**

@@ -1,14 +1,14 @@
+import datetime
 import smtplib
+import uuid
 from email.mime.text import MIMEText
 
 from fastapi import APIRouter, Body, HTTPException
-import uuid
-import datetime
-from database import get_session_factory
 from passlib.hash import bcrypt
-from models import User
+from starlette.responses import RedirectResponse
 
-from utils import debug_only
+from database import get_session_factory
+from models import User
 
 
 def send_mail(to: str, subject: str, body: str):
@@ -29,18 +29,6 @@ def send_mail(to: str, subject: str, body: str):
 
 router = APIRouter()
 
-@router.post("/send/test")
-@debug_only
-async def send_test_email(data: dict = Body(...)):
-    target_email = data.get("email")
-    if not target_email:
-        return {"error": "Missing email in request body"}
-    try:
-        send_mail(target_email, "Test Email", "test")
-        return {"success": True}
-    except Exception as e:
-        return {"error": str(e)}
-
 @router.get("/verify")
 async def verify_email(token: str):
     db = get_session_factory()()
@@ -50,7 +38,7 @@ async def verify_email(token: str):
     user.is_verified = True
     user.verification_token = None
     db.commit()
-    return {"success": True, "message": "Email verified!"}
+    return RedirectResponse(url="/account/login?verified=true")
 
 @router.post("/request-reset")
 async def request_reset(data: dict = Body(...)):

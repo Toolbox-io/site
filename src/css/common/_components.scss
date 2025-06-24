@@ -18,6 +18,8 @@ md-filled-button {
     display: block;
     overflow: hidden;
     position: relative;
+    width: max-content;
+
     &:hover {
         background-color: $color-primaryContainerDarkened;
     }
