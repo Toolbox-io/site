@@ -64,7 +64,11 @@ async def request_reset(request: Request, data: dict = Body(...)):
     user.reset_token = token
     user.reset_token_expiry = datetime.datetime.now() + datetime.timedelta(hours=1)
     db.commit()
-    send_mail(email, "Password Reset", f"Click to reset: https://beta.toolbox-io.ru/reset-password?token={token}")
+    send_mail(
+        email,
+        "Password Reset",
+        f"Click to reset: https://beta.toolbox-io.ru/account/reset-password?token={token}"
+    )
     return {"success": True}
 
 @router.get("/check-reset")
@@ -120,5 +124,9 @@ async def verify_email_post(request: Request, data: dict = Body(...)):
     verification_token = str(uuid.uuid4())
     user.verification_token = verification_token
     db.commit()
-    send_mail(user.email, "Verify your email", f"Click to verify: https://beta.toolbox-io.ru/verify?token={verification_token}")
+    send_mail(
+        user.email,
+        "Verify your email",
+        f"Click to verify: https://beta.toolbox-io.ru/verify?token={verification_token}"
+    )
     return {"success": True}
