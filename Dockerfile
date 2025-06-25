@@ -23,9 +23,9 @@ RUN apt update && \
 WORKDIR /root
 RUN rm -rf .venv && \
     python3 -m venv .venv
-COPY server/requirements.txt /root/site/server/requirements.txt
+COPY backend/requirements.txt /root/site/backend/requirements.txt
 RUN --mount=type=cache,target=/root/.cache/pip \
-    ./.venv/bin/pip3 install -r /root/site/server/requirements.txt
+    ./.venv/bin/pip3 install -r /root/site/backend/requirements.txt
 
 # 2. Frontend
 FROM node:24 AS frontend
@@ -34,8 +34,8 @@ FROM node:24 AS frontend
 RUN npm install -g autoprefixer sass postcss-cli typescript terser html-minifier
 
 # 2.2. Install local dependencies
-COPY src /root/site/src
-WORKDIR /root/site/src
+COPY frontend /root/site/frontend
+WORKDIR /root/site/frontend
 RUN npm install
 
 # 2.3. Prepare the server content
@@ -60,8 +60,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 
 # 3.2. Copy content
 COPY --from=backend /root/.venv /root/.venv
-COPY server /root/site/server
-COPY --from=frontend /root/site/src /root/site/src
+COPY backend /root/site/backend
+COPY --from=frontend /root/site/frontend /root/site/frontend
 
 # 4. Final command
 # 4.1. Environment variables
@@ -83,7 +83,7 @@ ENV HOST=$HOST
 ENV PORT=$PORT
 
 # 4.2. Workdir and ports
-WORKDIR /root/site/server
+WORKDIR /root/site/backend
 EXPOSE 80 443
 
 # 4.3. Run the server

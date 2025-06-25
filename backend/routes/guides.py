@@ -47,7 +47,7 @@ async def guides_raw(guide: str, request: Request):
 
 @router.get("/guides/list")
 async def guides_list():
-    """Return a JSON array of all guides (md files) in src/guides."""
+    """Return a JSON array of all guides (md files) in frontend/guides."""
     guides2 = []
     for md_file in GUIDES_PATH.glob("*.md"):
         if not md_file.name.strip() in exclude_guides:

@@ -9,8 +9,8 @@ on:
       - "Dockerfile"
       - "build.sh"
       - ".github/workflows/deploy.yml"
-      - "src/**"
-      - "server/**"
+      - "frontend/**"
+      - "backend/**"
       - "caddy/**"
       - "secrets.properties"
       - "docker-compose.yml"
@@ -45,7 +45,7 @@ jobs:
         run: ./build.sh
       - name: Set up the service
         run: |
-          cp -f server/server.service /etc/systemd/system/server.service
+          cp -f backend/server.service /etc/systemd/system/server.service
           systemctl daemon-reload
       - name: Start the server
         run: |

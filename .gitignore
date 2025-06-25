@@ -63,6 +63,15 @@ __pycache__/
 *.db
 
 # -----------------------------
+# Build artifacts
+# -----------------------------
+frontend/*.js
+!frontend/lib/*.js
+frontend/css/*.css
+*.map
+
+
+# -----------------------------
 # Project-specific
 # -----------------------------
-server/backups/
+backend/backups/

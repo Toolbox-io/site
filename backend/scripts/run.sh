@@ -19,7 +19,7 @@ else
   echo "Running production server"
 
   # Backup
-  ./server/scripts/db-backup.sh || true
+  ./backend/scripts/db-backup.sh || true
 
   # Clean up
   containers=$(docker ps --filter "name=^toolbox" -q)

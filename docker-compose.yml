@@ -32,10 +32,10 @@ services:
       PORT: 8000
       DEBUG: ${DEBUG:-false}
     volumes:
-      - site_node_modules:/root/site/src/node_modules
+      - site_node_modules:/root/site/frontend/node_modules
     ports:
       - "8000:8000"
-    working_dir: /root/site/server
+    working_dir: /root/site/backend
 
   caddy:
     build:

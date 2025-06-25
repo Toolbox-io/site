@@ -10,7 +10,7 @@ StartLimitBurst=3
 Type=simple
 User=root
 Group=root
-ExecStart=/bin/bash -c "chmod +x ./server/scripts/run.sh && DEBUG=false ./server/scripts/run.sh"
+ExecStart=/bin/bash -c "chmod +x ./backend/scripts/run.sh && DEBUG=false ./backend/scripts/run.sh"
 ExecStop=/bin/docker stop toolbox-io
 WorkingDirectory=/home/denis0001-dev/actions-runner/_work/site/site
 Restart=always
