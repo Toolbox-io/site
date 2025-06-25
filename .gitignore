@@ -65,9 +65,10 @@ __pycache__/
 # -----------------------------
 # Build artifacts
 # -----------------------------
-frontend/*.js
-!frontend/lib/*.js
-frontend/css/*.css
+/frontend/**/*.js
+!/frontend/lib/*.js
+!/frontend/res/fonts/**/*.css
+/frontend/css/**/*.css
 *.map
 
 
