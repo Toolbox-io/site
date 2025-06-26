@@ -87,7 +87,8 @@ def create_test_user():
         test_user = User(
             username="testuser",
             email="test@example.com",
-            hashed_password=hash_password("password123")
+            hashed_password=hash_password("password123"),
+            is_verified=True
         )
         db.add(test_user)
         db.commit()
