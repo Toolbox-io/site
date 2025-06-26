@@ -17,9 +17,10 @@ export DOCKER_BUILDKIT=1
 
 # 3.1. Development
 if [[ $DEBUG == "true" && $NORUN != "true" ]]; then
-  docker compose build
-  if [[ $NORUN != "true" ]]; then
-    docker compose up
+  if [[ $NORUN == "true" ]]; then
+    docker compose build
+  else
+    docker compose up --build --watch
   fi
 # 3.2. Production
 else

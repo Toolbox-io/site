@@ -6,10 +6,7 @@ set -e
 cd "$(realpath "$(dirname "$0")/../..")" || exit
 
 # 2. Variables
-if [[ -z $DEBUG ]]; then
-  echo "DEBUG environment variable not set; defaulting to true"
-  export DEBUG=true
-fi
+DEBUG="${DEBUG:-false}"
 
 # 3. Run
 if [[ $DEBUG == "true" ]]; then

@@ -87,4 +87,4 @@ WORKDIR /root/site/backend
 EXPOSE 80 443
 
 # 4.3. Run the server
-CMD ["/root/.venv/bin/python3", "main.py"]
+ENTRYPOINT ["/root/.venv/bin/python3", "main.py"]
