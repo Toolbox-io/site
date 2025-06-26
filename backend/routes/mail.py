@@ -2,24 +2,49 @@ import datetime
 import logging
 import smtplib
 import uuid
+from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
+import jinja2
 from fastapi import APIRouter, Body, HTTPException
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 
 from auth_api import hash_password, validate_password
+from constants import CONTENT_PATH
 from database import get_session_factory
 from limiter import limiter
 from models import User
 
 logger = logging.getLogger(__name__)
 
-def send_mail(to: str, subject: str, body: str):
-    msg = MIMEText(body)
-    msg["Subject"] = subject
-    msg["From"] = "robot@toolbox-io.ru"
-    msg["To"] = to
+# Path to the email templates
+EMAIL_TEMPLATE_PATH = CONTENT_PATH / "emails" / "verify.html"
+RESET_TEMPLATE_PATH = CONTENT_PATH / "emails" / "reset.html"
+
+def render_verify_email_html(token: str) -> str:
+    with open(EMAIL_TEMPLATE_PATH, encoding="utf-8") as f:
+        template = jinja2.Template(f.read())
+    return template.render(TOKEN=token)
+
+def render_reset_email_html(token: str) -> str:
+    with open(RESET_TEMPLATE_PATH, encoding="utf-8") as f:
+        template = jinja2.Template(f.read())
+    return template.render(TOKEN=token)
+
+def send_mail(to: str, subject: str, body: str, html: bool = False):
+    if html:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = subject
+        msg["From"] = "robot@toolbox-io.ru"
+        msg["To"] = to
+        part = MIMEText(body, "html", "utf-8")
+        msg.attach(part)
+    else:
+        msg = MIMEText(body)
+        msg["Subject"] = subject
+        msg["From"] = "robot@toolbox-io.ru"
+        msg["To"] = to
 
     # Change these as needed for your SMTP server
     smtp_server = "smtp.mail.ru"
@@ -64,10 +89,12 @@ async def request_reset(request: Request, data: dict = Body(...)):
     user.reset_token = token
     user.reset_token_expiry = datetime.datetime.now() + datetime.timedelta(hours=1)
     db.commit()
+    html_body = render_reset_email_html(token)
     send_mail(
         email,
-        "Password Reset",
-        f"Click to reset: https://beta.toolbox-io.ru/account/reset-password?token={token}"
+        "Сброс пароля Toolbox.io",
+        html_body,
+        html=True
     )
     return {"success": True}
 
@@ -124,9 +151,11 @@ async def verify_email_post(request: Request, data: dict = Body(...)):
     verification_token = str(uuid.uuid4())
     user.verification_token = verification_token
     db.commit()
+    html_body = render_verify_email_html(verification_token)
     send_mail(
         user.email,
-        "Verify your email",
-        f"Click to verify: https://beta.toolbox-io.ru/verify?token={verification_token}"
+        "Подтвертите ваш email",
+        html_body,
+        html=True
     )
     return {"success": True}

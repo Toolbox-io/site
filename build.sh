@@ -11,6 +11,7 @@ if [[ -z $DEBUG ]]; then
   export DEBUG=true
 fi
 export COMPOSE_BAKE=true
+export DOCKER_BUILDKIT=1
 
 # 3. Build & run
 

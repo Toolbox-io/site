@@ -12,7 +12,7 @@ from auth_api import hash_password, authenticate_user, create_access_token, get_
 from database import get_db
 from limiter import limiter
 from models import UserCreate, UserLogin, UserResponse, Token, PasswordChange, Message, User
-from routes.mail import send_mail
+from routes.mail import send_mail, render_verify_email_html, render_reset_email_html
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -86,7 +86,12 @@ def register(request: Request, user: UserCreate, db: Session = Depends(get_db)):
     db_user.is_verified = False
     db.commit()
     db.refresh(db_user)
-    send_mail(str(user.email), "Verify your email", f"Click to verify: https://beta.toolbox-io.ru/verify?token={verification_token}")
+    send_mail(
+        str(user.email),
+        "Подтвертите ваш email",
+        render_verify_email_html(verification_token),
+        html=True
+    )
 
     logger.info(f"User registered successfully: {user.username} (ID: {db_user.id})")
     return db_user

@@ -36,6 +36,15 @@ services:
     ports:
       - "8000:8000"
     working_dir: /root/site/backend
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend
+          target: /root/site/frontend
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: frontend/package.json
 
   caddy:
     build:

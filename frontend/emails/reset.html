@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<!--suppress HtmlDeprecatedAttribute -->
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Сброс пароля</title>
+  </head>
+  <body style="margin:0; padding:0;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="min-height:100vh;">
+      <tr>
+        <td align="center" style="padding:30px 10px;">
+          <table
+            width="500"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="
+              background: #1F1F25;
+              border-radius: 10px;
+              box-shadow: 4px 4px 15px 0 #00000045;
+            ">
+            <tr>
+              <td align="center" style="padding: 16px;">
+                <!-- Logo -->
+                <img
+                  src="https://beta.toolbox-io.ru/res/icon.svg"
+                  alt="Toolbox.io"
+                  width="75"
+                  height="75"
+                  style="border-radius:20px; display:block;" />
+
+                <!-- Heading -->
+                <h1 style="
+                  color:#fff;
+                  font-family:Arial, sans-serif;
+                  margin:10px 0 20px 0;
+                  font-size:2em;
+                ">Toolbox.io</h1>
+
+                <!-- Reset Text -->
+                <p style="
+                  color:#fff;
+                  font-family:Arial, sans-serif;
+                  text-align:center;
+                  margin:0 0 20px 0;
+                ">
+                  Вы запросили сброс пароля для вашей учетной записи Toolbox.io.<br>
+                  Чтобы установить новый пароль, нажмите на кнопку ниже:
+                </p>
+
+                <!-- Reset Button -->
+                <a href="https://beta.toolbox-io.ru/account/reset-password?token={{ TOKEN }}"
+                  style="
+                    display:inline-block;
+                    background:#404178;
+                    color:#fff;
+                    text-decoration:none;
+                    padding:12px 32px;
+                    border-radius:20px;
+                    font-family:Arial, sans-serif;
+                    font-size:1em;
+                    margin-bottom:20px;
+                  ">
+                  Сбросить пароль
+                </a>
+
+                <!-- Fallback Link -->
+                <p style="
+                  color:#fff;
+                  font-family:Arial, sans-serif;
+                  text-align:center;
+                  margin:20px 0 0 0;
+                ">
+                  Если кнопка не работает, скопируйте ссылку и вставьте в адресную строку браузера:<br>
+                  <a href="https://beta.toolbox-io.ru/account/reset-password?token={{ TOKEN }}" style="color:#7a7aff; word-break:break-all;">
+                    https://beta.toolbox-io.ru/account/reset-password?token={{ TOKEN }}
+                  </a>
+                </p>
+
+                <!-- Footer -->
+                <p style="
+                  color:#C8C5D0;
+                  font-family:Arial, sans-serif;
+                  text-align:center;
+                  font-size:15px;
+                  margin:30px 0 0 0;
+                ">
+                  <i>
+                    Это письмо было отправлено автоматически, пожалуйста, не отвечайте на него. Если есть вопросы, пишите на
+                    <a href="mailto:support@toolbox-io.ru" style="color:#7a7aff;">support@toolbox-io.ru</a>.
+                  </i>
+                </p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html> 

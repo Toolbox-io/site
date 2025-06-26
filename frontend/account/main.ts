@@ -9,6 +9,7 @@
 import {Utils} from "../common.js";
 import id = Utils.id;
 import setUpTabs = Utils.setUpTabs;
+import changeUrl = Utils.changeUrl;
 
 interface UserData {
     username: string;
@@ -118,6 +119,7 @@ type PageType = 'login' | 'register' | 'account';
         const params = new URLSearchParams(location.search);
         if (params.get("verified") === "true") {
             await openVerifiedDialog();
+            changeUrl("/account/login");
         }
     }
 
