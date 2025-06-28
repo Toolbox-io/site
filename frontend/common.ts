@@ -87,7 +87,7 @@ export namespace Utils {
     export async function switchTab(tab: Tab) {
         switch (tab) {
             case 0: open("/", "_self"); break;
-            case 1: open(`/#download_h`, "_self"); break;
+            case 1: open(`/download`, "_self"); break;
             case 2: open(`/guides`, "_self"); break;
         }
     }
@@ -280,6 +280,7 @@ export namespace Components {
             return Array.from(this.shadowRoot!!.querySelector("#tabs")!!.children) as HTMLDivElement[];
         }
 
+        // TODO account icon
         constructor() {
             super();
             const shadow = this.attachShadow({mode: "open"});

@@ -1,5 +1,5 @@
 beta.toolbox-io.ru {
-    reverse_proxy app:8000
+    reverse_proxy main:8000
 
     # Security headers
     header {
@@ -40,4 +40,8 @@ beta.toolbox-io.ru {
             }
         }
     }
+}
+
+download.toolbox-io.ru {
+    reverse_proxy download:8001
 }
