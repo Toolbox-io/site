@@ -6,10 +6,7 @@ set -e
 cd "$(dirname "$0")" || exit
 
 # 2. Variables
-if [[ -z $DEBUG ]]; then
-  echo "DEBUG environment variable not set; defaulting to true"
-  export DEBUG=true
-fi
+export DEBUG=${DEBUG:-true}
 export COMPOSE_BAKE=true
 export DOCKER_BUILDKIT=1
 
