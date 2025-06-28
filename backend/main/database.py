@@ -2,11 +2,9 @@ import logging
 import os
 import time
 
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, text
+from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.sql import func
 from models import Base  # Import the single source of truth for Base
 
 # Configure logging

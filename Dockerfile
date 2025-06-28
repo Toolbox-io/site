@@ -83,8 +83,8 @@ ENV HOST=$HOST
 ENV PORT=$PORT
 
 # 4.2. Workdir and ports
-WORKDIR /root/site/backend
-EXPOSE 80 443
+WORKDIR /root/site/backend/main
+EXPOSE 8000
 
 # 4.3. Run the server
 ENTRYPOINT ["/root/.venv/bin/python3", "main.py"]

@@ -2,7 +2,7 @@ services:
   db:
     image: mysql:8
     container_name: toolbox-db
-Imp    restart: always
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: ${DB_NAME:-toolbox_db}
@@ -13,7 +13,7 @@ Imp    restart: always
     volumes:
       - site_data:/var/lib/mysql
 
-  app:
+  main:
     build: .
     container_name: toolbox-io
     restart: always
@@ -33,7 +33,6 @@ Imp    restart: always
       - site_node_modules:/root/site/frontend/node_modules
     ports:
       - "8000:8000"
-    working_dir: /root/site/backend
     develop:
       watch:
         - action: sync
@@ -42,8 +41,26 @@ Imp    restart: always
           ignore:
             - node_modules/
         - action: sync+restart
-          path: ./backend
+          path: ./backend/main
           target: /root/site/backend
+        - action: rebuild
+          path: ./backend/requirements.txt
+        - action: rebuild
+          path: ./frontend/package.json
+
+  download:
+    build:
+      context: .
+      dockerfile: backend/download/Dockerfile
+    container_name: toolbox-io-download
+    restart: always
+    ports:
+      - "8001:8001"
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend/download
+          target: /root/site/backend/download
         - action: rebuild
           path: ./backend/requirements.txt
         - action: rebuild
