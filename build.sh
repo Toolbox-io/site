@@ -3,16 +3,19 @@
 set -e
 
 # 1. cd to the right directory
-cd "$(dirname "$0")" || exit
+cd "$(dirname "$0")"
 
 # 2. Variables
-export DEBUG=${DEBUG:-true}
+DEBUG=${DEBUG:-true}
 export COMPOSE_BAKE=true
 export DOCKER_BUILDKIT=1
 
 # 3. Build & run
 
 # 3.1. Development
+# Note: in development $NURUN is probably always false,
+# in production $NORUN is always true. This is not needed
+# but still there for flexibility.
 if [[ $DEBUG == "true" && $NORUN != "true" ]]; then
   if [[ $NORUN == "true" ]]; then
     docker compose build

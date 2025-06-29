@@ -57,16 +57,17 @@ async def serve_files(path: str, request: Request):
         logger.warning(f"File not found: {path}")
         raise HTTPException(status_code=404, detail="File not found")
 
-    if file_path.is_file() and (
+    if (
         file_path.name.endswith(".ts") or
         file_path.name.endswith(".scss") or
-        file_path.name == "minify.sh" or
+        file_path.name.endswith(".sh") or
         file_path.name == "package.json" or
         file_path.name == "tsconfig.json" or
-        file_path.parent.resolve() == (CONTENT_PATH / "templates").resolve()
+        file_path.parent.resolve() == (CONTENT_PATH / "templates").resolve() or
+        file_path.parent.resolve() == (CONTENT_PATH / "emails").resolve()
     ):
         logger.warning(f"Access denied to: {file_path}")
-        raise HTTPException(status_code=403, detail="Access denied")
+        raise HTTPException(status_code=404, detail="Access denied")
     
     mime_type, _ = mimetypes.guess_type(str(file_path))
     logger.info(f"Serving file: {file_path} (type: {mime_type})")

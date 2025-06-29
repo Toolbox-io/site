@@ -1,27 +1,20 @@
 #!/bin/bash
 
+#
+# Toolbox.io production run script
+#
+# For development use build.sh
+#
+
 set -e
 
-# 1. cd to the right directory
-cd "$(realpath "$(dirname "$0")/../..")" || exit
+# 1. Backup
+./backend/main/scripts/backup.sh || true
 
-# 2. Variables
-DEBUG="${DEBUG:-false}"
+# 2. Stop & delete old containers
+containers=$(docker ps --filter "name=^toolbox" -q)
+docker stop "$containers" || true
+docker rm "$containers" || true
 
-# 3. Run
-if [[ $DEBUG == "true" ]]; then
-  echo "Running development server"
-  docker compose up
-else
-  echo "Running production server"
-
-  # Backup
-  ./backend/main/scripts/db-backup.sh || true
-
-  # Clean up
-  containers=$(docker ps --filter "name=^toolbox" -q)
-  docker stop "$containers" || true
-  docker rm "$containers" || true
-
-  docker compose --profile prod up
-fi
+# 3. Run the server
+docker compose --profile prod up
