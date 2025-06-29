@@ -3,11 +3,9 @@ import setUpTabs = Utils.setUpTabs;
 import delay = Utils.delay;
 import id = Utils.id;
 
-(() => {
+(async () => {
     setUpTabs();
 
-    addEventListener("load", async () => {
-        await delay(1000);
-        id("download").click();
-    });
+    await delay(1000);
+    id("download").click();
 })();

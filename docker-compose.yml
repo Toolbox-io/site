@@ -65,6 +65,8 @@ services:
           path: ./backend/requirements.txt
         - action: rebuild
           path: ./frontend/package.json
+    volumes:
+      - site_download_cache:/root/site/backend/download/cache
 
   caddy:
     build:
@@ -87,3 +89,4 @@ volumes:
     name: toolbox-io_site_data
   site_certs:
   site_node_modules:
+  site_download_cache:

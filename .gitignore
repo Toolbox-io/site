@@ -22,6 +22,7 @@ lerna-debug.log*
 *.seed
 *.pid.lock
 pids/
+/backend/download/cache
 
 # Diagnostic reports
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
