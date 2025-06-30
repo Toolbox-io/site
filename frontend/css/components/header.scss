@@ -1,4 +1,5 @@
 @import "../common/colors";
+@import url(/css/common.css);
 
 :host {
     backdrop-filter: none;
@@ -87,26 +88,6 @@
             }
         }
     }
-
-    .auth-link {
-        cursor: pointer;
-        color: white;
-        font-size: 16px;
-        padding: 8px 16px;
-        border: 2px solid white;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        margin-left: 10px;
-
-        &:hover {
-            background-color: white;
-            color: black;
-        }
-
-        &:active {
-            transform: scale(0.95);
-        }
-    }
 }
 
 :host(:state(scrolled)) {
@@ -130,7 +111,7 @@
     }
 }
 
-@media (max-width: 370px) {
+@media (max-width: 380px) {
     :host {
         margin-top: 0 !important;
         margin-left: 0 !important;

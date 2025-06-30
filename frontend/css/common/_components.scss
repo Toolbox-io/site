@@ -179,3 +179,54 @@ pre {
         }
     }
 }
+
+
+//noinspection DuplicatedCode
+md-icon-button {
+    margin-left: auto;
+    position: relative;
+    transition: opacity 0.5s ease-in-out;
+    cursor: pointer;
+    font-family: 'Material Symbols Outlined', monospace;
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+    font-variation-settings:
+        'FILL' 1,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 24;
+
+    &::after {
+        content: '';
+        position: absolute;
+        width: calc(100% + 10px);
+        height: calc(100% + 10px);
+        left: -5px;
+        top: -5px;
+        border-radius: 50%;
+        background-color: $hover-color;
+        opacity: 0;
+        transition: all 0.25s ease-in-out;
+        cursor: pointer;
+    }
+}
+
+:is(md-icon-button:hover)::after {
+    opacity: 1;
+}
+
+:is(md-icon-button:active)::after {
+    opacity: 1;
+    background-color: $active-color;
+}

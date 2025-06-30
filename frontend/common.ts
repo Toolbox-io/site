@@ -295,7 +295,7 @@ export namespace Components {
                     <div class="tab" id="download">Скачать</div>
                     <div class="tab" id="guides">Гайды</div>
                 </div>
-                <div class="auth-link" id="auth-link">Login</div>
+                <md-icon-button id="auth-link">account_circle</md-icon-button>
             `;
             this.shadowRoot!!.querySelector(".icon.appicon")!!.addEventListener("click", () => {
                 open("/", "_self");
@@ -312,19 +312,6 @@ export namespace Components {
                 }
             });
             
-            // Update auth link text based on authentication status
-            this.updateAuthLink();
-            
-            // Listen for storage changes to update auth link
-            window.addEventListener('storage', () => {
-                this.updateAuthLink();
-            });
-            
-            // Also listen for custom events for same-origin updates
-            window.addEventListener('authStateChanged', () => {
-                this.updateAuthLink();
-            });
-            
             this.internals = this.attachInternals();
             try {
                 $(window).on('scroll', () => {
@@ -336,16 +323,6 @@ export namespace Components {
                 });
             } catch (e) {
                 console.log(e);
-            }
-        }
-
-        private updateAuthLink() {
-            const authLink = this.shadowRoot!!.querySelector("#auth-link") as HTMLElement;
-            const token = localStorage.getItem('authToken');
-            if (token) {
-                authLink.textContent = "Account";
-            } else {
-                authLink.textContent = "Login";
             }
         }
 
@@ -501,7 +478,7 @@ export namespace Components {
     document.addEventListener('touchstart', disableHover, true);
     document.addEventListener('mousemove', enableHover, true);
     enableHover();
-})()
+})();
 
 window.addEventListener("load", async () => {
     document.body.classList.add("loaded");
