@@ -29,6 +29,7 @@ services:
       HOST: 0.0.0.0
       PORT: 8000
       DEBUG: ${DEBUG:-false}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
     volumes:
       - site_node_modules:/root/site/frontend/node_modules
     ports:
@@ -67,6 +68,8 @@ services:
           path: ./frontend/package.json
     volumes:
       - site_download_cache:/root/site/backend/download/cache
+    environment:
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
 
   caddy:
     build:

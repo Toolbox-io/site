@@ -1,97 +1,126 @@
-# Toolbox.io — Web & Backend
+# Toolbox.io — Сайт и Backend
 
-Welcome to the Toolbox.io project! This repository contains the web frontend and backend for the Toolbox.io service. If you want to run the project locally, contribute, or just explore how it works, this guide will help you get started.
+Toolbox.io — это современное приложение для защиты и кастомизации Android-устройств.
 
----
+## 📦 Быстрый старт
 
-## 🚀 What is Toolbox.io?
+Этот гайд поможет вам быстро настроить проект с помощью Docker. Не переживайте, если вы никогда не работали с Docker — всё объясним простыми словами!
 
-Toolbox.io is a modern web application with a Python backend (FastAPI) and a frontend. It provides a secure, feature-rich environment for managing and protecting your data and applications. The backend is containerized using Docker and served via Caddy as a reverse proxy.
+### Шаг 1. Установка Docker
 
----
+1. Скачайте Docker с официального сайта: https://docs.docker.com/get-docker/
+2. Установите его, следуя инструкциям для вашей ОС (Windows, macOS или Linux)
+3. После установки проверьте, что всё работает:
+   ```bash
+   docker --version
+   ```
 
-## 🖥️ Quick Start (Recommended)
+### Шаг 2. Клонирование проекта
 
-The easiest way to run the project is with Docker. This ensures you have all dependencies and services running with a single command.
+> [!IMPORTANT]
+> Вам нужно авторизоваться через ваш аккаунт на GitHub, чтобы
+> клонировать этот репозиторий, так как он закрытый и доступ
+> дается только участникам команды.
+> 
+> #### Простой способ авторизации:
+> 1. Скачайте [GitHub CLI](https://cli.github.com/)
+> 2. Выполните `gh auth login`, выбирая значения по умолчанию
+>    в ответ на все вопросы
+> 3. Откройте ссылку и вставьте код, показанный командой
 
-### 1. Install Docker
-
-#### Linux/macOS
-- Go to [https://docs.docker.com/get-docker/](https://docs.docker.com/get-docker/)
-- Download and follow the installation instructions for your OS.
-- After installation, check Docker is working:
-  ```sh
-  docker --version
-  ```
-
-#### Windows
-- Download Docker Desktop from [https://docs.docker.com/desktop/install/windows-install/](https://docs.docker.com/desktop/install/windows-install/)
-- Run the installer and follow the prompts.
-- After installation, check Docker is working:
-  ```powershell
-  docker --version
-  ```
-
-### 2. Clone the Repository
-```sh
+**Откройте терминал и выполните:**
+```bash
 git clone https://github.com/Toolbox-io/site.git
-cd Toolbox-io/Site
+cd site
 ```
 
-### 3. Start the Project
-```sh
+### Шаг 3. Запуск проекта
+
+**Одна команда запустит всё:**
+```bash
 docker-compose up --build
 ```
-- This will build and start all services (backend, frontend, Caddy proxy).
-- The site will be available at [http://localhost:80](http://localhost:80) (or as configured in `docker-compose.yml`).
 
----
+- Docker автоматически скачает все необходимые компоненты
+- Проект станет доступен в вашем браузере
 
-## 🌐 Frontend
+#### Службы
 
-The frontend is built from SCSS and TypeScript sources. It is **not static**—it requires a build step to generate the final HTML, CSS, and JS files.
+| Служба            | Адрес                   | Описание                                             |
+|-------------------|-------------------------|------------------------------------------------------|
+| Сайт              | <http://localhost:8000> | Главный сайт приложения                              |
+| База данных       | <http://localhost:3306> | База данных MySQL для сайта                          |
+| Сервер скачивания | <http://localhost:8001> | Сервер для скачивания APK-файлов приложения с GitHub |
 
-- To build the frontend, run `npm run build` in the `frontend` directory.
-- **Important:** Do NOT run the build outside Docker unless you know what you're doing, as HTML files will be overwritten.
-- For development, you can edit the source files in `frontend/` and use Docker to handle the build process automatically.
+#### Основные команды
 
----
-
-## 🛠️ Useful Commands
-
-- **Stop all Docker containers:**
-  ```sh
-  docker-compose down
+- Запустить проект:
+  ```bash
+  docker-compose up --build --watch
   ```
-- **Rebuild after code changes:**
-  ```sh
-  docker-compose up --build
+- Очистить проект:
+  ```bash
+  docker-compose down -v
   ```
+  > [!WARNING]
+  > Эта команда также удаляет и локальную базу данных, поэтому
+  > **обязательно сохраните ее** если там есть что-то важное.
 
----
+#### Частые вопросы
+- Если видите ошибку о занятом порте, измените порт в файле docker-compose.yml
+- Проверьте, что Docker запущен в системе
+- Убедитесь, что у вас достаточно свободного места на диске
 
-## 📦 Project Structure
+#### Нужна помощь?
+- Создайте проблему в репозитории
+- Напишите в [чат команды](https://t.me/toolbox_io_devs) — мы поможем!
+
+## 🏗️ Архитектура проекта
+
+- **Backend:** Python 3.12, FastAPI, SQLAlchemy, MySQL, Docker
+- **Frontend:** TypeScript, SCSS, HTML, Docker
+- **Proxy:** Caddy (HTTPS, security headers, rate limiting)
+- **CI/CD:** GitHub Actions, Dependabot
+
+## 🗂️ Структура репозитория
 
 ```
-Site/
-  backend/      # Python FastAPI backend
-  frontend/     # Frontend source (HTML, SCSS, TypeScript, assets)
-  caddy/        # Caddy reverse proxy config
-  docker-compose.yml  # Multi-service orchestration
-  Dockerfile    # Backend Docker build
+site/
+├── backend/
+│   ├── main/         # Основной backend (FastAPI, SQLAlchemy)
+│   ├── download/     # Сервис скачивания
+│   └── requirements.txt
+├── frontend/         # Клиентская часть (HTML, SCSS, TypeScript)
+├── caddy/            # HTTPS-прокси (Caddy)
+├── docker-compose.yml
+├── Dockerfile
+└── build.sh
 ```
 
----
+## 🔒 Безопасность
+- Пароли и секреты НЕ хранятся в коде, используйте `.env`
+- Все пароли хэшируются (bcrypt)
+- JWT-токены, rate limiting, CORS, CSP, HSTS, XSS и другие защиты включены
+- SMTP-пароль и другие секреты задаются через переменные окружения
+- Подробнее см. раздел Security в коде и Caddyfile
 
-## ❓ FAQ
+## 🧩 Зависимости
 
-- **Q: I get a port conflict error?**
-  - A: Make sure nothing else is running on port 80 or 8000, or change the ports in `docker-compose.yml`.
-- **Q: How do I update dependencies?**
-  - A: For Python, update `requirements.txt` and run `pip install -r requirements.txt`.
-- **Q: Where do I report bugs?**
-  - A: Open an issue on [GitHub](https://github.com/Toolbox-io/Toolbox-io/issues).
+### Backend (см. [backend/requirements.txt](backend/requirements.txt))
+- FastAPI, SQLAlchemy, bcrypt, PyMySQL, Jinja2, и др.
 
----
+### Frontend (см. [frontend/package.json](frontend/package.json))
+- TypeScript, SCSS, highlight.js, marked, autoprefixer, terser, и др.
 
-Enjoy using Toolbox.io!
+## 📑 Документация и поддержка
+- [Политика конфиденциальности](frontend/PRIVACY.page.md)
+- [Совместимость устройств](frontend/COMPATIBILITY.page.md)
+- [Чат команды](https://t.me/toolbox_io_devs)
+- [Канал новостей](https://t.me/toolbox_io)
+
+## 🤝 Вклад и обратная связь
+- Для багов и предложений — создайте issue или пишите в чат
+- Pull requests приветствуются (для участников)
+
+## 🛡️ Лицензия
+- Проект закрытый, распространяется только внутри команды Toolbox.io

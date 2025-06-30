@@ -2,17 +2,17 @@
 
 import switchTab = Utils.switchTab;
 import {Components, Cookies, token, Utils} from "./common.js";
-import doScrolling = Utils.doScrolling;
+import smoothScroll = Utils.smoothScroll;
 import delay = Utils.delay;
 import TioHeader = Components.TioHeader;
 
-await (async () => {
+(async () => {
     // Set up buttons
     const header = document.querySelector("tio-header")!! as TioHeader;
 
     // Tabs
     header.tabs[0].addEventListener("click", () => {
-        doScrolling("body", 1000);
+        smoothScroll("body", 1000);
     });
     header.tabs[1].addEventListener("click", () => switchTab(1));
     header.tabs[2].addEventListener("click", () => switchTab(2));
@@ -102,8 +102,6 @@ await (async () => {
             const close = feature.querySelector(".feature-close") as HTMLDivElement;
             feature.addEventListener("click", async () => {
                 if (!feature.classList.contains("expanded")) {
-                    const rect = feature.getBoundingClientRect();
-
                     feature.insertAdjacentElement("afterend", replacement);
                     replacement.innerHTML = feature.innerHTML;
                     replacement.classList.add("placeholder", "feature");

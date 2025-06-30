@@ -16,15 +16,14 @@ export const token = "gi" + "thu" + "b_p" + "at_11BPW3Z" + "7Y0M847x0i" + "90jER
 
 export namespace Utils {
     import TioHeader = Components.TioHeader;
+    import _query = Utils.query;
     export type MarkdownHeader = { [key: string]: string }
 
     export function getMarkdownHeader(markdown: string): MarkdownHeader {
         const headerRegex = /---\n((?:[^:\n]+:[^:\n]+\n)+)---/;
         const match = markdown.match(headerRegex);
 
-        if (!match) {
-            return {};
-        }
+        if (!match) return {};
 
         const headerContent = match[1];
         const lines = headerContent.split('\n');
@@ -39,11 +38,10 @@ export namespace Utils {
     }
 
     export function getElementY(query: string): number {
-        // @ts-ignore
-        return window.scrollY + document.querySelector(query).getBoundingClientRect().top
+        return window.scrollY + _query(query).getBoundingClientRect().top;
     }
 
-    export function doScrolling(element: string, duration: number): void {
+    export function smoothScroll(element: string, duration: number): void {
         const startingY = window.scrollY;
         const elementY = getElementY(element);
         // If element is close to page's bottom then window will scroll only to some position above the element.
@@ -52,30 +50,30 @@ export namespace Utils {
         // Easing function: easeInOutCubic
         // From: https://gist.github.com/gre/1650294
         const easing = function (t: number): number {
-            return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1
+            return t < .5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
         };
         let start: number;
 
-        if (!diff) return
+        if (!diff) return;
 
         // Bootstrap our animation - it will get called right before next frame shall be rendered.
         window.requestAnimationFrame(function step(timestamp) {
-            if (!start) start = timestamp
+            if (!start) start = timestamp;
             // Elapsed miliseconds since start of scrolling.
             const time = timestamp - start;
             // Get percent of completion in range [0, 1].
             let percent = Math.min(time / duration, 1);
             // Apply the easing.
             // It can cause bad-looking slow frames in browser performance tool, so be careful.
-            percent = easing(percent)
+            percent = easing(percent);
 
-            window.scrollTo(0, startingY + diff * percent)
+            window.scrollTo(0, startingY + diff * percent);
 
             // Proceed with animation as long as we wanted it to.
             if (time < duration) {
-                window.requestAnimationFrame(step)
+                window.requestAnimationFrame(step);
             }
-        })
+        });
     }
 
     export function delay(millis: number): Promise<void> {
@@ -98,46 +96,6 @@ export namespace Utils {
         header.tabs[1].addEventListener("click", () => switchTab(1));
         header.tabs[2].addEventListener("click", () => switchTab(2));
     }
-
-    /*export function regexMatches(regex: RegExp, string: string): boolean {
-        return regex.exec(string) !== null;
-    }*/
-
-    /*export async function notification(
-        type: 'error' | 'success',
-        _headline: string,
-        _message: string,
-        durationSec: number = 5
-    ) {
-        const status: HTMLDivElement = document.getElementById("status") as HTMLDivElement;
-        const progress = status.querySelector(".progress > .progress_bar") as HTMLDivElement;
-        const headline = status.querySelector(".head > .message_headline") as HTMLElement;
-        const message = status.querySelector(".message") as HTMLParagraphElement;
-        const close = status.querySelector(".head > .close") as HTMLElement;
-
-        status.classList.remove("hidden", "success", "error");
-        status.classList.add(type);
-        headline.textContent = _headline;
-        message.textContent = _message;
-
-        progress.style.transitionDuration = `${durationSec}s`;
-        progress.style.width = "100%";
-
-        close.addEventListener("click", hide);
-
-        async function hide() {
-            status.classList.add("hidden");
-            progress.style.width = "0";
-            progress.style.transitionDuration = "";
-            await delay(250);
-            status.classList.remove(type);
-            headline.textContent = "";
-            message.textContent = "";
-        }
-
-        await delay((durationSec || 5) * 1000);
-        await hide();
-    }*/
 
     export async function loadMarkdown(file: string, element: HTMLElement = document.body): Promise<any> {
         if (file === "" || !file.endsWith(".md")) {

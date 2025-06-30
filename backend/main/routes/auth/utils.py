@@ -1,8 +1,7 @@
 import logging
 import os
-import re
+import uuid
 from datetime import datetime, timedelta
-from threading import Lock
 from typing import Optional
 
 import bcrypt
@@ -11,15 +10,17 @@ from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 
-from database import get_db, get_session_factory
+from constants import CONTENT_PATH
+from db.core import get_db, get_session_factory
 from models import User, BlacklistedToken
+from routes.mail import send_mail, render_email
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 # Security configuration
-SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-in-production")
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -36,29 +37,19 @@ COMMON_PASSWORDS = {
     "dragon", "joshua", "blowme", "fishing", "dolphin", "baseball",
     "stupid", "shit", "saturn", "gemini", "apples", "august", "canon",
     "blake", "cumming", "hunting", "kitty", "rainbow", "arthur",
-    "cream", "calvin", "shaved", "surfer", "samson", "kelly", "paul"
+    "cream", "calvin", "shaved", "surfer", "samson", "kelly", "paul",
+    "11111111"
 }
 
 security = HTTPBearer()
-
-# In-memory token blacklist and lock
-# Exported for use in other modules
-
-# Set of blacklisted JWT tokens
-# Note: In-memory only; use Redis/DB for production multi-instance
-
-# Exported for use in other modules
-
-token_blacklist = set()
-blacklist_lock = Lock()
 
 def validate_password(password: str) -> tuple[bool, str]:
     """
     Validate password strength
     Returns: (is_valid, error_message)
     """
-    if len(password) < 10:
-        return False, "Password must be at least 10 characters long"
+    if len(password) < 8:
+        return False, "Password must be at least 8 characters long"
     
     if len(password) > 128:
         return False, "Password must be less than 128 characters"
@@ -74,15 +65,7 @@ def validate_password(password: str) -> tuple[bool, str]:
     has_special = any(c in "!@#$%^&*()_+-=[]{}|;:,.<>?" for c in password)
     
     if not (has_upper and has_lower and has_digit and has_special):
-        return False, "Password must contain uppercase, lowercase, digit, and special character"
-    
-    # Check for repeated characters
-    if re.search(r'(.)\1{2,}', password):
-        return False, "Password cannot contain more than 2 repeated characters in a row"
-    
-    # Check for sequential characters
-    if re.search(r'(abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz|123|234|345|456|567|678|789|890)', password.lower()):
-        return False, "Password cannot contain sequential characters"
+        return False, "Password must contain uppercase, lowercase, digit, and special characters"
     
     return True, ""
 
@@ -225,4 +208,16 @@ def authenticate_user(db: Session, username: str, password: str) -> Optional[Use
         return user
     except Exception as e:
         logger.error(f"Error during user authentication: {e}")
-        return None 
+        return None
+
+def send_verify_email(user: User, db: Session):
+    verification_token = str(uuid.uuid4())
+    user.verification_token = verification_token
+    db.commit()
+    html_body = render_email(CONTENT_PATH / "emails" / "verify.html", TOKEN=verification_token)
+    send_mail(
+        user.email,
+        "Подтвертите ваш email",
+        html_body,
+        html=True
+    )

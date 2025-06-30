@@ -3,9 +3,10 @@ import time
 import logging
 import subprocess
 from sqlalchemy.exc import OperationalError
-from database import init_db, get_session_factory
-from auth_api import hash_password
-from models import User
+
+from db.core import get_engine, get_session_factory
+from routes.auth.utils import hash_password
+from models import User, Base
 
 logger = logging.getLogger(__name__)
 
@@ -106,7 +107,7 @@ def initialize_database():
     try:
         logger.info("Initializing Toolbox.io database...")
         logger.info("Creating database tables...")
-        init_db()
+        init_tables()
         create_test_user()
         logger.info("Database initialization complete!")
         return True
@@ -116,4 +117,16 @@ def initialize_database():
         return False
     except Exception as e:
         logger.error(f"Database initialization failed: {e}")
-        return False 
+        return False
+
+def init_tables():
+    """Initialize the database tables"""
+    try:
+        logger.info("Creating database tables...")
+        engine = get_engine()
+        # This will now create all tables registered with the Base from models.py
+        Base.metadata.create_all(bind=engine)
+        logger.info("Database tables created successfully")
+    except Exception as e:
+        logger.error(f"Error creating database tables: {e}")
+        raise

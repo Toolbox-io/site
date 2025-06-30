@@ -19,6 +19,7 @@ on:
     inputs:
       noCache:
         description: "Disable Docker cache"
+        type: boolean
         required: false
         default: false
 

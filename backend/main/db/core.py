@@ -5,14 +5,13 @@ import time
 from sqlalchemy import create_engine, text
 from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker
-from models import Base  # Import the single source of truth for Base
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Database configuration
-DB_HOST = os.getenv('DB_HOST', '95.165.0.162')
+DB_HOST = os.getenv('DB_HOST', '0.0.0.0')
 DB_PORT = os.getenv('DB_PORT', '3306')
 DB_USER = os.getenv('DB_USER', 'toolbox_user')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
@@ -27,7 +26,7 @@ DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB
 
 logger.info(f"Initializing database with URL: {DATABASE_URL.replace(DB_PASSWORD, '***')}")
 
-def create_engine_with_retry(max_retries=5, retry_delay=2):
+def create_engine_with_retry(max_retries=5, retry_delay=5):
     """Create database engine with retry mechanism"""
     for attempt in range(max_retries):
         try:
@@ -83,18 +82,6 @@ def get_session_factory():
         engine = get_engine()
         _SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     return _SessionLocal
-
-def init_db():
-    """Initialize the database tables"""
-    try:
-        logger.info("Creating database tables...")
-        engine = get_engine()
-        # This will now create all tables registered with the Base from models.py
-        Base.metadata.create_all(bind=engine)
-        logger.info("Database tables created successfully")
-    except Exception as e:
-        logger.error(f"Error creating database tables: {e}")
-        raise
 
 def get_db():
     """Get database session"""

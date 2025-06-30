@@ -9,7 +9,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app import app
 from constants import *
-from db_init import initialize_database
+from db.init import initialize_database
 from utils import find_file
 
 # Configure logging
