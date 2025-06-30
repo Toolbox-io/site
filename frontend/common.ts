@@ -187,6 +187,7 @@ export namespace Utils {
 
 // noinspection JSUnusedGlobalSymbols
 export namespace Cookies {
+    // noinspection JSUnusedGlobalSymbols
     export function get(name: string): string | null {
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
@@ -201,6 +202,7 @@ export namespace Cookies {
         return null;
     }
 
+    // noinspection JSUnusedGlobalSymbols
     export function set(name: string, value: string, expiresDays: number = 7): void {
         const date = new Date();
         date.setTime(date.getTime() + (expiresDays * 24 * 60 * 60 * 1000));
@@ -308,6 +310,7 @@ export namespace Components {
                     <a href="/" draggable="false">Главная</a>
                     <a href="/guides" draggable="false">Гайды</a>
                     <a href="/compatibility" draggable="false">Совместимость</a>
+                    <a href="/download" draggable="false">Скачать</a>
                 </div>
                 <div class="footer_column">
                     <div class="footer_title">Документы</div>

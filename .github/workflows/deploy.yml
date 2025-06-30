@@ -1,10 +1,11 @@
-# Enhanced workflow for deploying to the self-hosted server
+# Simple workflow for deploying to the self-hosted server
 name: Deploy to server
 
 on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
+    # Don't redeploy if no actual code changed
     paths:
       - "Dockerfile"
       - "build.sh"
@@ -16,12 +17,6 @@ on:
       - "docker-compose.yml"
       - ".dockerignore"
   workflow_dispatch:
-    inputs:
-      noCache:
-        description: "Disable Docker cache"
-        type: boolean
-        required: false
-        default: false
 
 # Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
 # However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
@@ -40,9 +35,7 @@ jobs:
       - name: Build container
         env:
           NORUN: true
-          PROGRESS: true
           DEBUG: false
-          NOCACHE: ${{ inputs.noCache }}
         run: ./build.sh
       - name: Set up the service
         run: |
