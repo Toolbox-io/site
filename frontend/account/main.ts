@@ -48,7 +48,7 @@ type PageType = 'login' | 'register' | 'account';
      * Detect which page we're on based on URL path
      */
     function detectPage(): PageType {
-        const path = window.location.pathname;
+        const path = location.pathname;
         if (path.includes('/login')) return 'login';
         if (path.includes('/register')) return 'register';
         return 'account'; // Default to account dashboard
@@ -79,7 +79,7 @@ type PageType = 'login' | 'register' | 'account';
      */
     async function initLogin() {
         if (await checkAuthStatus()) {
-            window.location.href = '/account/';
+            location.href = '/account/';
             return;
         }
 
@@ -100,7 +100,7 @@ type PageType = 'login' | 'register' | 'account';
                 const data: ApiResponse = await response.json();
                 if (response.ok) {
                     localStorage.setItem('authToken', data.access_token || '');
-                    window.location.href = '/account';
+                    location.href = '/account';
                 } else {
                     showError(errorMessage, data.error || 'Login failed');
                 }
@@ -128,7 +128,7 @@ type PageType = 'login' | 'register' | 'account';
      */
     async function initRegister() {
         if (await checkAuthStatus()) {
-            window.location.href = '/account/';
+            location.href = '/account/';
             return;
         }
 
@@ -195,7 +195,7 @@ type PageType = 'login' | 'register' | 'account';
      */
     async function initAccount(): Promise<void> {
         if (!await checkAuthStatus()) {
-            window.location.href = '/account/login';
+            location.href = '/account/login';
             return;
         }
         setupEventListeners();
@@ -308,7 +308,7 @@ type PageType = 'login' | 'register' | 'account';
             );
             if (response.ok) {
                 localStorage.removeItem('authToken');
-                window.location.href = '/account/login';
+                location.href = '/account/login';
             }
         } catch (error) {
             console.error('Logout failed:', error);

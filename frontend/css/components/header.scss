@@ -95,7 +95,7 @@
     border-radius: 20px;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 500px) {
     :host {
         .title {
             display: none;
@@ -111,7 +111,7 @@
     }
 }
 
-@media (max-width: 380px) {
+@media (max-width: 395px) {
     :host {
         margin-top: 0 !important;
         margin-left: 0 !important;

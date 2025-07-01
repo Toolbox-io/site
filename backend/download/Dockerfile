@@ -3,7 +3,7 @@
 #
 
 # 1. Base image and workdir
-FROM ubuntu:24.04
+FROM ubuntu:24.04 AS runtime
 WORKDIR /root
 
 # 2. Install Python & venv

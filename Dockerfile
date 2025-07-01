@@ -47,7 +47,6 @@ RUN npm run build && \
 
 # 3. Runtime
 FROM ubuntu:24.04 AS runtime
-LABEL authors="denis0001-dev"
 
 # 3.1. Install runtime dependencies (preserve cache for reuse)
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -66,21 +65,18 @@ COPY --from=frontend /root/site/frontend /root/site/frontend
 # 4. Final command
 # 4.1. Environment variables
 ARG SECRET_KEY
+ARG DB_PASSWORD
 ARG DB_HOST=localhost
 ARG DB_PORT=3306
 ARG DB_NAME=toolbox_db
 ARG DB_USER=toolbox_user
-ARG DB_PASSWORD
-ARG HOST=0.0.0.0
-ARG PORT=8000
+
 ENV SECRET_KEY=$SECRET_KEY
 ENV DB_HOST=$DB_HOST
 ENV DB_PORT=$DB_PORT
 ENV DB_NAME=$DB_NAME
 ENV DB_USER=$DB_USER
 ENV DB_PASSWORD=$DB_PASSWORD
-ENV HOST=$HOST
-ENV PORT=$PORT
 
 # 4.2. Workdir and ports
 WORKDIR /root/site/backend/main

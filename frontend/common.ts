@@ -8,12 +8,6 @@ import xml from '/node_modules/@highlightjs/cdn-assets/es/languages/xml.min.js';
 (window as any).marked = marked;
 (window as any).hljs = hljs;
 
-// noinspection JSUnusedLocalSymbols,ES6ConvertVarToLetConst,JSUnusedGlobalSymbols
-export var exports = {};
-
-export const token = "gi" + "thu" + "b_p" + "at_11BPW3Z" + "7Y0M847x0i" + "90jER_DKs" +
-    "vP8tQQwkRCvQd" + "0MCf7hc5" + "K9QVvtF" + "8eoI5eM9Drg" + "oVWG5FHXPIsg4HeMh"
-
 export namespace Utils {
     import TioHeader = Components.TioHeader;
     import _query = Utils.query;
@@ -38,14 +32,14 @@ export namespace Utils {
     }
 
     export function getElementY(query: string): number {
-        return window.scrollY + _query(query).getBoundingClientRect().top;
+        return scrollY + _query(query).getBoundingClientRect().top;
     }
 
     export function smoothScroll(element: string, duration: number): void {
-        const startingY = window.scrollY;
+        const startingY = scrollY;
         const elementY = getElementY(element);
         // If element is close to page's bottom then window will scroll only to some position above the element.
-        const targetY = document.body.scrollHeight - elementY < window.innerHeight ? document.body.scrollHeight - window.innerHeight : elementY;
+        const targetY = document.body.scrollHeight - elementY < innerHeight ? document.body.scrollHeight - innerHeight : elementY;
         const diff = targetY - startingY;
         // Easing function: easeInOutCubic
         // From: https://gist.github.com/gre/1650294
@@ -57,7 +51,7 @@ export namespace Utils {
         if (!diff) return;
 
         // Bootstrap our animation - it will get called right before next frame shall be rendered.
-        window.requestAnimationFrame(function step(timestamp) {
+        requestAnimationFrame(function step(timestamp) {
             if (!start) start = timestamp;
             // Elapsed miliseconds since start of scrolling.
             const time = timestamp - start;
@@ -67,11 +61,11 @@ export namespace Utils {
             // It can cause bad-looking slow frames in browser performance tool, so be careful.
             percent = easing(percent);
 
-            window.scrollTo(0, startingY + diff * percent);
+            scrollTo(0, startingY + diff * percent);
 
             // Proceed with animation as long as we wanted it to.
             if (time < duration) {
-                window.requestAnimationFrame(step);
+                requestAnimationFrame(step);
             }
         });
     }
@@ -170,7 +164,7 @@ export namespace Utils {
     }
 
     export function changeUrl(newUrl: string) {
-        window.history.pushState({}, "", newUrl);
+        history.pushState({}, "", newUrl);
     }
 
     export function id(id: string) {
@@ -441,7 +435,7 @@ export namespace Components {
     enableHover();
 })();
 
-window.addEventListener("load", async () => {
+addEventListener("load", async () => {
     document.body.classList.add("loaded");
     await Utils.delay(500);
     document.body.classList.add("full_loaded");

@@ -74,3 +74,10 @@ body > .wrapper {
         opacity: 1;
     }
 }
+
+@media (max-width: 1000px) {
+    #guide_wrapper {
+        margin-left: 16px;
+        margin-right: 16px;
+    }
+}

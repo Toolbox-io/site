@@ -70,6 +70,8 @@ await (async () => {
     setUpTabs();
     sizeElements();
 
+    addEventListener("resize", sizeElements);
+
     const guides = document.getElementById("guides_list") as HTMLDivElement;
 
     document.getElementById("guide_back")!!.addEventListener("click", async () => {
@@ -78,8 +80,8 @@ await (async () => {
         changeUrl("/guides");
     });
 
-    window.addEventListener("popstate", async () => {
-        const urlParams = new URLSearchParams(window.location.search);
+    addEventListener("popstate", async () => {
+        const urlParams = new URLSearchParams(location.search);
         const selectedGuide = urlParams.get('guide');
         if (selectedGuide !== null) {
             try {
@@ -120,7 +122,7 @@ await (async () => {
     }
 
     // Load the guide
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(location.search);
     const selectedGuide = urlParams.get('guide');
     if (selectedGuide !== null) {
         try {

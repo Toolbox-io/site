@@ -9,7 +9,7 @@ import TioInput = Components.TioInput;
     const confirmPassword = id("confirm-password") as TioInput;
     const message = id("reset-password-message");
 
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(location.search);
     const token = urlParams.get('token') || '';
 
     if (

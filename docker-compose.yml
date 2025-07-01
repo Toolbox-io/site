@@ -26,8 +26,6 @@ services:
       DB_NAME: toolbox_db
       DB_USER: toolbox_user
       DB_PASSWORD: ${DB_PASSWORD}
-      HOST: 0.0.0.0
-      PORT: 8000
       DEBUG: ${DEBUG:-false}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
     volumes:
