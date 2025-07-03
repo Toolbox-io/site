@@ -37,8 +37,7 @@ interface ApiResponse<T = any> {
     data?: T;
     error?: string;
     message?: string;
-    access_token?: string;
-    token_type?: string;
+    access_token?: string
 }
 
 type PageType = 'login' | 'register' | 'account';

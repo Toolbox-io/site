@@ -78,6 +78,9 @@ async def serve_files(path: str, request: Request):
 
 @app.exception_handler(StarletteHTTPException)
 async def http_exception(request: Request, exc: StarletteHTTPException):
+    if request.headers.get("content-type") == "application/json":
+        return await http_exception_handler(request, exc)
+
     path = CONTENT_PATH / "error" / f"{exc.status_code}.html"
     if path and path.exists():
         return FileResponse(path=path, status_code=exc.status_code)
