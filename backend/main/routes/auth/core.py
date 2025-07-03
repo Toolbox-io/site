@@ -130,7 +130,7 @@ def login(request: Request, user_credentials: UserLogin, db: Session = Depends(g
         )
 
         logger.info(f"Login successful for user: {user.username} (ID: {user.id})")
-        return {"access_token": access_token, "token_type": "bearer"}
+        return {"access_token": access_token}
 
     except HTTPException:
         raise
