@@ -78,8 +78,6 @@ def delete_account(
             detail="Failed to delete account"
         )
 
-router = APIRouter()
-
 @router.get("/verify")
 @limiter.limit("1/minute")
 async def verify_email(request: Request, token: str):
