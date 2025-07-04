@@ -5,7 +5,6 @@ import id = Utils.id;
 
 (() => {
     const codeInput = id("register-code") as CodeInputRow;
-    const submitBtn = id('verify-submit-btn') as HTMLButtonElement;
     const resendBtn = id('resend-btn') as HTMLButtonElement;
     const message = id('verify-message');
 
@@ -17,7 +16,6 @@ import id = Utils.id;
             return;
         }
         message.textContent = '';
-        submitBtn.disabled = true;
         try {
             const res = await fetch(`/api/auth/verify?code=${code}`);
             if (res.ok) {
@@ -35,8 +33,6 @@ import id = Utils.id;
             message.style.color = '#e74c3c';
             message.textContent = 'Неизвестная ошибка';
             await codeInput.animateError();
-        } finally {
-            submitBtn.disabled = false;
         }
     });
 
