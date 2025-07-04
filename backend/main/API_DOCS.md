@@ -177,9 +177,6 @@ All `/api/auth/*` endpoints are under the `/api/auth` prefix.
 
 ## Guides Endpoints
 
-### GET `/guides/`
-- **Description:** Get the main guides index page (HTML).
-
 ### GET `/guides/list`
 - **Description:** List all available guides.
 - **Response:**

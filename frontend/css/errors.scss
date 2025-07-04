@@ -13,4 +13,12 @@
     mask-composite: intersect;
     /* Optional: slight blur for extra softness */
     /* filter: blur(1px); */
+
+    // TODO make it smaller on mobiles
+}
+
+@media (max-width: 800px) {
+    .error-img {
+        max-width: 100vw;
+    }
 }
