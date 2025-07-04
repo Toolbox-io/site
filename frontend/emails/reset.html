@@ -45,36 +45,26 @@
                   margin:0 0 20px 0;
                 ">
                   Вы запросили сброс пароля для вашей учетной записи Toolbox.io.<br>
-                  Чтобы установить новый пароль, нажмите на кнопку ниже:
+                  Чтобы установить новый пароль, введите этот код на сайте или в приложении:
                 </p>
 
-                <!-- Reset Button -->
-                <a href="https://beta.toolbox-io.ru/account/reset-password?token={{ TOKEN }}"
-                  style="
-                    display:inline-block;
-                    background:#404178;
-                    color:#fff;
-                    text-decoration:none;
-                    padding:12px 32px;
-                    border-radius:20px;
-                    font-family:Arial, sans-serif;
-                    font-size:1em;
-                    margin-bottom:20px;
-                  ">
-                  Сбросить пароль
-                </a>
+                <!-- 6-digit code -->
+                <div style="
+                  font-size:2.5em;
+                  font-weight:bold;
+                  color:#7a7aff;
+                  letter-spacing:0.2em;
+                  margin:20px 0 20px 0;">
+                  {{ CODE }}
+                </div>
 
-                <!-- Fallback Link -->
                 <p style="
                   color:#fff;
                   font-family:Arial, sans-serif;
                   text-align:center;
                   margin:20px 0 0 0;
                 ">
-                  Если кнопка не работает, скопируйте ссылку и вставьте в адресную строку браузера:<br>
-                  <a href="https://beta.toolbox-io.ru/account/reset-password?token={{ TOKEN }}" style="color:#7a7aff; word-break:break-all;">
-                    https://beta.toolbox-io.ru/account/reset-password?token={{ TOKEN }}
-                  </a>
+                  Если вы не запрашивали сброс пароля, просто проигнорируйте это письмо.
                 </p>
 
                 <!-- Footer -->

@@ -7,11 +7,11 @@
         <title>Register - Toolbox.io</title>
         <link rel="icon" href="../res/favicon.svg" />
 
-        <link rel="stylesheet" href="../css/style.css" />
-        <link rel="stylesheet" href="../css/common.css" />
-        <link rel="stylesheet" href="../css/accounts/common.css" />
+        <link rel="stylesheet" href="/css/style.css" />
+        <link rel="stylesheet" href="/css/common.css" />
+        <link rel="stylesheet" href="/css/accounts/common.css" />
 
-        <script src="../lib/jquery.js"></script>
+        <script src="/lib/jquery.js"></script>
         <script type="module" src="../common.js"></script>
     </head>
     <body>
@@ -19,42 +19,52 @@
         <div class="wrapper">
             <div id="main" class="automargin">
                 <div class="auth-container">
-                    <h1>Register</h1>
+                    <h1>Зарегистрироваться</h1>
                     <div class="auth-form">
                         <div class="form-group">
-                            <div>Username</div>
-                            <tio-input type="text" id="username" name="username" label="Username" required></tio-input>
+                            <tio-input
+                                type="text"
+                                id="username"
+                                name="username"
+                                label="Имя пользователя"
+                                required>
+                            </tio-input>
                         </div>
                         <div class="form-group">
-                            <div>Email</div>
-                            <tio-input type="email" id="email" name="email" label="Email" required></tio-input>
+                            <tio-input
+                                type="email"
+                                id="email"
+                                name="email"
+                                label="Email"
+                                required>
+                            </tio-input>
                         </div>
                         <div class="form-group">
-                            <div>Password</div>
-                            <tio-input type="password" id="password" name="password" label="Password" required></tio-input>
+                            <tio-input
+                                type="password"
+                                id="password"
+                                name="password"
+                                label="Пароль"
+                                required>
+                            </tio-input>
                         </div>
                         <div class="form-group">
-                            <div>Confirm Password</div>
-                            <tio-input type="password" id="confirm-password" name="confirm-password" label="Confirm Password" required></tio-input>
+                            <tio-input
+                                type="password"
+                                id="confirm-password"
+                                name="confirm-password"
+                                label="Подтвердите пароль"
+                                required>
+                            </tio-input>
                         </div>
-                        <button id="register-btn" class="auth-button big-button">Register</button>
+                        <button id="register-btn" class="auth-button big-button">Зарегистрироваться</button>
                     </div>
                     <div class="auth-links">
-                        <a href="/account/login">Already have an account? Login</a>
-                        <a href="/">Back to Home</a>
+                        <a href="/account/login">Уже есть аккаунт? Войти</a>
                     </div>
                     <div id="error-message" class="error-message" style="display: none;"></div>
-                    <div id="verify-message" style="display:none;color:green;">Registration successful! Please check your email to verify your account.</div>
+                    <div id="verify-message" style="display:none;color:green;">Успешно зарегистрировано! Проверьте почту, там код подтверждения.</div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Email Verification Dialog -->
-        <div id="verify-dialog" class="dialog-overlay" style="display: none;">
-            <div class="dialog-content">
-                <h2>Email Verification</h2>
-                <p id="verify-dialog-message"></p>
-                <md-filled-button id="resend-btn">Resend</md-filled-button>
             </div>
         </div>
 

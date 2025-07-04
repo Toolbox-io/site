@@ -5,33 +5,31 @@
         <meta lang="en" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Request Password Reset - Toolbox.io</title>
-        <link rel="icon" href="../res/favicon.svg" />
+        <link rel="icon" href="/res/favicon.svg" />
 
-        <link rel="stylesheet" href="../css/style.css" />
-        <link rel="stylesheet" href="../css/common.css" />
-        <link rel="stylesheet" href="../css/accounts/common.css" />
-        <link rel="stylesheet" href="../css/accounts/request-reset.css" />
+        <link rel="stylesheet" href="/css/style.css" />
+        <link rel="stylesheet" href="/css/common.css" />
+        <link rel="stylesheet" href="/css/accounts/common.css" />
+        <link rel="stylesheet" href="/css/accounts/request-reset.css" />
 
-        <script src="../lib/jquery.js"></script>
-        <script type="module" src="../common.js"></script>
+        <script src="/lib/jquery.js"></script>
+        <script type="module" src="/common.js"></script>
     </head>
     <body>
         <tio-header class="top" tab="0"></tio-header>
         <div class="wrapper">
             <div id="main" class="automargin">
                 <div class="auth-container">
-                    <h1>Request Password Reset</h1>
+                    <h1>Сбросить пароль</h1>
                     <div class="auth-form">
                         <div class="form-group">
-                            <div>Email</div>
                             <tio-input id="email" type="email" label="Email" required></tio-input>
                         </div>
-                        <button id="submit" class="auth-button big-button">Send Reset Link</button>
+                        <button id="submit" class="auth-button big-button">Отправить ссылку</button>
                     </div>
                     <div id="reset-request-message" class="form-message"></div>
                     <div class="auth-links">
-                        <a href="/account/login">Back to Login</a>
-                        <a href="/">Back to Home</a>
+                        <a href="/account/login">Назад</a>
                     </div>
                 </div>
             </div>

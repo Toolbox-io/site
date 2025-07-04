@@ -1,6 +1,7 @@
 import datetime
 import logging
 import uuid
+import random
 
 from fastapi import APIRouter, Depends, HTTPException, status, Body
 from sqlalchemy.orm import Session
@@ -74,20 +75,19 @@ def delete_account(
 
 @router.get("/verify")
 @limiter.limit("1/minute")
-async def verify_email(request: Request, token: str):
+async def verify_email(request: Request, code: str):
     db = get_session_factory()()
-    user = db.query(User).filter(User.verification_token == token).first()
+    user = db.query(User).filter(User.verification_code == code).first()
     if not user:
-        raise HTTPException(status_code=400, detail="Invalid or expired token")
+        raise HTTPException(status_code=400, detail="Invalid or expired code")
     user.is_verified = True
-    user.verification_token = None
+    user.verification_code = None
     db.commit()
     return RedirectResponse(url="/account/login?verified=true")
 
 @router.post("/request-reset")
 @limiter.limit("1/minute")
 async def request_reset(request: Request, data: dict = Body(...)):
-    print(data)
     email = data.get("email")
     if not isinstance(email, str):
         raise HTTPException(status_code=400, detail="Invalid email format")
@@ -95,11 +95,11 @@ async def request_reset(request: Request, data: dict = Body(...)):
     user = db.query(User).filter(User.email == email).first()
     if not user:
         return {"success": True}  # Don't reveal if email exists
-    token = str(uuid.uuid4())
-    user.reset_token = token
+    code = str(random.randint(1, 999999)).zfill(6)
+    user.reset_code = code
     user.reset_token_expiry = datetime.datetime.now() + datetime.timedelta(hours=1)
     db.commit()
-    html_body = render_email(CONTENT_PATH / "emails" / "reset.html", TOKEN=token)
+    html_body = render_email(CONTENT_PATH / "emails" / "reset.html", CODE=code)
     send_mail(
         email,
         "Сброс пароля",
@@ -109,38 +109,32 @@ async def request_reset(request: Request, data: dict = Body(...)):
     return {"success": True}
 
 @router.get("/check-reset")
-def check_reset_token(
+def check_reset_code(
     data: dict = Body(...)
 ):
     db = get_session_factory()()
-
-    token: str | None = data.get("token")
-    user: User | None = db.query(User).filter(User.reset_token == token).first()
-
+    code: str | None = data.get("code")
+    user: User | None = db.query(User).filter(User.reset_code == code).first()
     if not user or user.reset_token_expiry < datetime.datetime.now():
-        raise HTTPException(status_code=400, detail="Invalid token")
-
+        raise HTTPException(status_code=400, detail="Invalid code")
     return {"success": True}
 
 @router.post("/reset-password")
 @limiter.limit("1/minute")
 async def reset_password(request: Request, data: dict = Body(...)):
-    token: str | None = data.get("token")
+    code: str | None = data.get("code")
     new_password: str | None = data.get("new_password")
     db = get_session_factory()()
-    user: User | None = db.query(User).filter(User.reset_token == token).first()
-
+    user: User | None = db.query(User).filter(User.reset_code == code).first()
     if not user or user.reset_token_expiry < datetime.datetime.now():
-        logger.warning(f"Reset password failed for {token}")
-        raise HTTPException(status_code=400, detail="Invalid or expired token")
-
+        logger.warning(f"Reset password failed for {code}")
+        raise HTTPException(status_code=400, detail="Invalid or expired code")
     valresult = validate_password(new_password)
     if not valresult[0]:
-        logger.warning(f"Password is too weak. {token}")
+        logger.warning(f"Password is too weak. {code}")
         raise HTTPException(status_code=400, detail=valresult[1])
-
     user.hashed_password = hash_password(new_password)
-    user.reset_token = None
+    user.reset_code = None
     user.reset_token_expiry = None
     db.commit()
     return {"success": True}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Email Verification - Toolbox.io</title>
+        <link rel="icon" href="/res/favicon.svg" />
+        <link rel="stylesheet" href="/css/style.css" />
+        <link rel="stylesheet" href="/css/common.css" />
+        <link rel="stylesheet" href="/css/accounts/common.css" />
+        <link rel="stylesheet" href="/css/accounts/register-code.css" />
+    </head>
+    <body>
+        <tio-header class="top" tab="0"></tio-header>
+        <div class="wrapper">
+            <div id="main" class="automargin">
+                <div class="auth-container">
+                    <h1>Подтверждение Email</h1>
+                    <p>Введите 6-значный код, отправленный на ваш email.</p>
+                    <div id="code-input-row">
+                        <code-input-row id="register-code"></code-input-row>
+                    </div>
+                    <div class="register-code-btn-row">
+                        <md-filled-button id="resend-btn">Отправить еще раз</md-filled-button>
+                    </div>
+                    <div id="verify-message"></div>
+                </div>
+            </div>
+        </div>
+        <script type="module" src="register-code.js"></script>
+    </body>
+</html>

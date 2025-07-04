@@ -1,0 +1,38 @@
+@import "../common/colors";
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-8px); }
+    80% { transform: translateX(8px); }
+    100% { transform: translateX(0); }
+}
+
+.shake {
+    animation: shake 0.4s;
+}
+
+// Styles for the register code entry screen
+#code-input-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 16px;
+
+    tio-input {
+        width: 2em;
+        text-align: center;
+    }
+}
+
+.register-code-btn-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+#verify-message {
+    margin-top: 12px;
+    text-align: center;
+}

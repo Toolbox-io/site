@@ -81,8 +81,8 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     is_verified = Column(Boolean, default=False)
-    verification_token = Column(String(128), nullable=True)
-    reset_token = Column(String(128), nullable=True)
+    verification_code = Column(String(6), nullable=True)
+    reset_code = Column(String(6), nullable=True)
     reset_token_expiry = Column(DateTime, nullable=True) 
 
 class BlacklistedToken(Base):

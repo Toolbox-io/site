@@ -3,6 +3,7 @@ import os
 import uuid
 from datetime import datetime, timedelta
 from typing import Optional
+import random
 
 import bcrypt
 from fastapi import HTTPException, status, Depends
@@ -211,10 +212,10 @@ def authenticate_user(db: Session, username: str, password: str) -> Optional[Use
         return None
 
 def send_verify_email(user: User, db: Session):
-    verification_token = str(uuid.uuid4())
-    user.verification_token = verification_token
+    code = str(random.randint(1, 999999)).zfill(6)
+    user.verification_code = code
     db.commit()
-    html_body = render_email(CONTENT_PATH / "emails" / "verify.html", TOKEN=verification_token)
+    html_body = render_email(CONTENT_PATH / "emails" / "verify.html", CODE=code)
     send_mail(
         user.email,
         "Подтвертите ваш email",

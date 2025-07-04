@@ -393,10 +393,99 @@ export namespace Components {
         set value(val: string) { this.input.value = val; }
     }
 
+    export class CodeInputRow extends HTMLElement {
+        private inputs: HTMLInputElement[];
+        constructor() {
+            super();
+            const shadow = this.attachShadow({mode: "open"});
+            shadow.innerHTML = `
+                <style>@import url(/css/components/code-input.css);</style>
+                <div class="code-input-row">
+                    <input class="code-digit-input" id="code-0" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" />
+                    <input class="code-digit-input" id="code-1" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" />
+                    <input class="code-digit-input" id="code-2" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" />
+                    <input class="code-digit-input" id="code-3" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" />
+                    <input class="code-digit-input" id="code-4" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" />
+                    <input class="code-digit-input" id="code-5" type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" />
+                </div>
+            `;
+            this.inputs = Array.from(shadow.querySelectorAll('input')) as HTMLInputElement[];
+            this.inputs.forEach((input, idx) => {
+                input.addEventListener('input', () => {
+                    // Only allow one digit, and only 0-9
+                    let v = input.value.replace(/[^0-9]/g, '');
+                    if (v.length > 1) v = v[0];
+                    input.value = v;
+                    if (v && idx < 5) this.inputs[idx+1].focus();
+                    // Autosubmit: fire 'complete' event when all 6 digits are filled
+                    if (this.value.length === 6 && /^[0-9]{6}$/.test(this.value)) {
+                        this.dispatchEvent(new CustomEvent('complete', {bubbles: true, composed: true}));
+                    }
+                });
+                input.addEventListener('keydown', (e: KeyboardEvent) => {
+                    if (e.key === 'Backspace') {
+                        if (!input.value && idx > 0) {
+                            this.inputs[idx-1].focus();
+                        } else {
+                            input.value = '';
+                        }
+                    }
+                });
+                input.addEventListener('paste', (e: ClipboardEvent) => {
+                    const data = e.clipboardData?.getData('text') || '';
+                    if (/^[0-9]{6}$/.test(data)) {
+                        e.preventDefault();
+                        for (let i = 0; i < 6; ++i) {
+                            this.inputs[i].value = data[i];
+                        }
+                        this.inputs[5].focus();
+                        this.dispatchEvent(new CustomEvent('complete', {bubbles: true, composed: true}));
+                    }
+                });
+            });
+        }
+        connectedCallback() {
+            // Autofocus the first input when the component is added to the DOM
+            setTimeout(() => this.inputs[0].focus(), 0);
+        }
+        get value() {
+            return this.inputs.map(input => input.value).join('');
+        }
+        set value(val: string) {
+            for (let i = 0; i < 6; ++i) {
+                this.inputs[i].value = val[i] || '';
+            }
+        }
+        private setColor(color: string) {
+            this.inputs.forEach(input => {
+                (input as HTMLElement).style.backgroundColor = color;
+                (input as HTMLElement).style.transition = 'background 0.3s';
+            });
+        }
+        private shake() {
+            const row = this.shadowRoot!.querySelector('.code-input-row')! as HTMLElement;
+            row.classList.remove('shake');
+            void row.offsetWidth;
+            row.classList.add('shake');
+        }
+        async animateSuccess() {
+            this.setColor('#99ff99');
+            await new Promise(r => setTimeout(r, 900));
+            this.setColor('');
+        }
+        async animateError() {
+            this.setColor('#ff5757');
+            this.shake();
+            await new Promise(r => setTimeout(r, 400));
+            this.setColor('');
+        }
+    }
+
     if (!_applied) {
         customElements.define("tio-header", TioHeader);
         customElements.define("tio-footer", TioFooter);
         customElements.define("tio-input", TioInput);
+        customElements.define("code-input-row", CodeInputRow);
         _applied = true
     }
 }

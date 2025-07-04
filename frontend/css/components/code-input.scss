@@ -1,0 +1,40 @@
+@import "../common/colors";
+
+.code-input-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 16px;
+}
+
+.code-input-row tio-input,
+.code-digit-input {
+    width: 1.3em;
+    height: 1.6em;
+    font-size: 1.5em;
+    text-align: center;
+    border: 2px solid $color-outline;
+    border-radius: 6px;
+    margin: 0 2px;
+    outline: none;
+    transition: border 0.25s;
+    background-color: inherit;
+
+    &:focus {
+        border: 2px solid $color-primary;
+        box-shadow: 0 0 2px #7a7aff44;
+    }
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-8px); }
+    80% { transform: translateX(8px); }
+    100% { transform: translateX(0); }
+}
+
+.shake {
+    animation: shake 0.4s;
+} 

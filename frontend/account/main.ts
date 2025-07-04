@@ -101,10 +101,10 @@ type PageType = 'login' | 'register' | 'account';
                     localStorage.setItem('authToken', data.access_token || '');
                     location.href = '/account';
                 } else {
-                    showError(errorMessage, data.error || 'Login failed');
+                    showError(errorMessage, data.error || 'Не удалось войти');
                 }
             } catch (error) {
-                showError(errorMessage, 'Network error. Please try again.');
+                showError(errorMessage, 'Неизвестная ошибка');
             }
         });
 
@@ -140,7 +140,7 @@ type PageType = 'login' | 'register' | 'account';
             const password = (id('password') as HTMLInputElement).value;
             const confirmPassword = (id('confirm-password') as HTMLInputElement).value;
             if (password !== confirmPassword) {
-                showError(errorMessage, 'Passwords do not match');
+                showError(errorMessage, 'Пароли не совпадают');
                 return;
             }
             const registerData: RegisterData = { username, email, password };
@@ -152,40 +152,13 @@ type PageType = 'login' | 'register' | 'account';
                 });
                 const data: ApiResponse = await response.json();
                 if (response.ok) {
-                    await showVerifyDialog(email);
+                    location.href = `/account/register-code.html?email=${encodeURIComponent(email)}`;
                 } else {
-                    showError(errorMessage, data.error || 'Registration failed');
+                    showError(errorMessage, data.error || 'Не удалось зарегистрироваться');
                 }
             } catch (error) {
-                showError(errorMessage, 'Network error. Please try again.');
+                showError(errorMessage, 'Неизвестная ошибка');
             }
-        });
-    }
-
-    async function showVerifyDialog(email: string) {
-        const dialog = id('verify-dialog')!;
-        const message = id('verify-dialog-message')!;
-        const resendBtn = id('resend-btn')!;
-
-        message.textContent = `Please check your email ${email} for a verification link.`;
-
-        if (dialog) {
-            dialog.style.display = 'flex';
-            await delay(1);
-            dialog.style.opacity = '1';
-        }
-
-        resendBtn.addEventListener("click", async () => {
-            resendBtn.setAttribute('disabled', 'true');
-            resendBtn.textContent = 'Sending...';
-            await fetch('/api/auth/verify-email', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email })
-            });
-            resendBtn.textContent = 'Resend';
-            resendBtn.removeAttribute('disabled');
-            // Optionally show a toast or update the dialog to say "Sent!"
         });
     }
 
@@ -252,7 +225,7 @@ type PageType = 'login' | 'register' | 'account';
             console.error('Failed to load user info:', error);
             showError(
                 id('error-message'),
-                'Failed to load account information'
+                'Не удалось загрузить информацию об аккаунте'
             );
         }
     }
@@ -381,23 +354,23 @@ type PageType = 'login' | 'register' | 'account';
         const submitButton = id('change-password-btn') as HTMLButtonElement;
 
         if (!currentPassword || !newPassword || !confirmPassword) {
-            await showDialogError(dialogError, 'All fields are required');
+            await showDialogError(dialogError, 'Заполните все поля');
             return;
         }
 
         if (newPassword !== confirmPassword) {
-            await showDialogError(dialogError, 'New passwords do not match');
+            await showDialogError(dialogError, 'Пароли не совпадают');
             return;
         }
 
         if (newPassword.length < 6) {
-            await showDialogError(dialogError, 'New password must be at least 6 characters long');
+            await showDialogError(dialogError, 'Пароль должен быть как минимум 8 символов длины');
             return;
         }
 
         if (submitButton) {
             submitButton.disabled = true;
-            submitButton.textContent = 'Changing...';
+            submitButton.textContent = 'Изменение...';
         }
 
         try {
@@ -419,19 +392,19 @@ type PageType = 'login' | 'register' | 'account';
             const data: ApiResponse = await response.json();
 
             if (response.ok) {
-                await showDialogError(dialogError, 'Password changed successfully!', 'success');
+                await showDialogError(dialogError, 'Пароль изменен успешно!', 'success');
                 setTimeout(() => {
                     closePasswordDialog();
                 }, 2000);
             } else {
-                await showDialogError(dialogError, data.error || 'Failed to change password');
+                await showDialogError(dialogError, data.error || 'Не удалось сменить пароль');
             }
         } catch (error) {
-            await showDialogError(dialogError, 'Network error. Please try again.');
+            await showDialogError(dialogError, 'Неизвестная ошибка');
         } finally {
             if (submitButton) {
                 submitButton.disabled = false;
-                submitButton.textContent = 'Change Password';
+                submitButton.textContent = 'Сменить пароль';
             }
         }
     }

@@ -7,11 +7,11 @@
         <title>Login - Toolbox.io</title>
         <link rel="icon" href="../res/favicon.svg" />
 
-        <link rel="stylesheet" href="../css/style.css" />
-        <link rel="stylesheet" href="../css/common.css" />
-        <link rel="stylesheet" href="../css/accounts/common.css" />
+        <link rel="stylesheet" href="/css/style.css" />
+        <link rel="stylesheet" href="/css/common.css" />
+        <link rel="stylesheet" href="/css/accounts/common.css" />
 
-        <script src="../lib/jquery.js"></script>
+        <script src="/lib/jquery.js"></script>
         <script type="module" src="../common.js"></script>
     </head>
     <body>
@@ -19,22 +19,32 @@
         <div class="wrapper">
             <div id="main" class="automargin">
                 <div class="auth-container">
-                    <h1>Login</h1>
+                    <h1>Войти</h1>
                     <div class="auth-form">
                         <div class="form-group">
-                            <div>Username</div>
-                            <tio-input type="text" id="username" name="username" label="Username" required></tio-input>
+                            <tio-input
+                                type="text"
+                                id="username"
+                                name="username"
+                                label="Имя пользователя"
+                                required>
+                            </tio-input>
                         </div>
                         <div class="form-group">
-                            <div>Password</div>
-                            <tio-input type="password" id="password" name="password" label="Password" required></tio-input>
+                            <tio-input
+                                type="password"
+                                id="password"
+                                name="password"
+                                label="Пароль"
+                                required>
+                            </tio-input>
                         </div>
-                        <button id="login-btn" class="auth-button big-button">Login</button>
+                        <button id="login-btn" class="auth-button big-button">Войти</button>
                     </div>
                     <div class="auth-links">
-                        <a href="/account/register">Don't have an account? Register</a>
-                        <a href="/">Back to Home</a>
-                        <a href="/account/request-reset.html">Forgot password?</a>
+                        <a href="/account/register">Нет аккаунта? Зарегистрироваться</a>
+                        <a href="/">Назад</a>
+                        <a href="/account/request-reset.html">Забыли пароль?</a>
                     </div>
                     <div id="error-message" class="error-message" style="display: none;"></div>
                 </div>

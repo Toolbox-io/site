@@ -7,11 +7,11 @@
         <title>Account - Toolbox.io</title>
         <link rel="icon" href="../res/favicon.svg" />
 
-        <link rel="stylesheet" href="../css/style.css" />
-        <link rel="stylesheet" href="../css/common.css" />
-        <link rel="stylesheet" href="../css/accounts/account.css" />
+        <link rel="stylesheet" href="/css/style.css" />
+        <link rel="stylesheet" href="/css/common.css" />
+        <link rel="stylesheet" href="/css/accounts/account.css" />
 
-        <script src="../lib/jquery.js"></script>
+        <script src="/lib/jquery.js"></script>
         <script type="module" src="../common.js"></script>
         <script type="module" src="main.js"></script>
     </head>
@@ -20,12 +20,12 @@
         <div class="wrapper">
             <div id="main" class="automargin">
                 <div class="account-container">
-                    <h1>Account</h1>
+                    <h1>Аккаунт</h1>
                     
                     <div id="user-info" class="user-info" style="display: none;">
                         <div class="infocard">
                             <div class="info-group">
-                                <div>Username:</div>
+                                <div>Имя пользователя:</div>
                                 <span id="username-display"></span>
                             </div>
                             <div class="info-group">
@@ -33,16 +33,16 @@
                                 <span id="email-display"></span>
                             </div>
                             <div class="info-group">
-                                <div>Member since:</div>
+                                <div>Создан:</div>
                                 <span id="created-at-display"></span>
                             </div>
                         </div>
 
-                        <button id="change-password-btn" class="account-button big-button">Change Password</button>
-                        <button id="logout-btn" class="account-button big-button secondary">Logout</button>
+                        <button id="change-password-btn" class="account-button big-button">Сменить пароль</button>
+                        <button id="logout-btn" class="account-button big-button secondary">Выйти</button>
                     </div>
                     
-                    <div id="loading" class="loading">Loading account information...</div>
+                    <div id="loading" class="loading">Загрузка...</div>
                     <div id="error-message" class="error-message" style="display: none;"></div>
                 </div>
             </div>
@@ -51,23 +51,39 @@
         <!-- Password Change Dialog -->
         <div id="password-dialog" class="dialog-overlay" style="display: none;">
             <div class="dialog-content">
-                <h2>Change Password</h2>
+                <h2>Сменить пароль</h2>
                 <div class="auth-form">
                     <div class="form-group">
-                        <div>Current Password</div>
-                        <tio-input type="password" id="current-password" name="current-password" label="Current Password" required></tio-input>
+                        <tio-input
+                            type="password"
+                            id="current-password"
+                            name="current-password"
+                            label="Текущий пароль"
+                            required>
+                        </tio-input>
                     </div>
                     <div class="form-group">
-                        <div>New Password</div>
-                        <tio-input type="password" id="new-password" name="new-password" label="New Password" required></tio-input>
+                        <tio-input
+                            type="password"
+                            id="new-password"
+                            name="new-password"
+                            label="Новый пароль"
+                            required>
+                        </tio-input>
                     </div>
                     <div class="form-group">
                         <div>Confirm New Password</div>
-                        <tio-input type="password" id="confirm-password" name="confirm-password" label="Confirm New Password" required></tio-input>
+                        <tio-input
+                            type="password"
+                            id="confirm-password"
+                            name="confirm-password"
+                            label="Подтвердите пароль"
+                            required>
+                        </tio-input>
                     </div>
                     <div class="dialog-buttons">
-                        <button type="button" id="cancel-btn" class="dialog-button big-button secondary">Cancel</button>
-                        <button id="change-password-btn2" class="dialog-button big-button">Change Password</button>
+                        <button type="button" id="cancel-btn" class="dialog-button big-button secondary">Отменить</button>
+                        <button id="change-password-btn2" class="dialog-button big-button">Сменить пароль</button>
                     </div>
                 </div>
                 <div id="dialog-error" class="error-message"></div>

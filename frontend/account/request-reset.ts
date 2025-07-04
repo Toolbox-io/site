@@ -12,6 +12,12 @@ import TioInput = Components.TioInput;
             body: JSON.stringify({ email: email })
         });
         const data = await res.json();
-        id('reset-request-message')!.textContent = data.success ? 'Check your email for a reset link.' : 'Error sending reset link.';
+        id('reset-request-message')!.textContent =
+            data.success ?
+                'Проверьте ваш email, там код сброса' :
+                'Ошибка при отправке кода.';
+        if (data.success) {
+            open("/reset-password");
+        }
     });
 })();
