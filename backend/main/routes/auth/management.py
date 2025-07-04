@@ -1,6 +1,5 @@
 import datetime
 import logging
-import uuid
 import random
 
 from fastapi import APIRouter, Depends, HTTPException, status, Body
@@ -73,17 +72,27 @@ def delete_account(
             detail="Failed to delete account"
         )
 
-@router.get("/verify")
-@limiter.limit("1/minute")
-async def verify_email(request: Request, code: str):
+def verify_email_code(code: str) -> bool:
     db = get_session_factory()()
     user = db.query(User).filter(User.verification_code == code).first()
     if not user:
-        raise HTTPException(status_code=400, detail="Invalid or expired code")
+        return False
     user.is_verified = True
     user.verification_code = None
     db.commit()
-    return RedirectResponse(url="/account/login?verified=true")
+
+    return True
+
+@router.get("/verify")
+@router.post("/verify")
+@limiter.limit("1/minute")
+async def verify_email(request: Request, code: str):
+    if not verify_email_code(code):
+        raise HTTPException(status_code=404, detail="Invalid or expired code")
+    if request.method == "POST":
+        return {"success": True}
+    else:
+        return RedirectResponse(url="/account/login?verified=true")
 
 @router.post("/request-reset")
 @limiter.limit("1/minute")

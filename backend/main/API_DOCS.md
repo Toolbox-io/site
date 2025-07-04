@@ -137,12 +137,15 @@ All `/api/auth/*` endpoints are under the `/api/auth` prefix.
 
 ---
 
-### GET `/api/auth/verify`
+### GET/POST `/api/auth/verify`
 - **Description:** Verify email using a token (from email link).
 - **Query Parameter:**
   `?token=...`
 - **Response:**
-  Redirects to `/account/login?verified=true` on success.
+
+  If method is `POST`: `{"success": true}` on success.
+  
+  If method is `GET`: Redirects to `/account/login?verified=true` on success.
 
 ---
 
