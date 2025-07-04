@@ -49,12 +49,6 @@ def change_password(
 
     except HTTPException:
         raise
-    except Exception as e:
-        logger.error(f"Unexpected error during password change: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error during password change"
-        )
 
 @router.delete("/delete-account")
 def delete_account(
@@ -108,7 +102,7 @@ async def request_reset(request: Request, data: dict = Body(...)):
     html_body = render_email(CONTENT_PATH / "emails" / "reset.html", TOKEN=token)
     send_mail(
         email,
-        "Сброс пароля Toolbox.io",
+        "Сброс пароля",
         html_body,
         html=True
     )

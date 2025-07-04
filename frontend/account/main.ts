@@ -178,7 +178,7 @@ type PageType = 'login' | 'register' | 'account';
         resendBtn.addEventListener("click", async () => {
             resendBtn.setAttribute('disabled', 'true');
             resendBtn.textContent = 'Sending...';
-            await fetch('/verify-email', {
+            await fetch('/api/auth/verify-email', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })

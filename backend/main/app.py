@@ -38,7 +38,7 @@ app.add_middleware(
 # Routes
 app.include_router(auth.core.api_router, prefix="/api/auth")
 app.include_router(auth.core.router)
-app.include_router(auth.management.router)
+app.include_router(auth.management.router, prefix="/api/auth")
 app.include_router(core.router)
 app.include_router(guides.router)
 app.include_router(utils.router)

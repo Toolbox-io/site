@@ -15,7 +15,7 @@ import TioInput = Components.TioInput;
     if (
         !(
             await fetch(
-                "/check-reset",
+                "/api/auth/check-reset",
                 {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' },
@@ -35,7 +35,7 @@ import TioInput = Components.TioInput;
             return;
         }
 
-        const res = await fetch('/reset-password', {
+        const res = await fetch('/api/auth/reset-password', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(
