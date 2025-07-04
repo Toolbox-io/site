@@ -35,14 +35,20 @@ async def guides(): return FileResponse(CONTENT_PATH / "guides/index.html")
 @router.get("/guides/{guide}/raw")
 async def guides_raw(guide: str, request: Request):
     """Serve the raw guide template for a given guide name (with or without .md)."""
-    if not guide.lower().endswith(".md"):
-        guide += ".md"
-    md_path = GUIDES_PATH / guide
-    if not md_path.is_file():
+    guide_stem = guide
+    if guide_stem.lower().endswith(".md"):
+        guide_stem = guide_stem[:-3]
+    # Case-insensitive search for the file
+    found = None
+    for f in GUIDES_PATH.glob("*.md"):
+        if f.stem.lower() == guide_stem.lower():
+            found = f
+            break
+    if not found or not found.is_file():
         raise HTTPException(status_code=404, detail="Guide not found")
     return templates.TemplateResponse(
         "raw_guide.html",
-        {"request": request, "guide": f"guides/{Path(guide).stem}.md"}
+        {"request": request, "guide": f"/guides/{found.stem}.md"}
     )
 
 @router.get("/guides/list")
