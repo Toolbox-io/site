@@ -47,6 +47,21 @@ services:
         - action: rebuild
           path: ./frontend/package.json
 
+  vite:
+    build:
+      dockerfile: frontend/vite/Dockerfile
+      context: .
+    container_name: vite
+    restart: always
+    ports:
+      - "8002:8002"
+    volumes:
+      - site_node_modules:/root/site/frontend/node_modules
+    depends_on:
+      - main
+    profiles:
+      - "dev"
+
   download:
     build:
       context: .

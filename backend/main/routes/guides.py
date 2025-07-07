@@ -32,7 +32,7 @@ def parse_guide_header(md_path: Path) -> dict:
 @router.get("/guides/")
 async def guides(): return FileResponse(CONTENT_PATH / "guides/index.html")
 
-@router.get("/guides/{guide}/raw")
+@router.get("/api/guides/{guide}/raw")
 async def guides_raw(guide: str, request: Request):
     """Serve the raw guide template for a given guide name (with or without .md)."""
     guide_stem = guide

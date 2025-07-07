@@ -36,7 +36,7 @@ RUN npm install -g autoprefixer sass postcss-cli typescript terser html-minifier
 # 2.2. Install local dependencies
 COPY frontend /root/site/frontend
 WORKDIR /root/site/frontend
-RUN npm install
+RUN npm install --include=dev --dev
 
 # 2.3. Prepare the server content
 RUN npm run build && \

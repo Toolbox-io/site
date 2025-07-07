@@ -3,7 +3,7 @@ import React from 'react';
 export default function App() {
     return (
         <>
-            <tio-header className="top" tab="0"></tio-header>
+            {/*<tio-header className="top" tab="0"></tio-header>*/}
             <div className="wrapper">
                 <div id="main" className="automargin">
                     <h1 id="headline">Все нужное — в одном приложении</h1>
@@ -18,7 +18,7 @@ export default function App() {
                             <div className="feature-header">
                                 <span className="material-symbols outlined feature-icon">phonelink_lock</span>
                                 <div className="feature-title">Блокировка приложений</div>
-                                <md-icon-button className="feature-close">close</md-icon-button>
+                                {/* <md-icon-button className="feature-close">close</md-icon-button> */}
                             </div>
                             <div className="feature-description">
                                 Защищает ваши приложения от несанкционированного доступа, показывая злоумышленнику
@@ -59,7 +59,7 @@ export default function App() {
                             <div className="feature-header">
                                 <span className="material-symbols filled feature-icon">lock</span>
                                 <div className="feature-title">Защита блокировки</div>
-                                <md-icon-button className="feature-close">close</md-icon-button>
+                                {/* <md-icon-button className="feature-close">close</md-icon-button> */}
                             </div>
                             <div className="feature-description">
                                 Выполняет действия, если кто-то много раз попытался разблокировать ваш телефон.
@@ -102,7 +102,7 @@ export default function App() {
                             <div className="feature-header">
                                 <span className="material-symbols filled feature-icon">do_not_touch</span>
                                 <div className="feature-title">Не трогайте мой телефон</div>
-                                <md-icon-button className="feature-close">close</md-icon-button>
+                                {/* <md-icon-button className="feature-close">close</md-icon-button> */}
                             </div>
                             <div className="feature-description">
                                 Защитите ваш телефон от несанкционированных прикосновений!
@@ -129,7 +129,7 @@ export default function App() {
                             <div className="feature-header">
                                 <span className="material-symbols filled feature-icon">apps</span>
                                 <div className="feature-title">Плитки</div>
-                                <md-icon-button className="feature-close">close</md-icon-button>
+                                {/* <md-icon-button className="feature-close">close</md-icon-button> */}
                             </div>
                             <div className="feature-description">
                                 Полезные плитки для быстрых настроек
@@ -152,7 +152,7 @@ export default function App() {
                             <div className="feature-header">
                                 <span className="material-symbols filled feature-icon">shortcut</span>
                                 <div className="feature-title">Ярлыки</div>
-                                <md-icon-button className="feature-close">close</md-icon-button>
+                                {/* <md-icon-button className="feature-close">close</md-icon-button> */}
                             </div>
                             <div className="feature-description">
                                 Полезные ярлыки для скрытых приложений на устройстве
@@ -173,7 +173,7 @@ export default function App() {
                             <div className="feature-header">
                                 <span className="material-symbols filled feature-icon">apps</span>
                                 <div className="feature-title">Менеджер приложений</div>
-                                <md-icon-button className="feature-close">close</md-icon-button>
+                                {/* <md-icon-button className="feature-close">close</md-icon-button> */}
                             </div>
                             <div className="feature-description">
                                 Удобно управляйте вашими приложениями
@@ -213,7 +213,7 @@ export default function App() {
                             href="https://github.com/orgs/Toolbox-io/projects/1"
                             draggable="false"
                             className="noeffect">
-                            <md-filled-button id="progress_btn">Открыть проект</md-filled-button>
+                            {/* <md-filled-button id="progress_btn">Открыть проект</md-filled-button> */}
                         </a>
                     </div>
 
@@ -228,7 +228,7 @@ export default function App() {
                         <a href="https://github.com/Toolbox-io/Toolbox-io/issues/new" draggable="false">GitHub</a>.
                     </p>
                     <div className="center">
-                        <md-filled-button id="issues_btn">Открыть проблемы</md-filled-button>
+                        {/*<md-filled-button id="issues_btn">Открыть проблемы</md-filled-button>*/}
                     </div>
 
                     <h2 id="download_h1" className="h1">
@@ -243,12 +243,12 @@ export default function App() {
                     </p>
                     <div className="center topmargin">
                         <a href="/download" draggable="false" className="noeffect">
-                            <md-filled-button id="download_btn">Скачать Toolbox.io</md-filled-button>
+                            {/*<md-filled-button id="download_btn">Скачать Toolbox.io</md-filled-button>*/}
                         </a>
                     </div>
                 </div>
             </div>
-            <tio-footer></tio-footer>
+            {/*<tio-footer></tio-footer>*/}
             <div id="card_dialog" className="dialog"></div>
         </>
     )

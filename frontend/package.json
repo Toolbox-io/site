@@ -15,10 +15,17 @@
   "dependencies": {
     "@highlightjs/cdn-assets": "^11.11.1",
     "highlight.js": "^11.11.1",
-    "marked": "^16.0.0"
+    "marked": "^16.0.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
   },
   "devDependencies": {
     "@types/jquery": "^3.5.32",
-    "typescript": "^5.8.3"
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@vitejs/plugin-react": "^4.6.0",
+    "rollup": "^4.44.2",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.2"
   }
 }

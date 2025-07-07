@@ -69,6 +69,7 @@ __pycache__/
 /frontend/**/*.js
 !/frontend/lib/*.js
 !/frontend/res/fonts/**/*.css
+!*.config.js
 /frontend/css/**/*.css
 *.map
 
