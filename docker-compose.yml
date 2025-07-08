@@ -28,8 +28,6 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DEBUG: ${DEBUG:-false}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
-    volumes:
-      - site_node_modules:/root/site/frontend/node_modules
     ports:
       - "8000:8000"
     develop:
@@ -89,5 +87,4 @@ volumes:
   site_data:
     name: toolbox-io_site_data
   site_certs:
-  site_node_modules:
   site_download_cache:
