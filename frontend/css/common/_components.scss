@@ -93,7 +93,7 @@ pre {
 
 
 //noinspection DuplicatedCode
-md-icon-button {
+.react-IconButton {
     margin-left: auto;
     position: relative;
     transition: opacity 0.5s ease-in-out;
@@ -133,11 +133,11 @@ md-icon-button {
     }
 }
 
-:is(md-icon-button:hover)::after {
+:is(.react-IconButton:hover)::after {
     opacity: 1;
 }
 
-:is(md-icon-button:active)::after {
+:is(.react-IconButton:active)::after {
     opacity: 1;
     background-color: $active-color;
 }

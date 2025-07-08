@@ -1,6 +1,8 @@
 @use "features";
-@import "common/animations";
-@import "common/colors";
+@use "common/animations";
+@use "common/colors";
+
+@use "components/header";
 
 #main {
     #headline {

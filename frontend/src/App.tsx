@@ -1,9 +1,10 @@
 import React from 'react';
+import {Header, IconButton} from "./components.tsx";
 
 export default function App() {
     return (
         <>
-            {/*<tio-header className="top" tab="0"></tio-header>*/}
+            <Header />
             <div className="wrapper">
                 <div id="main" className="automargin">
                     <h1 id="headline">Все нужное — в одном приложении</h1>
@@ -18,7 +19,7 @@ export default function App() {
                             <div className="feature-header">
                                 <span className="material-symbols outlined feature-icon">phonelink_lock</span>
                                 <div className="feature-title">Блокировка приложений</div>
-                                {/* <md-icon-button className="feature-close">close</md-icon-button> */}
+                                <IconButton icon="close" onClick={() => {}} />
                             </div>
                             <div className="feature-description">
                                 Защищает ваши приложения от несанкционированного доступа, показывая злоумышленнику
@@ -201,7 +202,7 @@ export default function App() {
                                 </div>
                             </div>
                         </div>
-                        // TODO notification history description
+                        {/*TODO notification history description*/}
                     </div>
                     <h2>Прогресс</h2>
                     <p>

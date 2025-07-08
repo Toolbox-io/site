@@ -3,7 +3,6 @@ import hljs from 'highlight.js';
 import xml from 'highlight.js/lib/languages/xml';
 
 export namespace Utils {
-    import TioHeader = Components.TioHeader;
     import _query = Utils.query;
     export type MarkdownHeader = { [key: string]: string }
 
@@ -220,72 +219,6 @@ export namespace Cookies {
 export namespace Components {
     let _applied = false
 
-    export class TioHeader extends HTMLElement {
-        static observedAttributes = ["tab"];
-        private readonly internals;
-
-        get tabs(): HTMLDivElement[] {
-            return Array.from(this.shadowRoot!!.querySelector("#tabs")!!.children) as HTMLDivElement[];
-        }
-
-        // TODO account icon
-        constructor() {
-            super();
-            const shadow = this.attachShadow({mode: "open"});
-            // noinspection CssUnknownTarget
-            shadow.innerHTML = `
-                <style>@import url(/css/components/header.css);</style>
-                <div class="icon appicon"></div>
-                <div class="title">Toolbox.io</div>
-                <div class="separator"></div>
-                <div id="tabs">
-                    <div class="tab" id="home">Главная</div>
-                    <div class="tab" id="download">Скачать</div>
-                    <div class="tab" id="guides">Гайды</div>
-                </div>
-                <md-icon-button id="auth-link">account_circle</md-icon-button>
-            `;
-            this.shadowRoot!!.querySelector(".icon.appicon")!!.addEventListener("click", () => {
-                open("/", "_self");
-            });
-            
-            // Add auth link functionality
-            const authLink = this.shadowRoot!!.querySelector("#auth-link") as HTMLElement;
-            authLink.addEventListener("click", () => {
-                const token = localStorage.getItem('authToken');
-                if (token) {
-                    open("/account", "_self");
-                } else {
-                    open("/account/login", "_self");
-                }
-            });
-            
-            this.internals = this.attachInternals();
-            try {
-                $(window).on('scroll', () => {
-                    if ($(window).scrollTop()!! + $(window).height()!! >= 0 && $(window).scrollTop() !== 0) {
-                        this.internals.states.add("scrolled");
-                    } else {
-                        this.internals.states.delete("scrolled");
-                    }
-                });
-            } catch (e) {
-                console.log(e);
-            }
-        }
-
-        // noinspection JSUnusedGlobalSymbols
-        attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-            console.log(`Attribute ${name} has changed.`);
-            switch (name) {
-                case "tab": {
-                    const tabs = this.shadowRoot!!.querySelector("#tabs")!!.children;
-                    tabs[Number(oldValue)].classList.remove("selected");
-                    tabs[Number(newValue)].classList.add("selected");
-                }
-            }
-        }
-    }
     export class TioFooter extends HTMLElement {
         constructor() {
             super();

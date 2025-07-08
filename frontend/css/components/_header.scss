@@ -1,7 +1,6 @@
 @import "../common/colors";
-@import url(/css/common.css);
 
-:host {
+.react-Header {
     backdrop-filter: none;
     border-radius: 0;
     display: flex;
@@ -90,13 +89,13 @@
     }
 }
 
-:host(:state(scrolled)) {
+.react-Header.scrolled {
     backdrop-filter: blur(10px) brightness(50%);
     border-radius: 20px;
 }
 
 @media (max-width: 500px) {
-    :host {
+    .react-Header {
         .title {
             display: none;
             width: 0;
@@ -112,7 +111,7 @@
 }
 
 @media (max-width: 395px) {
-    :host {
+    .react-Header {
         margin-top: 0 !important;
         margin-left: 0 !important;
         margin-right: 0 !important;
