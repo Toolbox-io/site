@@ -6,7 +6,7 @@
 'use strict';
 
 // Types and interfaces
-import {Utils} from "../common.js";
+import {Utils} from "../src/common.js";
 import id = Utils.id;
 import setUpTabs = Utils.setUpTabs;
 import changeUrl = Utils.changeUrl;

@@ -1,7 +1,7 @@
 "use strict";
 
 import switchTab = Utils.switchTab;
-import {Components, Utils} from "./common.js";
+import {Components, Utils} from "./src/common.js";
 import smoothScroll = Utils.smoothScroll;
 import delay = Utils.delay;
 import TioHeader = Components.TioHeader;

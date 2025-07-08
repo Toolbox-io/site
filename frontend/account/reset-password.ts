@@ -1,4 +1,4 @@
-import {Components, Utils} from "../common.js";
+import {Components, Utils} from "../src/common.js";
 import id = Utils.id;
 import CodeInputRow = Components.CodeInputRow;
 

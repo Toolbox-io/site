@@ -1,4 +1,4 @@
-import {Utils} from "../common.js";
+import {Utils} from "../src/common.js";
 import setUpTabs = Utils.setUpTabs;
 
 (() => {

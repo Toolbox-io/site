@@ -1,12 +1,6 @@
-// @ts-ignore
-import { marked } from "/node_modules/marked/lib/marked.esm.js";
-// @ts-ignore
-import hljs from '/node_modules/@highlightjs/cdn-assets/es/core.js';
-// @ts-ignore
-import xml from '/node_modules/@highlightjs/cdn-assets/es/languages/xml.min.js';
-
-(window as any).marked = marked;
-(window as any).hljs = hljs;
+import { marked } from "marked";
+import hljs from 'highlight.js';
+import xml from 'highlight.js/lib/languages/xml';
 
 export namespace Utils {
     import TioHeader = Components.TioHeader;
