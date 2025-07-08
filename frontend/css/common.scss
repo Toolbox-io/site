@@ -1,6 +1,10 @@
 @use "common/animations";
 @use "common/markdown";
 @use "common/components";
+
+@use "components/header";
+@use "components/footer";
+
 @import "common/mixins";
 @import "common/colors";
 @import "common/markdown";

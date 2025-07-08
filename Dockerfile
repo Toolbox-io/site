@@ -27,28 +27,10 @@ COPY backend/requirements.txt /root/site/backend/requirements.txt
 RUN --mount=type=cache,target=/root/.cache/pip \
     ./.venv/bin/pip3 install -r /root/site/backend/requirements.txt
 
-# 2. Frontend
-FROM node:20 AS frontend
-
-# 2.1. Install global dependencies
-RUN npm install -g autoprefixer sass postcss-cli typescript terser html-minifier
-
-# 2.2. Install local dependencies
-COPY frontend /root/site/frontend
-WORKDIR /root/site/frontend
-RUN npm install
-
-# 2.3. Prepare the server content
-RUN npm run build && \
-    rm -f $(find . -name "*.ts" | xargs) && \
-    rm -f $(find . -name "*.scss" | xargs) && \
-    rm -f $(find . -name "tsconfig.json" | xargs) && \
-    rm -f $(find . -name "package*.json" | xargs)
-
-# 3. Runtime
+# 2. Runtime
 FROM ubuntu:24.04 AS runtime
 
-# 3.1. Install runtime dependencies (preserve cache for reuse)
+# 2.1. Install runtime dependencies (preserve cache for reuse)
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -57,10 +39,10 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         mysql-client python3.12-full && \
     rm -rf /var/lib/apt/lists/*
 
-# 3.2. Copy content
+# 2.2. Copy content
 COPY --from=backend /root/.venv /root/.venv
 COPY backend /root/site/backend
-COPY --from=frontend /root/site/frontend /root/site/frontend
+COPY frontend /root/site/frontend
 
 # 4. Final command
 # 4.1. Environment variables
