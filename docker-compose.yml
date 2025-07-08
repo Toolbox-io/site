@@ -11,7 +11,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - site_data:/var/lib/mysql
+      - data:/var/lib/mysql
 
   main:
     build: .
@@ -63,7 +63,7 @@ services:
         - action: rebuild
           path: ./frontend/package.json
     volumes:
-      - site_download_cache:/root/site/backend/download/cache
+      - download_cache:/root/site/backend/download/cache
     environment:
       SMTP_PASSWORD: ${SMTP_PASSWORD}
 
@@ -78,13 +78,13 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - site_certs:/root/site/certs
+      - certs:/root/site/certs
     environment:
       XDG_DATA_HOME: /root/site/certs
       XDG_CONFIG_HOME: /root/site/certs
 
 volumes:
-  site_data:
-    name: toolbox-io_site_data
-  site_certs:
-  site_download_cache:
+  data:
+    name: toolbox-io_data
+  certs:
+  download_cache:

@@ -28,6 +28,7 @@ yarn-error.log*
 .npm
 .eslintcache
 node_modules
+package-lock.json
 
 # Git
 .gitignore
@@ -61,5 +62,3 @@ docker-compose*.yml
 # Documentation
 /*.md
 .github
-
-package-lock.json
