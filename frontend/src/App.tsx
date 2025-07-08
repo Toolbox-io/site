@@ -252,4 +252,4 @@ export default function App() {
             <div id="card_dialog" className="dialog"></div>
         </>
     )
-}; 
+};

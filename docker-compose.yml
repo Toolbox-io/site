@@ -55,8 +55,6 @@ services:
     restart: always
     ports:
       - "8002:8002"
-    depends_on:
-      - main
     profiles:
       - "dev"
     develop:
