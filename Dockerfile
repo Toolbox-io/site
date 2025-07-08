@@ -28,7 +28,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     ./.venv/bin/pip3 install -r /root/site/backend/requirements.txt
 
 # 2. Frontend
-FROM node:24 AS frontend
+FROM node:20 AS frontend
 
 # 2.1. Install global dependencies
 RUN npm install -g autoprefixer sass postcss-cli typescript terser html-minifier
@@ -36,7 +36,7 @@ RUN npm install -g autoprefixer sass postcss-cli typescript terser html-minifier
 # 2.2. Install local dependencies
 COPY frontend /root/site/frontend
 WORKDIR /root/site/frontend
-RUN npm install --include=dev --dev
+RUN npm install
 
 # 2.3. Prepare the server content
 RUN npm run build && \
