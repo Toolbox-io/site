@@ -7,7 +7,7 @@ from starlette.responses import Response
 
 import utils
 from limiter import limiter
-from routes import auth, guides, core
+from routes import auth, guides, core, issues
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
@@ -42,3 +42,4 @@ app.include_router(auth.management.router, prefix="/api/auth")
 app.include_router(core.router)
 app.include_router(guides.router)
 app.include_router(utils.router)
+app.include_router(issues.router, prefix="/api/issues")

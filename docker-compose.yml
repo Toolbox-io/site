@@ -28,6 +28,9 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DEBUG: ${DEBUG:-false}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
+      GITHUB_PRIVATE_KEY: ${GITHUB_PRIVATE_KEY}
+      GITHUB_APP_ID: ${GITHUB_APP_ID}
+      GITHUB_INSTALLATION_ID: ${GITHUB_INSTALLATION_ID}
     ports:
       - "8000:8000"
     develop:

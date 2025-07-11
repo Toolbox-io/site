@@ -68,3 +68,23 @@ def debug_only(route_handler):
             raise HTTPException(status_code=404)
         return await route_handler(*args, **kwargs)
     return wrapper
+
+def trim_margin(text: str, margin: str = '|') -> str:
+    """
+    Removes leading whitespace and the margin prefix from each line in the input string.
+    :param text: The multiline string to process.
+    :param margin: The margin prefix to trim (default is '|').
+    :return: The processed string with margins trimmed.
+    """
+    lines = text.splitlines()
+    trimmed_lines = []
+    for line in lines:
+        # Find the margin prefix in the line after leading whitespace
+        stripped = line.lstrip()
+        if stripped.startswith(margin):
+            # Remove up to and including the margin prefix
+            idx = line.index(margin)
+            trimmed_lines.append(line[idx + len(margin):])
+        else:
+            trimmed_lines.append(line)
+    return '\n'.join(trimmed_lines)

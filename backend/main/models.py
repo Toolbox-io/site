@@ -69,6 +69,27 @@ class PasswordChange(BaseModel):
             raise ValueError('Password cannot be empty')
         return v
 
+
+# noinspection PyMethodParameters
+class ReportCrash(BaseModel):
+    androidVersion: str
+    manufacturer: str
+    brand: str
+    model: str
+    programVersion: str
+
+    exceptionClass: str
+    exceptionMsg: str
+    exceptionStacktrace: str
+
+    whatHappened: str
+
+    @field_validator('whatHappened')
+    def validate_whatHappened(cls, v):
+        if len(v) > 10000:
+            raise ValueError('Field is too long')
+        return v
+
 class Message(BaseModel):
     message: str
 
