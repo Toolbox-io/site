@@ -3,7 +3,7 @@ from urllib.request import Request
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi.errors import RateLimitExceeded
-from starlette.responses import Response
+from starlette.responses import Response, JSONResponse
 
 import utils
 from limiter import limiter
@@ -14,8 +14,8 @@ app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
 # Rate limiting
 async def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> Response:
-    # noinspection PyProtectedMember
-    return await limiter._rate_limit_exceeded_handler(request, exc)
+    return JSONResponse({"message": "Rate Limit Exceeded"})
+
 app.state.limiter = limiter
 # noinspection PyTypeChecker
 app.add_exception_handler(RateLimitExceeded, rate_limit_handler)

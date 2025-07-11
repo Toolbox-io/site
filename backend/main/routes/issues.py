@@ -6,6 +6,7 @@ import jwt
 from fastapi import APIRouter, Request, HTTPException
 from httpx import HTTPStatusError
 
+from limiter import limiter
 from models import ReportCrash
 from utils import trim_margin
 
@@ -42,6 +43,7 @@ async def get_installation_access_token(jwt_token: str, installation_id: str) ->
         return response.json()["token"]
 
 @router.post("/reportCrash")
+@limiter.limit("1/15seconds")
 async def report_crash(
     request: Request,
     crash_report: ReportCrash
