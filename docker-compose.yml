@@ -1,7 +1,7 @@
 services:
   db:
     image: mysql:8
-    container_name: toolbox-db
+    container_name: toolbox-io-db
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
@@ -15,7 +15,7 @@ services:
 
   main:
     build: .
-    container_name: toolbox-io
+    container_name: toolbox-io-main
     restart: always
     depends_on:
       - db
@@ -74,7 +74,7 @@ services:
     build:
       context: ./caddy
       dockerfile: Dockerfile
-    container_name: toolbox-caddy
+    container_name: toolbox-io-caddy
     restart: always
     profiles: ["prod"]
     ports:
@@ -88,6 +88,6 @@ services:
 
 volumes:
   data:
-    name: toolbox-io_data
+    name: toolbox-io-data
   certs:
   download_cache:
