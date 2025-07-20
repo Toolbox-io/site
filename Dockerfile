@@ -27,28 +27,33 @@ COPY backend/requirements.txt /root/site/backend/requirements.txt
 RUN --mount=type=cache,target=/root/.cache/pip \
     ./.venv/bin/pip3 install -r /root/site/backend/requirements.txt
 
-# 2. Frontend
+
+# 2. Frontend build
 FROM node:24 AS frontend
 
-# 2.1. Install global dependencies
-RUN npm install -g autoprefixer sass postcss-cli typescript terser html-minifier
-
-# 2.2. Install local dependencies
-COPY frontend /root/site/frontend
+# 2.1. Install local dependencies
 WORKDIR /root/site/frontend
+COPY frontend/package.json .
 RUN --mount=type=cache,target=/root/.npm npm install
+COPY frontend/ .
 
-# 2.3. Prepare the server content
-RUN npm run build && \
-    rm -f $(find . -name "*.ts" | xargs) && \
-    rm -f $(find . -name "*.scss" | xargs) && \
-    rm -f $(find . -name "tsconfig.json" | xargs) && \
-    rm -f $(find . -name "package*.json" | xargs)
+# 2.2. Prepare the server content
+RUN npm run build:prod
 
-# 3. Runtime
+
+# 3. Frontend dependencies
+FROM node:24 AS frontend-deps
+
+# 3.1. Install production dependencies
+WORKDIR /root/site/frontend
+COPY frontend/package.json .
+RUN --mount=type=cache,target=/root/.npm npm install --omit=dev
+
+
+# 4. Runtime
 FROM ubuntu:24.04 AS runtime
 
-# 3.1. Install runtime dependencies (preserve cache for reuse)
+# 4.1. Install runtime dependencies (preserve cache for reuse)
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -57,13 +62,14 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         mysql-client python3.12-full && \
     rm -rf /var/lib/apt/lists/*
 
-# 3.2. Copy content
+# 4.2. Copy content
 COPY --from=backend /root/.venv /root/.venv
-COPY backend /root/site/backend
+COPY backend/main /root/site/backend/main
 COPY --from=frontend /root/site/frontend /root/site/frontend
+COPY --from=frontend-deps /root/site/frontend/node_modules /root/site/frontend/node_modules
 
-# 4. Final command
-# 4.1. Environment variables
+# 5. Final command
+# 5.1. Environment variables
 ARG SECRET_KEY
 ARG DB_PASSWORD
 ARG DB_HOST=localhost
@@ -78,9 +84,9 @@ ENV DB_NAME=$DB_NAME
 ENV DB_USER=$DB_USER
 ENV DB_PASSWORD=$DB_PASSWORD
 
-# 4.2. Workdir and ports
+# 5.2. Workdir and ports
 WORKDIR /root/site/backend/main
 EXPOSE 8000
 
-# 4.3. Run the server
+# 5.3. Run the server
 ENTRYPOINT ["/root/.venv/bin/python3", "main.py"]

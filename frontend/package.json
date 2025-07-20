@@ -4,13 +4,22 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "npm run build:ts && npm run build:scss && npm run minify:html",
+    "build": "npm run build:dev",
+    "build:dev": "npm run build:ts && npm run build:scss",
+    "build:prod": "npm run build:dev && npm run minify:html && npm run clean:prod",
+
     "build:ts": "npm run compile:ts && npm run minify:ts",
     "compile:ts": "tsc",
     "minify:ts": "find . -name '*.js' -not -path './node_modules/*' -not -path './lib/*' -exec terser {} -o {} -m \\;",
-    "build:scss": "sass css:css --no-source-map -s compressed && postcss css/*.css --use autoprefixer --no-map -d css",
+
+    "build:scss": "npm run compile:scss && npm run minify:scss",
+    "compile:scss": "sass css:css --no-source-map -s compressed",
+    "minify:scss": "postcss css/*.css --use autoprefixer --no-map -d css",
     "minify:html": "find . -name '*.html' -not -path './node_modules/*' -exec html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true -o {} {} \\;",
-    "clean": "find . -name '*.js' -not -path './node_modules/*' -not -path './lib/*' -delete && find css -name '*.css' -delete"
+    
+    "clean": "npm run clean:dev",
+    "clean:dev": "find . -name '*.js' -not -path './node_modules/*' -not -path './lib/*' -delete && find css -name '*.css' -delete",
+    "clean:prod": "find . \\( -name '*.ts' -o -name '*.scss' -o -name 'tsconfig.json' -o -name 'package*.json' \\) -exec rm -f {} +"
   },
   "dependencies": {
     "@highlightjs/cdn-assets": "^11.11.1",
@@ -19,6 +28,11 @@
   },
   "devDependencies": {
     "@types/jquery": "^3.5.32",
+    "autoprefixer": "^10.4.21",
+    "html-minifier": "^4.0.0",
+    "postcss-cli": "^11.0.1",
+    "sass": "^1.89.2",
+    "terser": "^5.43.1",
     "typescript": "^5.8.3"
   }
 }
