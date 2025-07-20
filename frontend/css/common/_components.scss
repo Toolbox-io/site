@@ -141,3 +141,9 @@ md-icon-button {
     opacity: 1;
     background-color: $active-color;
 }
+
+div.button-row {
+    display: inline-flex;
+    flex-direction: row;
+    gap: 10px;
+}
