@@ -31,6 +31,8 @@ services:
       GITHUB_PRIVATE_KEY: ${GITHUB_PRIVATE_KEY}
       GITHUB_APP_ID: ${GITHUB_APP_ID}
       GITHUB_INSTALLATION_ID: ${GITHUB_INSTALLATION_ID}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - "8000:8000"
     develop:

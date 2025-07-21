@@ -1,51 +1,61 @@
 toolbox-io.ru {
-    reverse_proxy main:8000
+	reverse_proxy main:8000
 
-    # Security headers
-    header {
-        X-XSS-Protection "1; mode=block" # Prevent XSS attacks
-        X-Content-Type-Options "nosniff" # Prevent MIME type sniffing
-        X-Frame-Options "DENY" # Prevent clickjacking
-        Referrer-Policy "strict-origin-when-cross-origin"
-        Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.github.com; frame-ancestors 'none';"
-        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
-        Permissions-Policy "geolocation=(), microphone=(), camera=()"
-    }
+	# Security headers
+	header {
+		X-XSS-Protection "1; mode=block" # Prevent XSS attacks
+		X-Content-Type-Options "nosniff" # Prevent MIME type sniffing
+		X-Frame-Options "DENY" # Prevent clickjacking
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.github.com; frame-ancestors 'none';"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		Permissions-Policy "geolocation=(), microphone=(), camera=()"
+	}
 
-    # Add rate limiting
-    @limited {
-        path /*
-    }
-    rate_limit @limited {
-        zone global {
-            key {remote_ip}
-            window 1m
-            burst 20
-            events 100
-        }
-    }
+	# Add rate limiting
+	@limited {
+		path /*
+	}
+	rate_limit @limited {
+		zone global {
+			key {remote_ip}
+			window 1m
+			burst 20
+			events 100
+		}
+	}
 
-    # Handle different types of error
-    handle_errors {
-        @errors {
-            expression {err.status_code} >= 400
-        }
+	# Handle different types of error
+	handle_errors {
+		@errors {
+			expression {err.status_code} >= 400
+		}
 
-        # Handle other error with http.cat reverse proxy
-        handle @errors {
-            rewrite * /{err.status_code}
-            reverse_proxy https://http.cat {
-                header_up Host {upstream_hostport}
-                replace_status {err.status_code}
-            }
-        }
-    }
+		# Handle other error with http.cat reverse proxy
+		handle @errors {
+			rewrite * /{err.status_code}
+			reverse_proxy https://http.cat {
+				header_up Host {upstream_hostport}
+				replace_status {err.status_code}
+			}
+		}
+	}
 }
 
 download.toolbox-io.ru {
-    reverse_proxy download:8001
+	reverse_proxy download:8001
 }
 
 beta.toolbox-io.ru {
-    redir https://toolbox-io.ru{uri} permanent
+	redir https://toolbox-io.ru{uri} permanent
+}
+
+panel.toolbox-io.ru {
+	reverse_proxy 172.18.0.1:9090 host.docker.internal:9090 172.17.0.1:9090 {
+		lb_policy first
+
+		transport http {
+			tls_insecure_skip_verify
+		}
+	}
 }
