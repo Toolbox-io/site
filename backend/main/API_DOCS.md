@@ -294,3 +294,56 @@ The Toolbox.io Telegram bot provides the same support functionality as the web i
 
 - All protected endpoints require the `Authorization: Bearer <access_token>` header.
 - JWT tokens are returned by `/api/auth/login` and must be stored securely on the client.
+
+---
+
+## Photo Storage Endpoints
+
+All `/photos/*` endpoints are under the `/photos` prefix and require authentication (`Authorization: Bearer <access_token>`).
+
+### GET `/photos/sync`
+- **Description:** List all photo UUIDs and metadata for the authenticated user (for sync).
+- **Headers:**
+  - `Authorization: Bearer <access_token>`
+- **Response:**
+  ```json
+  {
+    "photos": [
+      {"uuid": "<uuid>", "uploaded_at": "<date>T<time>Z", "filename": "<string>"}
+      // ...
+    ]
+  }
+  ```
+- **Errors:**
+  - `401`: Unauthorized (invalid or missing token)
+
+---
+
+### POST `/photos/upload`
+- **Description:** Upload an encrypted photo file with a client-generated UUID.
+- **Headers:**
+  - `Authorization: Bearer <access_token>`
+- **Request (multipart/form-data):**
+  - `photo_uuid`: string (UUID, required)
+  - `file`: binary (encrypted photo, required)
+- **Response:**
+  `201 Created`
+  ```json
+  { "status": "success" }
+  ```
+- **Errors:**
+  - `400`: Photo UUID already exists for this user
+  - `401`: Unauthorized (invalid or missing token)
+
+---
+
+### GET `/photos/download/{photo_uuid}`
+- **Description:** Download the encrypted photo file for the given UUID (if it belongs to the user).
+- **Headers:**
+  - `Authorization: Bearer <access_token>`
+- **Response:**
+  - Content-Type: `application/octet-stream`
+  - File download (binary)
+- **Errors:**
+  - `404`: Photo not found or file missing
+  - `401`: Unauthorized (invalid or missing token)

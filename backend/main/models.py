@@ -1,6 +1,6 @@
 import re
 from datetime import datetime
-from sqlalchemy import Boolean, String, DateTime, Column, Integer
+from sqlalchemy import Boolean, String, DateTime, Column, Integer, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
 
@@ -111,3 +111,14 @@ class BlacklistedToken(Base):
     id = Column(Integer, primary_key=True, index=True)
     token = Column(String(512), unique=True, nullable=False)
     blacklisted_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class Photo(Base):
+    __tablename__ = "photos"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    uuid = Column(String(36), unique=True, index=True, nullable=False)  # Client-generated UUID
+    filename = Column(String(255), nullable=False)
+    encrypted = Column(Boolean, default=False)  # True if photo is encrypted
+    salt = Column(String(64), nullable=True)    # Store as hex/base64 if encrypted
+    iv = Column(String(32), nullable=True)      # Store as hex/base64 if encrypted
+    uploaded_at = Column(DateTime(timezone=True), server_default=func.now())
