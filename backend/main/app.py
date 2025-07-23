@@ -8,6 +8,7 @@ from starlette.responses import Response, JSONResponse
 import utils
 from limiter import limiter
 from routes import auth, guides, core, issues
+from routes import photos
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
@@ -43,3 +44,4 @@ app.include_router(core.router)
 app.include_router(guides.router)
 app.include_router(utils.router)
 app.include_router(issues.router, prefix="/api/issues")
+app.include_router(photos.router, prefix="/api/photos")
