@@ -8,10 +8,15 @@ from db.core import get_db  # Adjust if your session dependency is elsewhere
 from routes.auth.utils import get_current_user
 from limiter import limiter
 from fastapi import Request
+import logging
 
 router = APIRouter()
 PHOTO_DIR = "photos"
 os.makedirs(PHOTO_DIR, exist_ok=True)
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 @router.get("/sync")
 def sync_photos(
@@ -19,11 +24,20 @@ def sync_photos(
     current_user: User = Depends(get_current_user)
 ):
     photos = db.query(Photo).filter_by(user_id=current_user.id).all()
-    return {
-        "photos": [
-            {"uuid": p.uuid, "uploaded_at": p.uploaded_at, "filename": p.filename} for p in photos
-        ]
-    }
+    photos_new = photos.copy()
+
+    for photo in photos:
+        logger.info(f"Checking {photo}")
+        if os.path.exists(photo.filename):
+            photos_new += {
+                "uuid": photo.uuid, 
+                "uploaded_at": photo.uploaded_at, 
+                "filename": photo.filename
+            }
+        else:
+            logger.warning(f"Photo {photo.uuid} doesn't exist")
+
+    return {"photos": photos_new}
 
 @router.post("/upload", status_code=status.HTTP_201_CREATED)
 @limiter.limit("1/minute")
@@ -58,7 +72,7 @@ async def upload_photo(
         os.remove(file_path)
         raise HTTPException(status_code=400, detail="Photo UUID already exists.")
     # Save metadata, including user_id and uuid (attached server-side)
-    photo = Photo(uuid=photo_uuid, user_id=current_user.id, filename=filename, encrypted=True)
+    photo = Photo(uuid=photo_uuid, user_id=current_user.id, filename=filename)
     db.add(photo)
     db.commit()
     return {"status": "success"}
