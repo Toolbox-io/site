@@ -1,4 +1,4 @@
-(() => {
+(async () => {
     interface Photo {
         uuid: string;
         url: string; // data URL or blob URL
@@ -188,32 +188,38 @@
     gallery.addEventListener('drop', handleDrop);
     
     // --- Load and decrypt photos from backend ---
-    async function loadAndDisplayPhotos() {
-        const resp = await fetch(
-            '/api/photos/sync', 
-            { 
-                "headers": {
-                    "Authorization": `Bearer ${localStorage.getItem("authToken")}`
-                }
-            }
-        );
-        if (!resp.ok) {
-            alert('Не удалось загрузить список фото');
-            return;
+    const checkAuth = await fetch("/api/auth/check-auth", {
+        headers: {
+            "Authorization": `Bearer ${localStorage.getItem("authToken")}`
         }
-        const data = await resp.json();
-        const photoList = data.photos as { uuid: string, filename: string }[];
-        photos = [];
-        for (const { uuid, filename } of photoList) {
-            try {
-                const url = await downloadAndDecryptPhoto(uuid, filename);
-                photos.push({ uuid, url });
-            } catch (e) {
-                console.error('Failed to load photo', uuid, e);
-            }
-        }
-        renderGallery();
+    })
+    if (!checkAuth.ok) {
+        location.href = "/account/login";
+        return;
     }
 
-    document.addEventListener('DOMContentLoaded', loadAndDisplayPhotos);
+    const resp = await fetch(
+        '/api/photos/sync', 
+        { 
+            "headers": {
+                "Authorization": `Bearer ${localStorage.getItem("authToken")}`
+            }
+        }
+    );
+    if (!resp.ok) {
+        alert('Не удалось загрузить список фото');
+        return;
+    }
+    const data = await resp.json();
+    const photoList = data.photos as { uuid: string, filename: string }[];
+    photos = [];
+    for (const { uuid, filename } of photoList) {
+        try {
+            const url = await downloadAndDecryptPhoto(uuid, filename);
+            photos.push({ uuid, url });
+        } catch (e) {
+            console.error('Failed to load photo', uuid, e);
+        }
+    }
+    renderGallery();
 })();
