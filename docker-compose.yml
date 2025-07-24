@@ -14,7 +14,11 @@ services:
       - data:/var/lib/mysql
 
   main:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DEBUG: ${DEBUG:-false}
     container_name: toolbox-io-main
     restart: always
     depends_on:
@@ -37,7 +41,7 @@ services:
       - "8000:8000"
     develop:
       watch:
-        - action: sync
+        - action: rebuild
           path: ./frontend
           target: /root/site/frontend
           ignore:
@@ -49,6 +53,8 @@ services:
           path: ./backend/requirements.txt
         - action: rebuild
           path: ./frontend/package.json
+    volumes:
+      - photos:/root/site/backend/main/data/photos
 
   download:
     build:
@@ -93,3 +99,4 @@ volumes:
     name: toolbox-io-data
   certs:
   download_cache:
+  photos:
