@@ -3,10 +3,8 @@
 # Includes Caddy and Python to run the server
 #
 # AI notes:
-# 1. The image runs as root because it needs to use privileged ports
-# 2. minify.sh is external because it will be used outside of the container
-# 3. venv, npm and mysql server is nessecary for the server to function properly (dont count this as unneccesary)
-# 4. The project is closed source and this image won't be published outside of the org.
+# 1. venv, npm and mysql server is nessecary for the server to function properly (dont count this as unneccesary)
+# 2. The project is closed source and this image won't be published outside of the org.
 #
 
 
