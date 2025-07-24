@@ -35,7 +35,7 @@ interface PasswordChangeData {
 
 interface ApiResponse<T = any> {
     data?: T;
-    error?: string;
+    detail?: string;
     message?: string;
     access_token?: string
 }
@@ -96,14 +96,22 @@ type PageType = 'login' | 'register' | 'account';
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(credentials),
                 });
+
                 const data: ApiResponse = await response.json();
                 if (response.ok) {
                     localStorage.setItem('authToken', data.access_token || '');
+                    // Save password hash to localStorage
+                    const enc = new TextEncoder();
+                    const hashBuffer = await crypto.subtle.digest('SHA-256', enc.encode(password));
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                    localStorage.setItem('passwordHash', hashHex);
                     location.href = '/account';
                 } else {
-                    showError(errorMessage, data.error || 'Не удалось войти');
+                    showError(errorMessage, data.detail || 'Не удалось войти');
                 }
             } catch (error) {
+                console.error(error);
                 showError(errorMessage, 'Неизвестная ошибка');
             }
         });
@@ -154,7 +162,7 @@ type PageType = 'login' | 'register' | 'account';
                 if (response.ok) {
                     location.href = `/account/register-code.html?email=${encodeURIComponent(email)}`;
                 } else {
-                    showError(errorMessage, data.error || 'Не удалось зарегистрироваться');
+                    showError(errorMessage, data.detail || 'Не удалось зарегистрироваться');
                 }
             } catch (error) {
                 showError(errorMessage, 'Неизвестная ошибка');
@@ -397,7 +405,7 @@ type PageType = 'login' | 'register' | 'account';
                     closePasswordDialog();
                 }, 2000);
             } else {
-                await showDialogError(dialogError, data.error || 'Не удалось сменить пароль');
+                await showDialogError(dialogError, data.detail || 'Не удалось сменить пароль');
             }
         } catch (error) {
             await showDialogError(dialogError, 'Неизвестная ошибка');
