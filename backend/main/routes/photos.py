@@ -11,8 +11,6 @@ router = APIRouter()
 PHOTO_DIR = "photos"
 os.makedirs(PHOTO_DIR, exist_ok=True)
 
-# TODO photo endpoints
-
 @router.get("/sync")
 def sync_photos(
     db: Session = Depends(get_db),
