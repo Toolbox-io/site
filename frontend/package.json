@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "build": "npm run build:dev",
-    "build:dev": "npm run build:ts && npm run build:scss",
-    "build:prod": "npm run build:dev && npm run minify:html && npm run clean:prod",
+    "build:dev": "npm run compile:ts && npm run compile:scss",
+    "build:prod": "npm run build:dev && npm run minify && npm run clean:prod",
+    "minify": "npm run minify:ts && npm run minify:scss && npm run minify:html",
 
     "build:ts": "npm run compile:ts && npm run minify:ts",
     "compile:ts": "tsc",
@@ -15,6 +16,7 @@
     "build:scss": "npm run compile:scss && npm run minify:scss",
     "compile:scss": "sass css:css --no-source-map -s compressed",
     "minify:scss": "postcss css/*.css --use autoprefixer --no-map -d css",
+
     "minify:html": "find . -name '*.html' -not -path './node_modules/*' -exec html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true -o {} {} \\;",
     
     "clean": "npm run clean:dev",

@@ -6,7 +6,7 @@ set -e
 cd "$(dirname "$0")"
 
 # 2. Variables
-DEBUG=${DEBUG:-true}
+export DEBUG=${DEBUG:-true}
 export COMPOSE_BAKE=true
 export DOCKER_BUILDKIT=1
 # shellcheck disable=SC2155

@@ -38,7 +38,13 @@ RUN --mount=type=cache,target=/root/.npm npm install
 COPY frontend/ .
 
 # 2.2. Prepare the server content
-RUN npm run build:prod
+ARG DEBUG=false
+ENV DEBUG=$DEBUG
+RUN if [ "$DEBUG" = "true" ]; then \
+        npm run build:dev; \
+    else \
+        npm run build:prod; \
+    fi
 
 
 # 3. Frontend dependencies
