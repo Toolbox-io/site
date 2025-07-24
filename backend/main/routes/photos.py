@@ -6,6 +6,8 @@ from uuid import uuid4
 from models import Photo, User
 from db.core import get_db  # Adjust if your session dependency is elsewhere
 from routes.auth.utils import get_current_user
+from limiter import limiter
+from fastapi import Request
 
 router = APIRouter()
 PHOTO_DIR = "photos"
@@ -24,23 +26,37 @@ def sync_photos(
     }
 
 @router.post("/upload", status_code=status.HTTP_201_CREATED)
+@limiter.limit("1/minute")
 async def upload_photo(
+    request: Request,
     photo_uuid: str = Form(...),
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    # Limit file size to 50MB, read in chunks
+    MAX_SIZE = 50 * 1024 * 1024
+    chunk_size = 1024 * 1024  # 1MB
+    total_size = 0
+    filename = f"{current_user.id}_{photo_uuid}.bin"
+    file_path = os.path.join(PHOTO_DIR, filename)
+    with open(file_path, "wb") as out_file:
+        while True:
+            chunk = await file.read(chunk_size)
+            if not chunk:
+                break
+            total_size += len(chunk)
+            if total_size > MAX_SIZE:
+                out_file.close()
+                os.remove(file_path)
+                raise HTTPException(status_code=413, detail="File too large (max 50MB)")
+            out_file.write(chunk)
+    
     # Check if UUID already exists for this user
     existing = db.query(Photo).filter_by(uuid=photo_uuid, user_id=current_user.id).first()
     if existing:
+        os.remove(file_path)
         raise HTTPException(status_code=400, detail="Photo UUID already exists.")
-
-    # Save encrypted file
-    filename = f"{current_user.id}_{photo_uuid}.bin"
-    file_path = os.path.join(PHOTO_DIR, filename)
-    with open(file_path, "wb") as f:
-        f.write(await file.read())
-
     # Save metadata, including user_id and uuid (attached server-side)
     photo = Photo(uuid=photo_uuid, user_id=current_user.id, filename=filename, encrypted=True)
     db.add(photo)
