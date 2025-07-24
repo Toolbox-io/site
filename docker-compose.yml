@@ -32,7 +32,6 @@ services:
       DB_PASSWORD: ${DB_PASSWORD}
       DEBUG: ${DEBUG:-false}
       SMTP_PASSWORD: ${SMTP_PASSWORD}
-      GITHUB_PRIVATE_KEY: ${GITHUB_PRIVATE_KEY}
       GITHUB_APP_ID: ${GITHUB_APP_ID}
       GITHUB_INSTALLATION_ID: ${GITHUB_INSTALLATION_ID}
     extra_hosts:
@@ -48,7 +47,7 @@ services:
             - node_modules/
         - action: sync+restart
           path: ./backend/main
-          target: /root/site/backend
+          target: /root/site/backend/main
         - action: rebuild
           path: ./backend/requirements.txt
         - action: rebuild
