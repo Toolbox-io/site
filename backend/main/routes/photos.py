@@ -11,7 +11,7 @@ from fastapi import Request
 import logging
 
 router = APIRouter()
-PHOTO_DIR = "photos"
+PHOTO_DIR = "data/photos"
 os.makedirs(PHOTO_DIR, exist_ok=True)
 
 # Configure logging
