@@ -2,9 +2,7 @@
 # OS/Editor/IDE Files
 # -----------------------------
 .DS_Store
-.idea/
 .idea/dataSources
-.vscode/
 .vscode-test
 .idea/dataSources.local.xml
 
