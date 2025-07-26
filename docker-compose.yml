@@ -40,7 +40,7 @@ services:
       - "8000:8000"
     develop:
       watch:
-        - action: rebuild
+        - action: sync
           path: ./frontend
           target: /root/site/frontend
           ignore:
