@@ -20,7 +20,7 @@ services:
       args:
         DEBUG: ${DEBUG:-false}
     container_name: toolbox-io-main
-    restart: nless-stopped
+    restart: unless-stopped
     depends_on:
       - db
     environment:
@@ -60,7 +60,7 @@ services:
       context: .
       dockerfile: backend/download/Dockerfile
     container_name: toolbox-io-download
-    restart: nless-stopped
+    restart: unless-stopped
     ports:
       - "8001:8001"
     develop:
