@@ -5,15 +5,14 @@
         <meta lang="ru" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title></title>
-        <script type="module" src="/common.js"></script>
+        <script type="module" src="/js/common.js"></script>
         <script type="module">
-            import {Utils} from "/common.js";
+            import {Utils} from "/js/common.js";
 
-            async function main() {
+            (async () => {
                 const header = await Utils.loadMarkdown("{{ guide }}");
                 document.title = header.DisplayName;
-            }
-            main();
+            })();
         </script>
         <link rel="stylesheet" href="/css/common.css" />
     </head>
