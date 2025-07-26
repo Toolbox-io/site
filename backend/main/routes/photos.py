@@ -50,10 +50,22 @@ async def upload_photo(
 ):
     # Limit file size to 50MB, read in chunks
     MAX_SIZE = 50 * 1024 * 1024
+    USER_MAX_STORAGE = 1024 * 1024 * 1024  # 1GB
     chunk_size = 1024 * 1024  # 1MB
     total_size = 0
     filename = f"{current_user.id}_{photo_uuid}.bin"
     file_path = os.path.join(PHOTO_DIR, filename)
+
+    # Calculate current user storage usage
+    user_photos = db.query(Photo).filter_by(user_id=current_user.id).order_by(Photo.uploaded_at).all()
+    user_storage = 0
+    for p in user_photos:
+        try:
+            if os.path.exists(p.filename):
+                user_storage += os.path.getsize(p.filename)
+        except Exception:
+            pass
+    # Read file in chunks, check size
     with open(file_path, "wb") as out_file:
         while True:
             chunk = await file.read(chunk_size)
@@ -65,7 +77,17 @@ async def upload_photo(
                 os.remove(file_path)
                 raise HTTPException(status_code=413, detail="File too large (max 50MB)")
             out_file.write(chunk)
-    
+    # Enforce 1GB per-user storage limit
+    while user_storage + total_size > USER_MAX_STORAGE and user_photos:
+        oldest = user_photos.pop(0)
+        try:
+            if os.path.exists(oldest.filename):
+                user_storage -= os.path.getsize(oldest.filename)
+                os.remove(oldest.filename)
+            db.delete(oldest)
+            db.commit()
+        except Exception as e:
+            logger.warning(f"Failed to delete old photo {oldest.uuid}: {e}")
     # Check if UUID already exists for this user
     existing = db.query(Photo).filter_by(uuid=photo_uuid, user_id=current_user.id).first()
     if existing:
