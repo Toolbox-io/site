@@ -29,9 +29,22 @@ jobs:
     runs-on: self-hosted
     env:
       HOME: "/root"
+    environment:
+      name: production
+      url: https://toolbox-io.ru
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Set up environment
+        run: |
+          cat > .env << EOF
+          SECRET_KEY=${{ secrets.SECRET_KEY }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          GITHUB_TOKEN=${{ secrets.TOKEN_GITHUB }}
+          SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}
+          GITHUB_APP_ID=${{ secrets.APP_ID }}
+          GITHUB_INSTALLATION_ID=${{ secrets.INSTALLATION_ID }}
+          EOF
       - name: Build container
         env:
           NORUN: true

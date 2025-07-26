@@ -54,7 +54,7 @@ def find_file(path: str) -> Tuple[Optional[Path], Optional[str]]:
 
 
 def static(path: str | Path):
-    if not path is Path:
+    if not isinstance(path, Path):
         path = Path(path)
     path = str(path.resolve())
 

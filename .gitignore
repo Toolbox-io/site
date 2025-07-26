@@ -21,6 +21,7 @@ lerna-debug.log*
 *.pid.lock
 pids/
 /backend/download/cache
+.env
 
 # Diagnostic reports
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
