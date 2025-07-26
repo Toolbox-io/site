@@ -16,7 +16,23 @@
     <body>
         <tio-header class="top" tab="0"></tio-header>
         <div class="wrapper">
-            <div id="main" class="automargin">
+            <div id="main">
+                <div class="section" id="main_block">
+                    <div class="left">
+                        <h1>
+                            <span>Приложение, созданное для</span>
+                            <span class="scrolling_text"></span>
+                        </h1>
+                        <a href="/download" draggable="false" class="noeffect">
+                            <md-filled-button id="download_btn">Скачать Toolbox.io</md-filled-button>
+                        </a>
+                    </div>
+                    <div class="right">
+                        <video autoplay muted loop height="480" width="216" id="demo">
+                            <source src="/res/demo.webm" type="video/webm" />
+                        </video>
+                    </div>
+                </div>
                 <h1 id="headline">Все нужное — в одном приложении</h1>
                 <p>
                     Toolbox.io — это надежный инструмент, который помогает защитить ваши приложения и данные
