@@ -29,7 +29,9 @@ jobs:
     runs-on: self-hosted
     env:
       HOME: "/root"
-    environment: Toolbox-io-website
+    environment:
+      name: production
+      url: https://toolbox-io.ru
     steps:
       - name: Checkout
         uses: actions/checkout@v4
