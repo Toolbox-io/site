@@ -1,4 +1,4 @@
-import {Utils} from "../common.js";
+import {Utils} from "./common.js";
 import setUpTabs = Utils.setUpTabs;
 import delay = Utils.delay;
 import id = Utils.id;

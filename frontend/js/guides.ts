@@ -1,7 +1,7 @@
 // noinspection JSUnusedLocalSymbols
 
 // @ts-ignore
-import {Utils} from "../../common.js";
+import {Utils} from "../../js/common.js";
 
 import delay = Utils.delay;
 import loadMarkdown = Utils.loadMarkdown;
