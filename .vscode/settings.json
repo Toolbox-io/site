@@ -1,0 +1,11 @@
+{
+    "files.exclude": {
+        "__pycache__": true,
+        "frontend/css/**/*.css": true,
+        "frontend/js/**/*.js": true,
+        "**/package-lock.json": true
+    },
+    "files.watcherExclude": {
+        "**/__pycache__/**": true
+    }
+}

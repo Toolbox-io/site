@@ -85,7 +85,7 @@ async def guide_info(guide: str):
 async def guides_handler(subpath: str, request: Request):
     """Handle guide requests with special processing for markdown files (except /raw and /list endpoints)."""
 
-    file_path, redirect_path = find_file(f"guides/{subpath}")
+    file_path = find_file(f"guides/{subpath}")[0]
     # Handle files
     if (
         "." in subpath or
@@ -93,16 +93,19 @@ async def guides_handler(subpath: str, request: Request):
     ):
         if not (file_path and file_path.is_file()):
             if subpath.endswith(".md"):
-                return FileResponse((CONTENT_PATH / "guides" / "ERROR.md").resolve(), status_code=404)
-            raise HTTPException(status_code=404)
-        return FileResponse(file_path)
-    # Redirect for not found guides
-    guide_name = f"{Path(subpath).stem.upper()}.md"
-    if not (CONTENT_PATH / "guides" / guide_name).is_file():
-        guide_name = "ERROR.md"
-    # Preserve query parameters
-    query_string = re.sub(r"&?guide=.*?(&|$)", "", request.url.query)
-    redirect_url = f"/guides/?guide={guide_name}"
-    if query_string:
-        redirect_url += f"&{query_string}"
-    return RedirectResponse(url=redirect_url)
+                return FileResponse(CONTENT_PATH / "guides" / "ERROR.md", status_code=404)
+            else:
+                raise HTTPException(status_code=404)
+        else:
+            return FileResponse(file_path)
+    else:
+        if (CONTENT_PATH / "guides" / guide_name).is_file():
+            guide_name = f"{Path(subpath).stem.upper()}.md"
+        else:
+            guide_name = "ERROR.md"
+        # Preserve query parameters
+        query_string = re.sub(r"&?guide=.*?(&|$)", "", request.url.query)
+        redirect_url = f"/guides/?guide={guide_name}"
+        if query_string:
+            redirect_url += f"&{query_string}"
+        return RedirectResponse(url=redirect_url)
