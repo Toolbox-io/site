@@ -14,36 +14,62 @@ import TioHeader = Components.TioHeader;
         let currentWordIndex = 0;
         
         function updateScrollingText() {
+            // Hide the original element during the transition
+            scrollingTextElement.style.display = "none";
+            
+            // Calculate the width of the widest word
+            const tempSpan = document.createElement("span");
+            tempSpan.style.position = "absolute";
+            tempSpan.style.visibility = "hidden";
+            tempSpan.style.whiteSpace = "nowrap";
+            tempSpan.style.font = window.getComputedStyle(scrollingTextElement).font;
+            document.body.appendChild(tempSpan);
+            
+            let maxWidth = 0;
+            words.forEach(word => {
+                tempSpan.textContent = word;
+                const width = tempSpan.offsetWidth;
+                if (width > maxWidth) {
+                    maxWidth = width;
+                }
+            });
+            
+            document.body.removeChild(tempSpan);
+            
             // Create a wrapper for the sliding effect
             const wrapper = document.createElement("div");
             wrapper.className = "scrolling-wrapper";
+            wrapper.style.width = `${maxWidth}px`;
             
-            // Create the old word element
+            // Create the old word element (currently visible)
             const oldWord = document.createElement("span");
             oldWord.textContent = words[currentWordIndex];
             oldWord.className = "scrolling-word";
             oldWord.style.top = "0";
+            oldWord.style.transform = "translateY(0)";
             
-            // Create the new word element
+            // Create the new word element (below, hidden)
             const newWord = document.createElement("span");
             newWord.textContent = words[(currentWordIndex + 1) % words.length];
             newWord.className = "scrolling-word";
-            newWord.style.top = "100%";
+            newWord.style.top = "0";
+            newWord.style.transform = "translateY(100%)";
             
             // Replace the original element with the wrapper
             scrollingTextElement.parentNode?.insertBefore(wrapper, scrollingTextElement);
             wrapper.appendChild(oldWord);
             wrapper.appendChild(newWord);
             
-            // Start the sliding animation
+            // Start the sliding animation - both words slide up together
             setTimeout(() => {
-                oldWord.style.transform = "translateY(-100%)";
-                newWord.style.transform = "translateY(-100%)";
+                oldWord.style.transform = "translateY(-100%)"; // Old word slides up and out
+                newWord.style.transform = "translateY(0)";     // New word slides up and into view
             }, 50);
             
             // Clean up and update for next cycle
             setTimeout(() => {
                 scrollingTextElement.textContent = words[(currentWordIndex + 1) % words.length];
+                scrollingTextElement.style.display = "";
                 scrollingTextElement.style.transform = "translateY(0)";
                 wrapper.remove();
                 currentWordIndex = (currentWordIndex + 1) % words.length;

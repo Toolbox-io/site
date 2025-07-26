@@ -34,12 +34,15 @@
                     position: relative;
                     overflow: hidden;
                     display: inline-block;
-                    min-width: 200px;
+                    height: 1em; // Match the actual text height
+                    line-height: 1em; // Ensure proper vertical alignment
                 }
                 
                 .scrolling-word {
                     position: absolute;
                     left: 0;
+                    top: 0;
+                    width: 100%;
                     background: linear-gradient(
                         133deg,
                         rgba(48, 134, 193, 1) 0%,
@@ -51,6 +54,7 @@
                     background-clip: text;
                     -webkit-background-clip: text;
                     transition: transform 0.6s ease-in-out;
+                    white-space: nowrap;
                 }
             }
         }
