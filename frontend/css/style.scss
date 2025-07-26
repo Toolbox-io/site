@@ -23,82 +23,96 @@
         &.col {
             flex-direction: column;
         }
-    }
 
-    .section#main_block {
-        background-color: $color-surfaceContainer;
-        margin: 30px;
-        border-radius: 30px;
-
-
-        .left {
-            h1 {
-                height: 39px;
-                line-height: 39px;
-                display: flex;
-                flex-direction: row;
-                gap: 10px;
-                align-items: center;
-
-                span {
-                    height: 39px;
+        &#main_block {
+            background-color: $color-surfaceContainer;
+            margin: 30px;
+            border-radius: 30px;
+    
+    
+            .left {
+                h1 {
+                    min-height: 39px;
                     line-height: 39px;
-                    display: block;
+                    display: flex;
+                    flex-direction: row;
+                    gap: 10px;
+                    align-items: center;
+                    flex-wrap: wrap;
+    
+                    span {
+                        height: 39px;
+                        line-height: 39px;
+                        display: block;
+                    }
+    
+                    .scrolling_text {
+                        display: inline-block;
+                        min-width: 200px;
+                        background: linear-gradient(
+                            133deg,
+                            rgba(48, 134, 193, 1) 0%,
+                            rgba(60, 96, 178, 1) 37%,
+                            rgba(125, 70, 218, 1) 71%,
+                            rgba(228, 9, 255, 1) 100%
+                        );
+                        color: transparent;
+                        background-clip: text;
+                        -webkit-background-clip: text;
+                    }
+                    
+                    // Styles for the sliding animation wrapper and elements
+                    .scrolling-wrapper {
+                        position: relative;
+                        overflow: hidden;
+                        display: inline-block;
+                        height: 39px; // Match the actual text height
+                        line-height: 39px; // Ensure proper vertical alignment
+                    }
+                    
+                    .scrolling-word {
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        width: 100%;
+                        background: linear-gradient(
+                            133deg,
+                            rgba(48, 134, 193, 1) 0%,
+                            rgba(60, 96, 178, 1) 37%,
+                            rgba(125, 70, 218, 1) 71%,
+                            rgba(228, 9, 255, 1) 100%
+                        );
+                        color: transparent;
+                        background-clip: text;
+                        -webkit-background-clip: text;
+                        transition: transform 0.6s ease-in-out;
+                        white-space: nowrap;
+                    }
                 }
-
-                .scrolling_text {
-                    display: inline-block;
-                    min-width: 200px;
-                    background: linear-gradient(
-                        133deg,
-                        rgba(48, 134, 193, 1) 0%,
-                        rgba(60, 96, 178, 1) 37%,
-                        rgba(125, 70, 218, 1) 71%,
-                        rgba(228, 9, 255, 1) 100%
-                    );
-                    color: transparent;
-                    background-clip: text;
-                    -webkit-background-clip: text;
-                }
-                
-                // Styles for the sliding animation wrapper and elements
-                .scrolling-wrapper {
-                    position: relative;
-                    overflow: hidden;
-                    display: inline-block;
-                    height: 39px; // Match the actual text height
-                    line-height: 39px; // Ensure proper vertical alignment
-                }
-                
-                .scrolling-word {
-                    position: absolute;
-                    left: 0;
-                    top: 0;
-                    width: 100%;
-                    background: linear-gradient(
-                        133deg,
-                        rgba(48, 134, 193, 1) 0%,
-                        rgba(60, 96, 178, 1) 37%,
-                        rgba(125, 70, 218, 1) 71%,
-                        rgba(228, 9, 255, 1) 100%
-                    );
-                    color: transparent;
-                    background-clip: text;
-                    -webkit-background-clip: text;
-                    transition: transform 0.6s ease-in-out;
-                    white-space: nowrap;
+    
+                #main_p {
+                    margin-block: 0;
+                    margin-top: 0;
+                    margin-bottom: 30px;
                 }
             }
-
-            #main_p {
-                margin-block: 0;
-                margin-top: 0;
-                margin-bottom: 30px;
+    
+            .right video {
+                border-radius: 20px;
             }
         }
 
-        .right video {
-            border-radius: 20px;
+        @media (max-width: 650px) {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        @media (max-width: 390px) {
+            padding: 20px;
+
+            &#main_block {
+                margin: 10px;
+            }
         }
     }
 
