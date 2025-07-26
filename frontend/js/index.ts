@@ -7,6 +7,58 @@ import delay = Utils.delay;
 import TioHeader = Components.TioHeader;
 
 (async () => {
+    // Scrolling text functionality
+    const scrollingTextElement = document.querySelector(".scrolling_text") as HTMLElement;
+    if (scrollingTextElement) {
+        const words = ["защиты", "кастомизации", "инструментов"];
+        let currentWordIndex = 0;
+        
+        function updateScrollingText() {
+            // Create a wrapper for the sliding effect
+            const wrapper = document.createElement("div");
+            wrapper.className = "scrolling-wrapper";
+            
+            // Create the old word element
+            const oldWord = document.createElement("span");
+            oldWord.textContent = words[currentWordIndex];
+            oldWord.className = "scrolling-word";
+            oldWord.style.top = "0";
+            
+            // Create the new word element
+            const newWord = document.createElement("span");
+            newWord.textContent = words[(currentWordIndex + 1) % words.length];
+            newWord.className = "scrolling-word";
+            newWord.style.top = "100%";
+            
+            // Replace the original element with the wrapper
+            scrollingTextElement.parentNode?.insertBefore(wrapper, scrollingTextElement);
+            wrapper.appendChild(oldWord);
+            wrapper.appendChild(newWord);
+            
+            // Start the sliding animation
+            setTimeout(() => {
+                oldWord.style.transform = "translateY(-100%)";
+                newWord.style.transform = "translateY(-100%)";
+            }, 50);
+            
+            // Clean up and update for next cycle
+            setTimeout(() => {
+                scrollingTextElement.textContent = words[(currentWordIndex + 1) % words.length];
+                scrollingTextElement.style.transform = "translateY(0)";
+                wrapper.remove();
+                currentWordIndex = (currentWordIndex + 1) % words.length;
+            }, 650);
+        }
+        
+        // Initialize with first word
+        scrollingTextElement.textContent = words[0];
+        scrollingTextElement.style.transform = "translateY(0)";
+        scrollingTextElement.style.opacity = "1";
+        
+        // Start the rotation
+        setInterval(updateScrollingText, 3000);
+    }
+
     // Set up buttons
     const header = document.querySelector("tio-header")!! as TioHeader;
 

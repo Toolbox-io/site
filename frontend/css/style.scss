@@ -3,6 +3,68 @@
 @import "common/colors";
 
 #main {
+    .section {
+        display: flex;
+        flex-direction: row;
+        text-align: left;
+        padding: 20px;
+
+        .left {
+            flex-grow: 1;
+            flex-shrink: 0;
+            
+            h1 {
+                .scrolling_text {
+                    display: inline-block;
+                    min-width: 200px;
+                    background: linear-gradient(
+                        133deg,
+                        rgba(48, 134, 193, 1) 0%,
+                        rgba(60, 96, 178, 1) 37%,
+                        rgba(125, 70, 218, 1) 71%,
+                        rgba(228, 9, 255, 1) 100%
+                    );
+                    color: transparent;
+                    background-clip: text;
+                    -webkit-background-clip: text;
+                }
+                
+                // Styles for the sliding animation wrapper and elements
+                .scrolling-wrapper {
+                    position: relative;
+                    overflow: hidden;
+                    display: inline-block;
+                    min-width: 200px;
+                }
+                
+                .scrolling-word {
+                    position: absolute;
+                    left: 0;
+                    background: linear-gradient(
+                        133deg,
+                        rgba(48, 134, 193, 1) 0%,
+                        rgba(60, 96, 178, 1) 37%,
+                        rgba(125, 70, 218, 1) 71%,
+                        rgba(228, 9, 255, 1) 100%
+                    );
+                    color: transparent;
+                    background-clip: text;
+                    -webkit-background-clip: text;
+                    transition: transform 0.6s ease-in-out;
+                }
+            }
+        }
+
+        .right {
+            flex-grow: 0;
+            flex-shrink: 1;
+        }
+
+        &.col {
+            flex-direction: column;
+        }
+    }
+
     #headline {
         background: linear-gradient(
             133deg,
