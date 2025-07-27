@@ -34,8 +34,6 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       GITHUB_APP_ID: ${GITHUB_APP_ID}
       GITHUB_INSTALLATION_ID: ${GITHUB_INSTALLATION_ID}
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     ports:
       - "8000:8000"
     develop:
@@ -74,8 +72,6 @@ services:
           path: ./frontend/package.json
     volumes:
       - download_cache:/root/site/backend/download/cache
-    environment:
-      SMTP_PASSWORD: ${SMTP_PASSWORD}
 
   caddy:
     build:
@@ -87,6 +83,8 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - certs:/root/site/certs
     environment:
