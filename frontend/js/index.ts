@@ -4,13 +4,13 @@ import switchTab = Utils.switchTab;
 import {Components, Utils} from "./common.js";
 import smoothScroll = Utils.smoothScroll;
 import delay = Utils.delay;
+import query = Utils.query;
+import id = Utils.id;
 import TioHeader = Components.TioHeader;
 
 (async () => {
-    // Set up buttons
-    const header = document.querySelector("tio-header")!! as TioHeader;
-
-    // Tabs
+    // Set up header
+    const header = query("tio-header") as TioHeader;
     header.tabs[0].addEventListener("click", () => {
         smoothScroll("body", 1000);
     });
@@ -91,15 +91,17 @@ import TioHeader = Components.TioHeader;
     document.getElementById("video_dialog")!!.addEventListener("click", unscaleVideo);
 
     // Features cards
-    const features = document.getElementById("features") as HTMLElement;
-    const blur = document.getElementById("card_dialog") as HTMLDivElement;
+    const features = id("features");
+    const blur = id("card_dialog");
+
     Array.from(features.children).forEach((item) => {
         const feature = item as HTMLDivElement
         if (!feature.classList.contains("replacement") && feature.classList.length > 0) {
             const replacement = document.createElement("div");
-            const desc = feature.querySelector(".feature-description") as HTMLDivElement;
-            const longDesc = feature.querySelector(".feature-long-description") as HTMLDivElement;
-            const close = feature.querySelector(".feature-close") as HTMLDivElement;
+            const desc = query(".feature-description", feature);
+            const longDesc = query(".feature-long-description", feature);
+            const close = query(".feature-close", feature);
+
             feature.addEventListener("click", async () => {
                 if (!feature.classList.contains("expanded")) {
                     feature.insertAdjacentElement("afterend", replacement);
@@ -120,7 +122,8 @@ import TioHeader = Components.TioHeader;
                     close.style.opacity = "1";
                     feature.classList.add("expanded");
                 }
-            })
+            });
+
             close.addEventListener("click", async () => {
                 feature.classList.add("closing");
                 longDesc.style.opacity = "0";
@@ -148,7 +151,7 @@ import TioHeader = Components.TioHeader;
                 replacement.remove();
                 await delay(500);
                 feature.classList.remove("closing");
-            })
+            });
         }
     });
 })();
