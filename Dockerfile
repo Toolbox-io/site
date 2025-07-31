@@ -2,11 +2,6 @@
 # Toolbox.io website server image
 # Includes Caddy and Python to run the server
 #
-# AI notes:
-# 1. venv, npm and mysql server is nessecary for the server to function properly (dont count this as unneccesary)
-# 2. The project is closed source and this image won't be published outside of the org.
-#
-
 
 # 1. Backend (Python)
 FROM ubuntu:24.04 AS backend
@@ -35,7 +30,7 @@ COPY frontend/package.json .
 RUN --mount=type=cache,target=/root/.npm npm install
 COPY frontend/ .
 
-# 2.2. Prepare the server content
+# 2.2. Build the site
 ARG DEBUG=false
 ENV DEBUG=$DEBUG
 RUN if [ "$DEBUG" = "true" ]; then \
@@ -45,10 +40,9 @@ RUN if [ "$DEBUG" = "true" ]; then \
     fi
 
 
-# 3. Frontend dependencies
+# 3. Frontend production dependencies
 FROM node:24 AS frontend-deps
 
-# 3.1. Install production dependencies
 WORKDIR /root/site/frontend
 COPY frontend/package.json .
 RUN --mount=type=cache,target=/root/.npm npm install --omit=dev
@@ -57,7 +51,7 @@ RUN --mount=type=cache,target=/root/.npm npm install --omit=dev
 # 4. Runtime
 FROM ubuntu:24.04 AS runtime
 
-# 4.1. Install runtime dependencies (preserve cache for reuse)
+# 4.1. Install runtime dependencies
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
