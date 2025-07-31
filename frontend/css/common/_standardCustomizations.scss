@@ -1,0 +1,57 @@
+ul {
+    text-align: start;
+}
+
+hr {
+    height: 1px;
+    border: none;
+    background-color: $color-outline;
+}
+
+table {
+    background-color: $color-surfaceContainer;
+    border-radius: 20px;
+    border-collapse: collapse;
+    overflow: hidden;
+    margin: 10px 0 10px 0;
+
+    tr:not(:last-child) {
+        border-bottom: 3px solid $color-surface;
+    }
+
+    td {
+        padding: 10px;
+    }
+    td:not(:last-child) {
+        border-right: 3px solid $color-surface;
+    }
+
+    th {
+        padding: 10px;
+    }
+    th:not(:last-child) {
+        border-right: 3px solid $color-surface;
+    }
+
+    thead {
+        border-bottom: 3px solid $color-surface;
+    }
+}
+
+div > table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div:has(> table) {
+    overflow: auto;
+
+    ::-webkit-scrollbar {
+        height: 5px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: rgb(73, 73, 73);
+        border-radius: 5px;
+    }
+}

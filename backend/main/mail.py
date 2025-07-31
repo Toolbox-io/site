@@ -7,7 +7,7 @@ from os import PathLike
 
 import jinja2
 
-from backend.main.constants import TEMPLATES_PATH
+from constants import TEMPLATES_PATH
 
 logger = logging.getLogger(__name__)
 

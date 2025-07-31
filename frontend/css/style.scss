@@ -196,21 +196,19 @@ body.hasHover #main #features .feature:not(.noHover):hover {
 }
 
 @media (max-width: 500px) {
-    #main {
-        .side {
-            text-align: center;
-            flex-direction: column;
+    .side {
+        text-align: center;
+        flex-direction: column;
 
-            div#video_container {
-                video {
-                    margin-left: auto !important;
-                    margin-right: auto !important;
-                }
+        #video_container {
+            video {
+                margin-left: auto !important;
+                margin-right: auto !important;
+            }
 
-                .tip {
-                    margin-left: auto !important;
-                    margin-right: auto !important;
-                }
+            .tip {
+                margin-left: auto !important;
+                margin-right: auto !important;
             }
         }
     }
