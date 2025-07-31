@@ -14,7 +14,7 @@ from sqlalchemy.orm import Session
 from constants import CONTENT_PATH
 from db.core import get_db, get_session_factory
 from models import User, BlacklistedToken
-from routes.mail import send_mail, render_email
+from mail import send_mail, render_email
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
@@ -215,7 +215,7 @@ def send_verify_email(user: User, db: Session):
     code = str(random.randint(1, 999999)).zfill(6)
     user.verification_code = code
     db.commit()
-    html_body = render_email(CONTENT_PATH / "emails" / "verify.html", CODE=code)
+    html_body = render_email("verify", CODE=code)
     send_mail(
         user.email,
         "Подтвертите ваш email",
