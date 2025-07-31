@@ -12,7 +12,7 @@ from db.core import get_db, get_session_factory
 from limiter import limiter
 from models import PasswordChange, Message, User
 from routes.auth.utils import hash_password, get_current_user, verify_password, validate_password, send_verify_email
-from routes.mail import render_email, send_mail
+from mail import render_email, send_mail
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -108,7 +108,7 @@ async def request_reset(request: Request, data: dict = Body(...)):
     user.reset_code = code
     user.reset_token_expiry = datetime.datetime.now() + datetime.timedelta(hours=1)
     db.commit()
-    html_body = render_email(CONTENT_PATH / "emails" / "reset.html", CODE=code)
+    html_body = render_email("reset", CODE=code)
     send_mail(
         email,
         "Сброс пароля",
