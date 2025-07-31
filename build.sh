@@ -9,8 +9,6 @@ cd "$(dirname "$0")"
 export DEBUG=${DEBUG:-true}
 export COMPOSE_BAKE=true
 export DOCKER_BUILDKIT=1
-# shellcheck disable=SC2155
-export GITHUB_PRIVATE_KEY="$(cat secrets/toolbox-io.private-key.pem)"
 
 # 3. Build & run
 

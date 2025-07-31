@@ -45,18 +45,15 @@
             }
         }
     }
-}
 
-@media (max-width: 560px) {
-    :host {
+    @media (max-width: 560px) {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 20px;
     }
-}
-
-@media (max-width: 380px) {
-    :host {
+    
+    @media (max-width: 380px) {
         grid-template-columns: 1fr;
     }
 }
+

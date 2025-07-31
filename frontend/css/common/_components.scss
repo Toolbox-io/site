@@ -1,6 +1,6 @@
 @use "visualEffects";
-@import "colors";
-@import "mixins";
+@use "colors";
+@use "mixins";
 
 a:has(md-filled-button) {
     text-decoration: none !important;
@@ -62,11 +62,11 @@ div.warning {
     transition: opacity 0.5s ease;
     opacity: 0;
     user-select: none;
-}
 
-.dialog.open {
-    opacity: 1;
-    height: 100vh;
+    &.open {
+        opacity: 1;
+        height: 100vh;
+    }
 }
 
 pre {
@@ -109,6 +109,7 @@ md-icon-button {
     white-space: nowrap;
     word-wrap: normal;
     direction: ltr;
+    font-feature-settings: "liga";
     -webkit-font-feature-settings: 'liga';
     -webkit-font-smoothing: antialiased;
     user-select: none;
@@ -146,4 +147,44 @@ div.button-row {
     display: inline-flex;
     flex-direction: row;
     gap: 10px;
+}
+
+button.big-button {
+    padding: 0.75rem 1.5rem;
+    background: $color-primaryContainer;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transform-origin: center;
+    transition: background-color 0.2s ease, transform 0.25s ease;
+
+    &:hover {
+        background: $color-primaryContainerDarkened;
+    }
+
+    &:active {
+        transform: scale(0.95);
+    }
+
+    &.secondary {
+        background: $color-secondaryContainer;
+        color: $color-onSurface;
+
+        &:hover {
+            background: $color-secondaryContainerDarkened;
+        }
+    }
+
+    &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+
+        &:hover {
+            transform: none;
+        }
+    }
 }

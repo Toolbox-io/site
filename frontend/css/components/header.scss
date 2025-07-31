@@ -88,15 +88,8 @@
             }
         }
     }
-}
 
-:host(:state(scrolled)) {
-    backdrop-filter: blur(10px) brightness(50%);
-    border-radius: 20px;
-}
-
-@media (max-width: 500px) {
-    :host {
+    @media (max-width: 500px) {
         .title {
             display: none;
             width: 0;
@@ -109,10 +102,8 @@
             padding: 6px 12px;
         }
     }
-}
-
-@media (max-width: 395px) {
-    :host {
+    
+    @media (max-width: 395px) {
         margin-top: 0 !important;
         margin-left: 0 !important;
         margin-right: 0 !important;
@@ -121,4 +112,9 @@
         width: 100% !important;
         top: 0 !important;
     }
+}
+
+:host(:state(scrolled)) {
+    backdrop-filter: blur(10px) brightness(50%);
+    border-radius: 20px;
 }

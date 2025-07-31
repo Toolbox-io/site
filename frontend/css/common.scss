@@ -1,9 +1,10 @@
 @use "common/animations";
 @use "common/markdown";
 @use "common/components";
-@import "common/mixins";
-@import "common/colors";
-@import "common/markdown";
+@use "common/mixins";
+@use "common/colors";
+@use "common/markdown";
+@use "common/standardCustomizations";
 
 @import url(../res/fonts/montserrat/index.css);
 @import url(../res/fonts/material-symbols/index.css);
@@ -23,9 +24,66 @@ html, body {
     -webkit-tap-highlight-color: transparent !important;
 }
 
-body .wrapper {
-    position: relative;
-    margin-bottom: 20px;
+body {
+    .wrapper {
+        position: relative;
+        margin-bottom: 20px;
+    }
+
+    &::before {
+        position: fixed;
+        width: 100dvw;
+        height: 100dvh;
+        content: '';
+        backdrop-filter: blur(30px) brightness(0.8);
+        display: block;
+        opacity: 1;
+        z-index: 1000;
+        transition: opacity 0.5s ease;
+    }
+    
+    &::after {
+        content: '';
+        width: 70px;
+        height: 70px;
+        font-weight: 500;
+        border-top: $spinner-thickness solid $spinner-color;
+        border-right: $spinner-thickness solid $spinner-color;
+        border-bottom: $spinner-thickness solid transparent;
+        border-left: $spinner-thickness solid transparent;
+        border-radius: 50%;
+        position: fixed;
+        animation: rotate 1s ease;
+        animation-iteration-count: infinite;
+        opacity: 1;
+        z-index: 1001;
+        transition: opacity 0.5s ease;
+        left: calc(50% - 70px / 2);
+        top: calc(50dvh - 70px / 2);
+    }
+    
+    &.loaded::before, &.loaded::after {
+        opacity: 0;
+    }
+    
+    &.full_loaded::before, &.full_loaded::after {
+        display: none;
+    }
+
+
+
+    // TODO review and remove
+    &.hasHover {
+        .toucheffect {
+            &:hover {
+                background-color: $hover-color;
+            }
+
+            &:active {
+                background-color: $active-color;
+            }
+        }
+    }
 }
 
 #headline {
@@ -49,10 +107,8 @@ body .wrapper {
     @include automargin();
     max-width: 1000px;
     transition: all 0.5s ease-in-out;
-}
 
-@media (max-width: 1020px) {
-    .automargin {
+    @media (max-width: 1020px) {
         margin-left: 10px;
         margin-right: 10px;
     }
@@ -62,158 +118,4 @@ body .wrapper {
     margin-left: 25%;
     margin-right: 25%;
     transition: all 0.5s ease-in-out;
-}
-
-ul {
-    text-align: start;
-}
-
-hr {
-    height: 1px;
-    border: none;
-    background-color: $color-outline;
-}
-
-table {
-    background-color: $color-surfaceContainer;
-    border-radius: 20px;
-    border-collapse: collapse;
-    overflow: hidden;
-    margin: 10px 0 10px 0;
-
-    tr:not(:last-child) {
-        border-bottom: 3px solid $color-surface;
-    }
-
-    td {
-        padding: 10px;
-    }
-    td:not(:last-child) {
-        border-right: 3px solid $color-surface;
-    }
-
-    th {
-        padding: 10px;
-    }
-    th:not(:last-child) {
-        border-right: 3px solid $color-surface;
-    }
-
-    thead {
-        border-bottom: 3px solid $color-surface;
-    }
-}
-
-div > table {
-    margin-left: auto;
-    margin-right: auto;
-}
-
-div:has(> table) {
-    overflow: auto;
-
-    ::-webkit-scrollbar {
-        height: 5px;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background-color: rgb(73, 73, 73);
-        border-radius: 5px;
-    }
-}
-
-@media (max-width: 1000px) {
-    .automargin {
-        margin-left: 10px !important;
-        margin-right: 10px !important;
-    }
-}
-
-// TODO review and remove
-body.hasHover .toucheffect:hover {
-    background-color: $hover-color;
-}
-
-.toucheffect:active {
-    background-color: $active-color;
-}
-
-body::before {
-    position: fixed;
-    width: 100dvw;
-    height: 100dvh;
-    content: '';
-    backdrop-filter: blur(30px) brightness(0.8);
-    display: block;
-    opacity: 1;
-    z-index: 1000;
-    transition: opacity 0.5s ease;
-}
-
-body::after {
-    content: '';
-    width: 70px;
-    height: 70px;
-    font-weight: 500;
-    border-top: $spinner-thickness solid $spinner-color;
-    border-right: $spinner-thickness solid $spinner-color;
-    border-bottom: $spinner-thickness solid transparent;
-    border-left: $spinner-thickness solid transparent;
-    border-radius: 50%;
-    position: fixed;
-    animation: rotate 1s ease;
-    animation-iteration-count: infinite;
-    opacity: 1;
-    z-index: 1001;
-    transition: opacity 0.5s ease;
-    left: calc(50% - 70px / 2);
-    top: calc(50dvh - 70px / 2);
-}
-
-body.loaded::before, body.loaded::after {
-    opacity: 0;
-}
-
-body.full_loaded::before, body.full_loaded::after {
-    display: none;
-}
-
-button.big-button {
-    padding: 0.75rem 1.5rem;
-    background: $color-primaryContainer;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transform-origin: center;
-    transition: background-color 0.2s ease, transform 0.25s ease;
-
-    &:hover {
-        background: $color-primaryContainerDarkened;
-    }
-
-    &:active {
-        transform: scale(0.95);
-    }
-
-    &.secondary {
-        background: $color-secondaryContainer;
-        color: $color-onSurface;
-
-        &:hover {
-            background: $color-secondaryContainerDarkened;
-        }
-    }
-
-    &:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        transform: none;
-
-        &:hover {
-            transform: none;
-        }
-    }
 }
