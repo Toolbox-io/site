@@ -64,7 +64,17 @@ import TioHeader = Components.TioHeader;
         await delay(600);
         
         // Clean up old elements and update for next cycle
-        currentWord.remove();
+        Array.from(wrapper.children).forEach((item) => {
+            switch (item) {
+                case currentWord:
+                    item.remove();
+                    break;
+                case newWord: break;
+                default:
+                    item.remove();
+                    break;
+            }
+        });
         currentWordIndex = (currentWordIndex + 1) % words.length;
     }
     
