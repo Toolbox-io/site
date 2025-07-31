@@ -172,8 +172,8 @@ export namespace Utils {
     }
 
     // noinspection JSUnusedGlobalSymbols
-    export function query(query: string) {
-        return document.querySelector(query)!! as HTMLElement;
+    export function query(query: string, element: Element | Document = document) {
+        return element.querySelector(query)!! as HTMLElement;
     }
 
     hljs.registerLanguage("xml", xml);
