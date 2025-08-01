@@ -1,4 +1,4 @@
-@import "../common/colors";
+@use "../common/colors" as *;
 
 @keyframes shake {
     0% { transform: translateX(0); }

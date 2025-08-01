@@ -1,6 +1,6 @@
 @use "visualEffects";
-@use "colors";
-@use "mixins";
+@use "colors" as *;
+@use "mixins" as *;
 
 a:has(md-filled-button) {
     text-decoration: none !important;

@@ -1,4 +1,4 @@
-@import "../common/colors";
+@use "../common/colors" as *;
 
 .code-input-row {
     display: flex;
