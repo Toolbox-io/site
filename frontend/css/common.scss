@@ -1,9 +1,8 @@
 @use "common/animations";
-@use "common/markdown";
+@use "common/markdown" as *;
 @use "common/components";
-@use "common/mixins";
-@use "common/colors";
-@use "common/markdown";
+@use "common/mixins" as *;
+@use "common/colors" as *;
 @use "common/standardCustomizations";
 
 @import url(../res/fonts/montserrat/index.css);

@@ -1,4 +1,4 @@
-@import "common/colors";
+@use "common/colors" as *;
 
 #main #features {
     display: grid;

@@ -1,4 +1,4 @@
-@import "../common/colors";
+@use "../common/colors" as *;
 @import url(/css/common.css);
 
 :host {

@@ -1,4 +1,4 @@
-@import "../common/colors";
+@use "../common/colors" as *;
 
 :host {
     background-color: #1F1F25;
