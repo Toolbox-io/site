@@ -29,7 +29,6 @@
             margin: 30px;
             border-radius: 30px;
     
-    
             .left {
                 h1 {
                     min-height: 39px;
@@ -40,25 +39,11 @@
                     align-items: center;
                     flex-wrap: wrap;
     
+                    // Normalize text
                     span {
                         height: 39px;
                         line-height: 39px;
                         display: block;
-                    }
-    
-                    .scrolling_text {
-                        display: inline-block;
-                        min-width: 200px;
-                        background: linear-gradient(
-                            133deg,
-                            rgba(48, 134, 193, 1) 0%,
-                            rgba(60, 96, 178, 1) 37%,
-                            rgba(125, 70, 218, 1) 71%,
-                            rgba(228, 9, 255, 1) 100%
-                        );
-                        color: transparent;
-                        background-clip: text;
-                        -webkit-background-clip: text;
                     }
                     
                     // Styles for the sliding animation wrapper and elements
@@ -66,27 +51,27 @@
                         position: relative;
                         overflow: hidden;
                         display: inline-block;
-                        height: 39px; // Match the actual text height
-                        line-height: 39px; // Ensure proper vertical alignment
-                    }
-                    
-                    .scrolling-word {
-                        position: absolute;
-                        left: 0;
-                        top: 0;
-                        width: 100%;
-                        background: linear-gradient(
-                            133deg,
-                            rgba(48, 134, 193, 1) 0%,
-                            rgba(60, 96, 178, 1) 37%,
-                            rgba(125, 70, 218, 1) 71%,
-                            rgba(228, 9, 255, 1) 100%
-                        );
-                        color: transparent;
-                        background-clip: text;
-                        -webkit-background-clip: text;
-                        transition: transform 0.6s ease-in-out;
-                        white-space: nowrap;
+                        height: 39px;
+                        line-height: 39px;
+
+                        .scrolling-word {
+                            position: absolute;
+                            left: 0;
+                            top: 0;
+                            width: 100%;
+                            background: linear-gradient(
+                                133deg,
+                                rgba(48, 134, 193, 1) 0%,
+                                rgba(60, 96, 178, 1) 37%,
+                                rgba(125, 70, 218, 1) 71%,
+                                rgba(228, 9, 255, 1) 100%
+                            );
+                            color: transparent;
+                            background-clip: text;
+                            -webkit-background-clip: text;
+                            transition: transform 0.6s ease-in-out;
+                            white-space: nowrap;
+                        }
                     }
                 }
     
@@ -189,27 +174,4 @@
 
 body.hasHover #main #features .feature:not(.noHover):hover {
     transform: translateY(5px);
-}
-
-#video_dialog {
-    z-index: 1001;
-}
-
-@media (max-width: 500px) {
-    .side {
-        text-align: center;
-        flex-direction: column;
-
-        #video_container {
-            video {
-                margin-left: auto !important;
-                margin-right: auto !important;
-            }
-
-            .tip {
-                margin-left: auto !important;
-                margin-right: auto !important;
-            }
-        }
-    }
 }
