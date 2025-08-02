@@ -118,3 +118,12 @@ body {
     margin-right: 25%;
     transition: all 0.5s ease-in-out;
 }
+
+.gradient-text {
+    @include gradient_text();
+}
+
+.nomargin {
+    margin: 0;
+    margin-block: 0;
+}

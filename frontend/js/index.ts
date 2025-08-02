@@ -89,68 +89,50 @@ import TioHeader = Components.TioHeader;
         open("https://github.com/Toolbox-io/Toolbox-io/issues", "_self");
     });
 
-    // Features cards
-    const features = id("features");
-    const blur = id("card_dialog");
-
-    Array.from(features.children).forEach((item) => {
-        const feature = item as HTMLDivElement
-        if (!feature.classList.contains("replacement") && feature.classList.length > 0) {
-            const replacement = document.createElement("div");
-            const desc = query(".feature-description", feature);
-            const longDesc = query(".feature-long-description", feature);
-            const close = query(".feature-close", feature);
-
-            feature.addEventListener("click", async () => {
-                if (!feature.classList.contains("expanded")) {
-                    feature.insertAdjacentElement("afterend", replacement);
-                    replacement.innerHTML = feature.innerHTML;
-                    replacement.classList.add("placeholder", "feature");
-                    replacement.id = `${feature.id}_placeholder`;
-                    feature.classList.add("noHover");
-
-                    blur.classList.add("open");
-
-                    desc.style.opacity = "0";
-                    desc.style.display = "none";
-
-                    longDesc.style.display = "block";
-                    longDesc.style.opacity = "1";
-
-                    close.style.display = "block";
-                    close.style.opacity = "1";
-                    feature.classList.add("expanded");
-                }
+    // Security items
+    const securityItems = document.querySelectorAll(".security-item");
+    const securityDetails = document.querySelectorAll(".security-detail");
+    
+    securityItems.forEach((item) => {
+        const securityItem = item as HTMLDivElement;
+        const featureId = securityItem.getAttribute("data-feature");
+        
+        securityItem.addEventListener("click", () => {
+            // Remove active class from all security items
+            securityItems.forEach((si) => {
+                si.classList.remove("active");
             });
-
-            close.addEventListener("click", async () => {
-                feature.classList.add("closing");
-                longDesc.style.opacity = "0";
-                close.style.opacity = "0";
-                blur.style.opacity = "0";
-                feature.style.opacity = "0";
-                await delay(500);
-                blur.classList.remove("open");
-                blur.style.opacity = "";
-                longDesc.style.display = "none";
-                close.style.display = "none";
-                desc.style.display = "block";
-                desc.style.opacity = "1";
-                feature.style.animation = "";
-                feature.style.opacity = "1";
-                feature.classList.remove("noHover", "expanded");
-                Array.from(features.children).forEach(item2 => {
-                    const item3 = item2 as HTMLDivElement;
-                    if (item3.classList.length > 0) {
-                        item3.style.width = "";
-                        item3.style.height = "";
-                        item3.style.boxSizing = "";
-                    }
-                });
-                replacement.remove();
-                await delay(500);
-                feature.classList.remove("closing");
+            
+            // Add active class to clicked item
+            securityItem.classList.add("active");
+            
+            // Hide all security details
+            securityDetails.forEach((detail) => {
+                detail.classList.remove("active");
             });
-        }
+            
+            // Show the corresponding detail
+            const detailId = `${featureId}-detail`;
+            const detailElement = document.getElementById(detailId);
+            if (detailElement) {
+                detailElement.classList.add("active");
+            }
+        });
     });
+    
+    // Show first security item by default
+    if (securityItems.length > 0) {
+        const firstItem = securityItems[0] as HTMLDivElement;
+        const firstFeatureId = firstItem.getAttribute("data-feature");
+        
+        firstItem.classList.add("active");
+        
+        if (firstFeatureId) {
+            const firstDetailId = `${firstFeatureId}-detail`;
+            const firstDetailElement = document.getElementById(firstDetailId);
+            if (firstDetailElement) {
+                firstDetailElement.classList.add("active");
+            }
+        }
+    }
 })();

@@ -2,3 +2,15 @@
     margin-left: auto;
     margin-right: auto;
 }
+
+@mixin gradient_text() {
+    background: linear-gradient(
+        133deg,
+        rgba(48, 134, 193, 1) 0%,
+        rgba(60, 96, 178, 1) 37%,
+        rgba(125, 70, 218, 1) 71%,
+        rgba(228, 9, 255, 1) 100%
+    );
+    color: transparent;
+    background-clip: text;
+}
