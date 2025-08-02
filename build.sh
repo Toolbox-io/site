@@ -10,7 +10,30 @@ export DEBUG=${DEBUG:-true}
 export COMPOSE_BAKE=true
 export DOCKER_BUILDKIT=1
 
-# 3. Build & run
+# 3. Start Docker Desktop on macOS if not running
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  if ! docker info >/dev/null 2>&1; then
+    echo "Starting Docker Desktop on macOS..."
+    docker desktop start
+    
+    # Wait for Docker to be ready (max 60 seconds)
+    echo "Waiting for Docker to be ready..."
+    for i in {1..30}; do
+      if docker info >/dev/null 2>&1; then
+        break
+      fi
+      echo "Attempt $i/30: Docker not ready yet..."
+      sleep 2
+    done
+    
+    if ! docker info >/dev/null 2>&1; then
+      echo "Error: Docker did not start within 60 seconds"
+      exit 1
+    fi
+  fi
+fi
+
+# 4. Build & run
 
 # 3.1. Development
 # Note: in development $NURUN is probably always false,
