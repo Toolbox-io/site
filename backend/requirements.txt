@@ -16,3 +16,4 @@ slowapi>=0.1.9
 passlib
 httpx
 PyJWT
+watchdog>=3.0.0

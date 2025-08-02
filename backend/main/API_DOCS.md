@@ -149,6 +149,26 @@ All `/api/auth/*` endpoints are under the `/api/auth` prefix.
 
 ---
 
+## Live Reload Endpoints
+
+### WebSocket `/ws/live-reload`
+- **Description:** WebSocket endpoint for live reload functionality (development only).
+- **Connection:** `ws://localhost:8000/ws/live-reload` or `wss://toolbox-io.ru/ws/live-reload`
+- **Messages:**
+  - **Incoming:** Any text message (keeps connection alive)
+  - **Outgoing:** JSON object with reload notification
+    ```json
+    {
+      "type": "reload",
+      "file": "path/to/changed/file",
+      "timestamp": 1234567890.123
+    }
+    ```
+- **Behavior:** Automatically reloads the page when files in the main directory change.
+- **Client Script:** Automatically injected into all HTML responses in development mode.
+
+---
+
 ### POST `/api/auth/change-password`
 - **Description:** Change the current user's password.
 - **Headers:**

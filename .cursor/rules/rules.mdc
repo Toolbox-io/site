@@ -9,6 +9,8 @@ When working with this project, follow these rules:
 - When i ask you to do something with the project and you don't have any clarifying questions, 
   always automatically proceed with the edit without asking me for confirmation.
 
+- Do NOT add tests unless i explicitly ask you to do so.
+
 ## Important Clarifications
 
 - When working with API authentication in JS/TS, do NOT use { credentials: "include" }, instead use this:
