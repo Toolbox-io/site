@@ -10,7 +10,7 @@ import TioHeader = Components.TioHeader;
 
 (async () => {
     // Scrolling text functionality
-    const wrapper = query(".scrolling_text");
+    const wrapper = query("#scrolling-wrapper");
     const words = ["защиты", "кастомизации", "инструментов"];
     let currentWordIndex = 0;
     
