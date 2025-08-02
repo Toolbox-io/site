@@ -97,15 +97,12 @@ export namespace Utils {
         }
 
         let text = await (await fetch(file)).text();
-        console.log(text);
         const header = getMarkdownHeader(text);
         text = text.replace(/^---(.|\n)*?^---/gm, '');
-        console.log(text);
         text = text.replace(
             /^([\t ]*)> \[!(IMPORTANT|TIP|NOTE|WARNING)]\n((\s*>.*)*)/gm,
             `$1> [!$2]\n$1>\n$3`
         );
-        console.log(text);
         element.innerHTML = await marked.parse(text);
 
         // apply styles
@@ -282,7 +279,6 @@ export namespace Components {
 
         // noinspection JSUnusedGlobalSymbols
         attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-            console.log(`Attribute ${name} has changed.`);
             switch (name) {
                 case "tab": {
                     const tabs = this.shadowRoot!!.querySelector("#tabs")!!.children;
@@ -319,7 +315,6 @@ export namespace Components {
             `;
             shadow.querySelectorAll(".footer_column a").forEach((el) => {
                 const a = el as HTMLAnchorElement;
-                console.log(a);
                 const regex = /^(?!\/)(.+?)\/*$/;
                 if (a.href.replace(regex, "$1/") === location.href.replace(regex, "$1/")) {
                     a.classList.add("selected");
