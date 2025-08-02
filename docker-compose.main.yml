@@ -1,0 +1,92 @@
+services:
+  db-main:
+    image: mysql:8
+    container_name: toolbox-io-main-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME:-toolbox_db_main}
+      MYSQL_USER: ${DB_USER:-toolbox_user_main}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3306:3306"
+    volumes:
+      - main_data:/var/lib/mysql
+    networks:
+      - main-network
+
+  main:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DEBUG: ${DEBUG:-false}
+    container_name: toolbox-io-main-app
+    restart: unless-stopped
+    depends_on:
+      - db-main
+    environment:
+      SECRET_KEY: ${SECRET_KEY}
+      DB_HOST: db-main
+      DB_PORT: 3306
+      DB_NAME: toolbox_db_main
+      DB_USER: toolbox_user_main
+      DB_PASSWORD: ${DB_PASSWORD}
+      DEBUG: ${DEBUG:-false}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      GITHUB_APP_ID: ${GITHUB_APP_ID}
+      GITHUB_INSTALLATION_ID: ${GITHUB_INSTALLATION_ID}
+    ports:
+      - "8000:8000"
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend
+          target: /root/site/frontend
+          ignore:
+            - node_modules/
+        - action: sync+restart
+          path: ./backend/main
+          target: /root/site/backend/main
+        - action: rebuild
+          path: ./backend/requirements.txt
+        - action: rebuild
+          path: ./frontend/package.json
+    volumes:
+      - main_photos:/root/site/backend/main/data/photos
+    networks:
+      - main-network
+
+  download-main:
+    build:
+      context: .
+      dockerfile: backend/download/Dockerfile
+    container_name: toolbox-io-main-download
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend/download
+          target: /root/site/backend/download
+        - action: rebuild
+          path: ./backend/requirements.txt
+        - action: rebuild
+          path: ./frontend/package.json
+    volumes:
+      - main_download_cache:/root/site/backend/download/cache
+    networks:
+      - main-network
+
+volumes:
+  main_data:
+    name: toolbox-io-main-data
+  main_photos:
+    name: toolbox-io-main-photos
+  main_download_cache:
+    name: toolbox-io-main-download-cache
+
+networks:
+  main-network:
+    name: toolbox-io-main-network 

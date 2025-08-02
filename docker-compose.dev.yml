@@ -1,0 +1,92 @@
+services:
+  db-dev:
+    image: mysql:8
+    container_name: toolbox-io-dev-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME:-toolbox_db_dev}
+      MYSQL_USER: ${DB_USER:-toolbox_user_dev}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "3307:3306"
+    volumes:
+      - dev_data:/var/lib/mysql
+    networks:
+      - dev-network
+
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DEBUG: true
+    container_name: toolbox-io-dev-app
+    restart: unless-stopped
+    depends_on:
+      - db-dev
+    environment:
+      SECRET_KEY: ${DEV_SECRET_KEY:-${SECRET_KEY}}
+      DB_HOST: db-dev
+      DB_PORT: 3306
+      DB_NAME: toolbox_db_dev
+      DB_USER: toolbox_user_dev
+      DB_PASSWORD: ${DB_PASSWORD}
+      DEBUG: true
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      GITHUB_APP_ID: ${GITHUB_APP_ID}
+      GITHUB_INSTALLATION_ID: ${GITHUB_INSTALLATION_ID}
+    ports:
+      - "8002:8000"
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend
+          target: /root/site/frontend
+          ignore:
+            - node_modules/
+        - action: sync+restart
+          path: ./backend/main
+          target: /root/site/backend/main
+        - action: rebuild
+          path: ./backend/requirements.txt
+        - action: rebuild
+          path: ./frontend/package.json
+    volumes:
+      - dev_photos:/root/site/backend/main/data/photos
+    networks:
+      - dev-network
+
+  download-dev:
+    build:
+      context: .
+      dockerfile: backend/download/Dockerfile
+    container_name: toolbox-io-dev-download
+    restart: unless-stopped
+    ports:
+      - "8003:8001"
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend/download
+          target: /root/site/backend/download
+        - action: rebuild
+          path: ./backend/requirements.txt
+        - action: rebuild
+          path: ./frontend/package.json
+    volumes:
+      - dev_download_cache:/root/site/backend/download/cache
+    networks:
+      - dev-network
+
+volumes:
+  dev_data:
+    name: toolbox-io-dev-data
+  dev_photos:
+    name: toolbox-io-dev-photos
+  dev_download_cache:
+    name: toolbox-io-dev-download-cache
+
+networks:
+  dev-network:
+    name: toolbox-io-dev-network 

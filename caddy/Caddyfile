@@ -1,5 +1,5 @@
 toolbox-io.ru {
-	reverse_proxy main:8000
+	reverse_proxy localhost:8000
 
 	# Security headers
 	header {
@@ -43,11 +43,55 @@ toolbox-io.ru {
 }
 
 download.toolbox-io.ru {
-	reverse_proxy download:8001
+	reverse_proxy localhost:8001
 }
 
 beta.toolbox-io.ru {
-	redir https://toolbox-io.ru{uri} permanent
+	reverse_proxy localhost:8002
+
+	# Security headers for dev environment
+	header {
+		X-XSS-Protection "1; mode=block"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "DENY"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.github.com; frame-ancestors 'none';"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		Permissions-Policy "geolocation=(), microphone=(), camera=()"
+	}
+
+	# Add rate limiting for dev environment
+	@limited {
+		path /*
+	}
+	rate_limit @limited {
+		zone global {
+			key {remote_ip}
+			window 1m
+			burst 20
+			events 100
+		}
+	}
+
+	# Handle different types of error
+	handle_errors {
+		@errors {
+			expression {err.status_code} >= 400
+		}
+
+		# Handle other error with http.cat reverse proxy
+		handle @errors {
+			rewrite * /{err.status_code}
+			reverse_proxy https://http.cat {
+				header_up Host {upstream_hostport}
+				replace_status {err.status_code}
+			}
+		}
+	}
+}
+
+download-beta.toolbox-io.ru {
+	reverse_proxy localhost:8003
 }
 
 panel.toolbox-io.ru {
