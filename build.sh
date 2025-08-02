@@ -33,9 +33,15 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
   fi
 fi
 
-# 4. Build & run
+# 4. Sanity check
+if ! [[ -e ./.env ]]; then
+  echo "ERROR: .env file is missing."
+  exit 1
+fi
 
-# 3.1. Development
+# 5. Build & run
+
+# 5.1. Development
 # Note: in development $NURUN is probably always false,
 # in production $NORUN is always true. This is not needed
 # but still there for flexibility.
@@ -45,7 +51,7 @@ if [[ $DEBUG == "true" && $NORUN != "true" ]]; then
   else
     docker compose --profile dev up --build --watch
   fi
-# 3.2. Production
+# 5.2. Production
 else
   docker compose --profile prod build
   if [[ $NORUN != "true" ]]; then
