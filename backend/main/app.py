@@ -8,6 +8,7 @@ from starlette.responses import Response, JSONResponse
 import utils
 from limiter import limiter
 from routes import auth, guides, core, issues
+from live_reload import HTMLInjectorMiddleware, router as live_reload_router
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
@@ -34,6 +35,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Add HTML injector middleware for live reload
+app.add_middleware(HTMLInjectorMiddleware)
+
 
 # Routes
 app.include_router(auth.core.api_router, prefix="/api/auth")
@@ -43,3 +47,4 @@ app.include_router(core.router)
 app.include_router(guides.router)
 app.include_router(utils.router)
 app.include_router(issues.router, prefix="/api/issues")
+app.include_router(live_reload_router)

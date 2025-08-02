@@ -1,6 +1,8 @@
 import logging
 import mimetypes
 import sys
+from pathlib import Path
+from contextlib import asynccontextmanager
 
 from fastapi import HTTPException, Request
 from fastapi.exception_handlers import http_exception_handler
@@ -11,6 +13,7 @@ from app import app
 from constants import *
 from db.init import initialize_database
 from utils import find_file
+from live_reload import start_file_watcher, stop_file_watcher, live_reload_manager
 
 # Configure logging
 logging.basicConfig(
@@ -20,6 +23,24 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 logger.info("Starting Toolbox.io server initialization...")
+
+@asynccontextmanager
+async def lifespan(app):
+    """Lifespan event handler for FastAPI"""
+    # Startup
+    import os
+    if os.getenv("DEBUG", "false").lower() == "true":
+        import asyncio
+        live_reload_manager.set_main_loop(asyncio.get_running_loop())
+        logger.info("Live reload event loop configured")
+    
+    yield
+    
+    # Shutdown
+    stop_file_watcher()
+
+# Update the app with lifespan
+app.router.lifespan_context = lifespan
 
 @app.get("/{path:path}")
 async def serve_files(path: str, request: Request):
@@ -95,6 +116,18 @@ if __name__ == "__main__":
     if not initialize_database():
         logger.error("Failed to initialize database. Exiting.")
         sys.exit(1)
+    
+    # Start file watcher for live reload (only in development)
+    import os
+    if os.getenv("DEBUG", "false").lower() == "true":
+        logger.info("Starting live reload file watcher...")
+        start_file_watcher([CONTENT_PATH])
+    
     logger.info("Starting Toolbox.io server...")
     logger.info(f"Server will run on host: 0.0.0.0, port: 8000")
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    
+    try:
+        uvicorn.run(app, host="0.0.0.0", port=8000)
+    finally:
+        # Clean up file watcher on shutdown
+        stop_file_watcher()
