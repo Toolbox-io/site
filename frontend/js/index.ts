@@ -74,7 +74,7 @@ import TioHeader = Components.TioHeader;
         }
     }
 
-    await scrollingText();
+    scrollingText(); // no await intentionally
 
     // Set up header
     const header = query("tio-header") as TioHeader;
