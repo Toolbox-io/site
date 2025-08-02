@@ -84,11 +84,6 @@ import TioHeader = Components.TioHeader;
     header.tabs[1].addEventListener("click", () => switchTab(1));
     header.tabs[2].addEventListener("click", () => switchTab(2));
 
-    // Buttons
-    document.getElementById("issues_btn")!!.addEventListener("click", () => {
-        open("https://github.com/Toolbox-io/Toolbox-io/issues", "_self");
-    });
-
     // Security items
     const securityItems = document.querySelectorAll(".security-item");
     const securityDetails = document.querySelectorAll(".security-detail");
