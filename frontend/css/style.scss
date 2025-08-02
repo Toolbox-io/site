@@ -10,14 +10,24 @@
         padding: 30px;
         gap: 30px;
 
+        .left, .right {
+            flex-shrink: 1;
+            
+            > * {
+                width: fit-content;
+            }
+
+            > a {
+                display: inline-block;
+            }
+        }
+
         .left {
             flex-grow: 1;
-            flex-shrink: 1;
         }
 
         .right {
             flex-grow: 0;
-            flex-shrink: 1;
         }
 
         &.col {
