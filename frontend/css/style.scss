@@ -254,20 +254,145 @@
                 }
             }
     
-            @media (max-width: 650px) {
-                flex-direction: column;
-                align-items: center;
-    
-                .left-reverse {
-                    .security-features {
-                        max-width: 100%;
+            @media (max-width: 700px) {
+                .section-inner {
+                    flex-direction: column;
+                    align-items: center;
+                    gap: 20px;
+                    position: relative;
+
+                    .left-reverse {
+                        width: 100%;
+                        position: relative;
+
+                        .security-features {
+                            width: 100%;
+                            max-width: 100%;
+                            position: relative;
+
+                            .security-item {
+                                max-width: none;
+                                padding: 12px 16px;
+                                border-radius: 12px;
+                            }
+                        }
+                    }
+
+                    .right-reverse {
+                        .security-details {
+                            min-height: 250px;
+                            width: 100%;
+
+                            .security-detail {
+                                padding: 20px;
+                                border-radius: 16px;
+
+                                h2 {
+                                    font-size: 20px;
+                                    margin-bottom: 12px;
+                                }
+
+                                > p {
+                                    font-size: 14px;
+                                    margin-bottom: 20px;
+                                }
+
+                                .detail-content {
+                                    h4 {
+                                        font-size: 16px;
+                                        margin: 20px 0 8px 0;
+                                    }
+
+                                    p {
+                                        font-size: 13px;
+                                        margin-bottom: 12px;
+                                    }
+
+                                    ul li {
+                                        font-size: 13px;
+                                        margin: 6px 0;
+                                    }
+
+                                    .warning {
+                                        padding: 12px;
+                                        margin: 12px 0;
+
+                                        .warning-icon {
+                                            font-size: 18px;
+                                        }
+
+                                        p {
+                                            font-size: 12px;
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-    
+            }
+
+            @media (max-width: 480px) {
+                margin: 10px;
+                border-radius: 20px;
+
+                .left-reverse {
+                    .security-features {
+                        .security-item {
+                            padding: 10px 14px;
+                            border-radius: 10px;
+                        }
+                    }
+                }
+
                 .right-reverse {
                     .security-details {
-                        min-height: 300px;
-                        width: 100%;
+                        min-height: 200px;
+
+                        .security-detail {
+                            padding: 16px;
+                            border-radius: 12px;
+
+                            h2 {
+                                font-size: 18px;
+                                margin-bottom: 10px;
+                            }
+
+                            > p {
+                                font-size: 13px;
+                                margin-bottom: 16px;
+                            }
+
+                            .detail-content {
+                                h4 {
+                                    font-size: 15px;
+                                    margin: 16px 0 6px 0;
+                                }
+
+                                p {
+                                    font-size: 12px;
+                                    margin-bottom: 10px;
+                                }
+
+                                ul li {
+                                    font-size: 12px;
+                                    margin: 4px 0;
+                                }
+
+                                .warning {
+                                    padding: 10px;
+                                    margin: 10px 0;
+
+                                    .warning-icon {
+                                        font-size: 16px;
+                                    }
+
+                                    p {
+                                        font-size: 11px;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -278,7 +403,7 @@
             align-items: center;
         }
 
-        @media (max-width: 390px) {
+        @media (max-width: 480px) {
             padding: 20px;
 
             &#main_block {
