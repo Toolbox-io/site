@@ -232,19 +232,18 @@
                                 align-items: flex-start;
                                 gap: 12px;
                                 padding: 16px;
-                                background-color: $color-errorContainer;
                                 border-radius: 12px;
                                 margin: 16px 0;
     
                                 .warning-icon {
-                                    color: $color-onErrorContainer;
+                                    color: #ff0;
                                     font-size: 20px;
                                     flex-shrink: 0;
                                 }
     
                                 p {
                                     margin: 0;
-                                    color: $color-onErrorContainer;
+                                    color: #ff0;
                                     font-size: 14px;
                                     line-height: 1.5;
                                 }
