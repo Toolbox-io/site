@@ -99,9 +99,8 @@ async def guides_handler(subpath: str, request: Request):
         else:
             return FileResponse(file_path)
     else:
-        if (CONTENT_PATH / "guides" / guide_name).is_file():
-            guide_name = f"{Path(subpath).stem.upper()}.md"
-        else:
+        guide_name = f"{Path(subpath).stem.upper()}.md"
+        if not (CONTENT_PATH / "guides" / guide_name).is_file():
             guide_name = "ERROR.md"
         # Preserve query parameters
         query_string = re.sub(r"&?guide=.*?(&|$)", "", request.url.query)

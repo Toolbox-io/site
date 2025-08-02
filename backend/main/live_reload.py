@@ -160,9 +160,9 @@ class HTMLInjectorMiddleware(BaseHTTPMiddleware):
         self.live_reload_script_path = live_reload_script_path
         
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
+        response = await call_next(request)
+
         try:
-            response = await call_next(request)
-            
             # Only inject in development mode
             if (
                 os.getenv("DEBUG", "false").lower() != "true" or 
