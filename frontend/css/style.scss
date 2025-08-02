@@ -124,10 +124,10 @@
                         }
     
                         &.active {
-                            background-color: $color-primaryContainer;
+                            background-color: $color-secondaryContainer;
                             
                             .security-content h3 {
-                                color: $color-onPrimaryContainer;
+                                color: $color-onSecondaryContainer;
                             }
                         }
     
@@ -137,7 +137,7 @@
                             align-items: center;
                             justify-content: center;
                             border-radius: 8px;
-                            color: $color-onPrimaryContainer;
+                            color: $color-onSecondaryContainer;
     
                             .material-symbols {
                                 font-size: 20px;
