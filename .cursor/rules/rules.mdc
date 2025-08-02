@@ -1,0 +1,40 @@
+---
+alwaysApply: true
+---
+
+When working with this project, follow these rules:
+
+- When adding API endpoints always document them in backend/main/@API_DOCS.md.
+
+- When i ask you to do something with the project and you don't have any clarifying questions, 
+  always automatically proceed with the edit without asking me for confirmation.
+
+## Important Clarifications
+
+- When working with API authentication in JS/TS, do NOT use { credentials: "include" }, instead use this:
+  { 
+      headers: {
+          "Authorization": `Bearer ${localStorage.getItem("authToken")}`
+      }
+  }
+
+- When working with rate limits in the Python backend, the request handler function
+  annotated with "limiter.limit('<rate limit string>')" should ALWAYS have the "request: Request"
+  parameter zregardless of whether its used or not.
+
+- This project uses SCSS instead of CSS and editing CSS files is an error, so find the SCSS file with
+  the same name before editing.
+
+## Coding Style
+
+- Use 4-space indents in all files except .sh, .y(a)ml.
+
+- When a reference is used only once, inline it instead of declaring a variable for it.
+  If you are working with Python code and the reference is long declare it as a variable.
+
+- Shorter code is preferred but clarity is important too. Do NOT spam comments in code, use them
+  only when they actually clarify what the code does.
+
+- When working with SCSS, nested styles are preferred. The styles should be nested according to the
+  HTML hierarchy and styles like ".class:hover" should be defined inside the classes braces with
+  "&:hover".
