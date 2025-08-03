@@ -16,22 +16,24 @@ import TioHeader = Components.TioHeader;
         let currentWordIndex = 0;
         
         // Calculate the width of the widest word once
-        const tempSpan = document.createElement("span");
-        tempSpan.style.position = "absolute";
-        tempSpan.style.visibility = "hidden";
-        tempSpan.style.whiteSpace = "nowrap";
-        tempSpan.style.font = window.getComputedStyle(wrapper).font;
-        document.body.appendChild(tempSpan);
-        let maxWidth = 0;
-        words.forEach(word => {
-            tempSpan.textContent = word;
-            const width = tempSpan.offsetWidth;
-            if (width > maxWidth) {
-                maxWidth = width;
-            }
-        });
-        document.body.removeChild(tempSpan);
-        wrapper.style.width = `${maxWidth}px`;
+        function setWidth() {
+            const tempSpan = document.createElement("span");
+            tempSpan.style.position = "absolute";
+            tempSpan.style.visibility = "hidden";
+            tempSpan.style.whiteSpace = "nowrap";
+            tempSpan.style.font = window.getComputedStyle(wrapper).font;
+            document.body.appendChild(tempSpan);
+            let maxWidth = 0;
+            words.forEach(word => {
+                tempSpan.textContent = word;
+                const width = tempSpan.offsetWidth;
+                if (width > maxWidth) {
+                    maxWidth = width;
+                }
+            });
+            document.body.removeChild(tempSpan);
+            wrapper.style.width = `${maxWidth}px`;
+        }
         
         // Create the first word element
         const firstWord = document.createElement("span");
@@ -42,6 +44,7 @@ import TioHeader = Components.TioHeader;
         wrapper.appendChild(firstWord);
 
         while (true) {
+            setWidth();
             await delay(3000);
             
             // Get the current visible word element
