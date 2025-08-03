@@ -40,18 +40,10 @@ RUN if [ "$DEBUG" = "true" ]; then \
     fi
 
 
-# 3. Frontend production dependencies
-FROM node:24 AS frontend-deps
-
-WORKDIR /root/site/frontend
-COPY frontend/package.json .
-RUN --mount=type=cache,target=/root/.npm npm install --omit=dev
-
-
-# 4. Runtime
+# 3. Runtime
 FROM ubuntu:24.04 AS runtime
 
-# 4.1. Install runtime dependencies
+# 3.1. Install runtime dependencies
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -60,14 +52,13 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         mysql-client python3.12-full && \
     rm -rf /var/lib/apt/lists/*
 
-# 4.2. Copy content
+# 3.2. Copy content
 COPY --from=backend /root/.venv /root/.venv
 COPY backend/main /root/site/backend/main
 COPY --from=frontend /root/site/frontend /root/site/frontend
-COPY --from=frontend-deps /root/site/frontend/node_modules /root/site/frontend/node_modules
 
-# 5. Final command
-# 5.1. Environment variables
+# 4. Final command
+# 4.1. Environment variables
 ARG SECRET_KEY
 ARG DB_PASSWORD
 ARG DB_HOST=localhost
@@ -82,9 +73,9 @@ ENV DB_NAME=$DB_NAME
 ENV DB_USER=$DB_USER
 ENV DB_PASSWORD=$DB_PASSWORD
 
-# 5.2. Workdir and ports
+# 4.2. Workdir and ports
 WORKDIR /root/site/backend/main
 EXPOSE 8000
 
-# 5.3. Run the server
+# 4.3. Run the server
 ENTRYPOINT ["/root/.venv/bin/python3", "main.py"]
