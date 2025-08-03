@@ -9,6 +9,76 @@ import id = Utils.id;
 import TioHeader = Components.TioHeader;
 
 (async () => {
+    async function scrollingText() {
+        // Scrolling text functionality
+        const wrapper = query("#scrolling-wrapper");
+        const words = ["защиты", "кастомизации", "инструментов"];
+        let currentWordIndex = 0;
+        
+        // Calculate the width of the widest word once
+        function setWidth() {
+            const tempSpan = document.createElement("span");
+            tempSpan.style.position = "absolute";
+            tempSpan.style.visibility = "hidden";
+            tempSpan.style.whiteSpace = "nowrap";
+            tempSpan.style.font = window.getComputedStyle(wrapper).font;
+            document.body.appendChild(tempSpan);
+            let maxWidth = 0;
+            words.forEach(word => {
+                tempSpan.textContent = word;
+                const width = tempSpan.offsetWidth;
+                if (width > maxWidth) {
+                    maxWidth = width;
+                }
+            });
+            document.body.removeChild(tempSpan);
+            wrapper.style.width = `${maxWidth}px`;
+        }
+        
+        // Create the first word element
+        const firstWord = document.createElement("span");
+        firstWord.textContent = words[0];
+        firstWord.className = "scrolling-word";
+        firstWord.style.top = "0";
+        firstWord.style.transform = "translateY(0)";
+        wrapper.appendChild(firstWord);
+
+        while (true) {
+            setWidth();
+            await delay(3000);
+            
+            // Get the current visible word element
+            const currentWord = wrapper.querySelector(".scrolling-word") as HTMLElement;
+            if (!currentWord) return;
+            
+            // Create the new word element (below, hidden)
+            const newWord = document.createElement("span");
+            newWord.textContent = words[(currentWordIndex + 1) % words.length];
+            newWord.className = "scrolling-word";
+            newWord.style.top = "0";
+            newWord.style.transform = "translateY(100%)";
+            
+            wrapper.appendChild(newWord);
+            
+            await delay(50);
+            // Start the sliding animation - both words slide up together
+            currentWord.style.transform = "translateY(-100%)"; // Old word slides up and out
+            newWord.style.transform = "translateY(0)";     // New word slides up and into view
+
+            await delay(600);
+            
+            // Clean up old elements and update for next cycle
+            Array.from(wrapper.children).forEach((item) => {
+                if (item != newWord) {
+                    item.remove();
+                }
+            });
+            currentWordIndex = (currentWordIndex + 1) % words.length;
+        }
+    }
+
+    scrollingText(); // no await intentionally
+
     // Set up header
     const header = query("tio-header") as TioHeader;
     header.tabs[0].addEventListener("click", () => {
@@ -17,141 +87,97 @@ import TioHeader = Components.TioHeader;
     header.tabs[1].addEventListener("click", () => switchTab(1));
     header.tabs[2].addEventListener("click", () => switchTab(2));
 
-    // Buttons
-    document.getElementById("issues_btn")!!.addEventListener("click", () => {
-        open("https://github.com/Toolbox-io/Toolbox-io/issues", "_self");
+    // Security items
+    const securityItems = document.querySelectorAll("#security_block .menu-item");
+    const securityDetails = document.querySelectorAll("#security_block .detail-item");
+    
+    securityItems.forEach((item) => {
+        const securityItem = item as HTMLDivElement;
+        const featureId = securityItem.getAttribute("data-feature");
+        
+        securityItem.addEventListener("click", () => {
+            // Remove active class from all security items
+            securityItems.forEach((si) => {
+                si.classList.remove("active");
+            });
+            
+            // Add active class to clicked item
+            securityItem.classList.add("active");
+            
+            // Hide all security details
+            securityDetails.forEach((detail) => {
+                detail.classList.remove("active");
+            });
+            
+            // Show the corresponding detail
+            const detailId = `${featureId}-detail`;
+            const detailElement = document.getElementById(detailId);
+            if (detailElement) {
+                detailElement.classList.add("active");
+            }
+        });
     });
-
-    // Scaling video in App Locker
-    let videoListenerActive = true;
-    let videoX: number | null = null;
-    let videoY: number | null = null;
-    let videoElement: HTMLVideoElement | null;
-
-    async function scaleVideo() {
-        if (videoListenerActive) {
-            const dialog = document.getElementById("video_dialog") as HTMLDivElement;
-            dialog.classList.add("open");
-            const video = document.getElementById("demo") as HTMLVideoElement;
-            const rect = video.getBoundingClientRect();
-            let x = rect.x;
-            const y = rect.y - 10;
-            if (document.documentElement.offsetWidth > 500) x -= 10;
-            video.style.position = "fixed";
-            video.style.left = `${x}px`;
-            video.style.top = `${y}px`;
-            videoX = x;
-            videoY = y;
-            video.style.transitionProperty = "left, top, transform";
-            video.style.transitionDuration = "0.5s";
-            video.style.transitionTimingFunction = "ease-out";
-            video.style.zIndex = "1003";
-            videoElement = document.createElement("video");
-            videoElement.style.width = rect.width + "px";
-            videoElement.style.height = rect.height + "px";
-            videoElement.style.margin = "10px";
-            videoElement.style.marginBottom = "0px";
-            videoElement.style.flexShrink = "0";
-            video.insertAdjacentElement("beforebegin", videoElement);
-            await delay(1);
-            video.style.left = `calc(50% - ${rect.width / 2}px)`;
-            video.style.top = `calc(50% - ${rect.height / 2}px)`;
-            video.style.transform = document.documentElement.offsetWidth <= 375 ? "scale(1.4)" : "scale(1.5)";
-            videoListenerActive = false;
-            video.removeEventListener("click", scaleVideo)
-            await delay(500);
-            video.controls = true;
+    
+    // Show first security item by default
+    if (securityItems.length > 0) {
+        const firstItem = securityItems[0] as HTMLDivElement;
+        const firstFeatureId = firstItem.getAttribute("data-feature");
+        
+        firstItem.classList.add("active");
+        
+        if (firstFeatureId) {
+            const firstDetailId = `${firstFeatureId}-detail`;
+            const firstDetailElement = document.getElementById(firstDetailId);
+            if (firstDetailElement) {
+                firstDetailElement.classList.add("active");
+            }
         }
     }
 
-    async function unscaleVideo() {
-        const dialog = document.getElementById("video_dialog") as HTMLDivElement;
-        dialog.style.opacity = "0";
-        const video = document.getElementById("demo") as HTMLVideoElement;
-        video.style.left = `${videoX}px`;
-        video.style.top = `${videoY}px`;
-        video.style.transform = "scale(1)";
-        await delay(500);
-        dialog.classList.remove("open");
-        dialog.style.opacity = "";
-        videoListenerActive = true;
-        video.controls = false;
-        (video.parentElement as HTMLDivElement).removeChild((videoElement as HTMLVideoElement));
-        video.style.position = "";
-        video.style.zIndex = "";
-        video.style.left = "";
-        video.style.top = "";
-        video.style.transform = "";
-        videoX = null;
-        videoY = null;
-        video.addEventListener("click", scaleVideo);
-    }
-
-    document.getElementById("demo")!!.addEventListener("click", scaleVideo);
-    document.getElementById("video_dialog")!!.addEventListener("click", unscaleVideo);
-
-    // Features cards
-    const features = id("features");
-    const blur = id("card_dialog");
-
-    Array.from(features.children).forEach((item) => {
-        const feature = item as HTMLDivElement
-        if (!feature.classList.contains("replacement") && feature.classList.length > 0) {
-            const replacement = document.createElement("div");
-            const desc = query(".feature-description", feature);
-            const longDesc = query(".feature-long-description", feature);
-            const close = query(".feature-close", feature);
-
-            feature.addEventListener("click", async () => {
-                if (!feature.classList.contains("expanded")) {
-                    feature.insertAdjacentElement("afterend", replacement);
-                    replacement.innerHTML = feature.innerHTML;
-                    replacement.classList.add("placeholder", "feature");
-                    replacement.id = `${feature.id}_placeholder`;
-                    feature.classList.add("noHover");
-
-                    blur.classList.add("open");
-
-                    desc.style.opacity = "0";
-                    desc.style.display = "none";
-
-                    longDesc.style.display = "block";
-                    longDesc.style.opacity = "1";
-
-                    close.style.display = "block";
-                    close.style.opacity = "1";
-                    feature.classList.add("expanded");
-                }
+    // Action cards
+    const actionCards = document.querySelectorAll("#progress_block .menu-item");
+    const actionDetails = document.querySelectorAll("#progress_block .detail-item");
+    
+    actionCards.forEach((item) => {
+        const actionCard = item as HTMLDivElement;
+        const actionId = actionCard.getAttribute("data-action");
+        
+        actionCard.addEventListener("click", () => {
+            // Remove active class from all action cards
+            actionCards.forEach((ac) => {
+                ac.classList.remove("active");
             });
-
-            close.addEventListener("click", async () => {
-                feature.classList.add("closing");
-                longDesc.style.opacity = "0";
-                close.style.opacity = "0";
-                blur.style.opacity = "0";
-                feature.style.opacity = "0";
-                await delay(500);
-                blur.classList.remove("open");
-                blur.style.opacity = "";
-                longDesc.style.display = "none";
-                close.style.display = "none";
-                desc.style.display = "block";
-                desc.style.opacity = "1";
-                feature.style.animation = "";
-                feature.style.opacity = "1";
-                feature.classList.remove("noHover", "expanded");
-                Array.from(features.children).forEach(item2 => {
-                    const item3 = item2 as HTMLDivElement;
-                    if (item3.classList.length > 0) {
-                        item3.style.width = "";
-                        item3.style.height = "";
-                        item3.style.boxSizing = "";
-                    }
-                });
-                replacement.remove();
-                await delay(500);
-                feature.classList.remove("closing");
+            
+            // Add active class to clicked item
+            actionCard.classList.add("active");
+            
+            // Hide all action details
+            actionDetails.forEach((detail) => {
+                detail.classList.remove("active");
             });
-        }
+            
+            // Show the corresponding detail
+            const detailId = `${actionId}-detail`;
+            const detailElement = document.getElementById(detailId);
+            if (detailElement) {
+                detailElement.classList.add("active");
+            }
+        });
     });
+    
+    // Show first action card by default
+    if (actionCards.length > 0) {
+        const firstActionCard = actionCards[0] as HTMLDivElement;
+        const firstActionId = firstActionCard.getAttribute("data-action");
+        
+        firstActionCard.classList.add("active");
+        
+        if (firstActionId) {
+            const firstDetailId = `${firstActionId}-detail`;
+            const firstDetailElement = document.getElementById(firstDetailId);
+            if (firstDetailElement) {
+                firstDetailElement.classList.add("active");
+            }
+        }
+    }
 })();

@@ -17,245 +17,245 @@
         <tio-header class="top" tab="0"></tio-header>
         <div class="wrapper">
             <div id="main" class="automargin">
-                <h1 id="headline">Все нужное — в одном приложении</h1>
-                <p>
-                    Toolbox.io — это надежный инструмент, который помогает защитить ваши приложения и данные
-                    на Android от несанкционированного доступа. Он предлагает множество функций, которые делают
-                    вашу жизнь более безопасной и комфортной.
-                </p>
-                <h2>Возможности</h2>
-                <div id="features">
-                    <div class="feature" id="applocker">
-                        <div class="feature-header">
-                            <span class="material-symbols outlined feature-icon">phonelink_lock</span>
-                            <div class="feature-title">Блокировка приложений</div>
-                            <md-icon-button class="feature-close">close</md-icon-button>
-                        </div>
-                        <div class="feature-description">
-                            Защищает ваши приложения от несанкционированного доступа, показывая злоумышленнику
-                            фальшивое сообщение о сбое.
-                        </div>
+                <div class="section" id="main_block">
+                    <div class="left">
+                        <h1>
+                            <span>Приложение,</span> <span>созданное</span> <span>для</span>
+                            <span id="scrolling-wrapper"></span>
+                        </h1>
 
-                        <div class="feature-long-description textcenter">
-                            <div class="side centermargin">
-                                <div class="text">
-                                    <p>
-                                        Когда вы пытаетесь открыть защищённое приложение, оно закроется
-                                        и вы увидите сообщение об ошибке.
-                                        На самом деле, никакой ошибки нет, это нужно, чтобы запутать
-                                        мошенника.
-                                    </p>
-                                    <p>
-                                        Чтобы разблокировать приложение, нужно использовать выбранный способ
-                                        разблокировки. По умолчанию, это долгое нажатие кнопки <b>О
-                                        приложении</b>. Но Вы всегда можете это изменить через настройки
-                                        Блокировки приложений.
-                                    </p>
-                                    <p>
-                                        Вы можете прочитать, как пользоваться этой функцией
-                                        <a href="guides/how_to_lock_apps" draggable="false">здесь</a>.
-                                    </p>
-                                </div>
-                                <div id="video_container">
-                                    <video autoplay muted loop height="480" width="216" id="demo">
-                                        <source src="/res/demo.webm" type="video/webm" />
-                                    </video>
-                                    <div class="tip">Нажмите, чтобы увеличить</div>
-                                </div>
-                            </div>
-                            <div id="video_dialog" class="dialog"></div>
-                        </div>
-                    </div>
-                    <div class="feature" id="unlock_protection">
-                        <div class="feature-header">
-                            <span class="material-symbols filled feature-icon">lock</span>
-                            <div class="feature-title">Защита блокировки</div>
-                            <md-icon-button class="feature-close">close</md-icon-button>
-                        </div>
-                        <div class="feature-description">
-                            Выполняет действия, если кто-то много раз попытался разблокировать ваш телефон.
-                        </div>
-                        <div class="feature-long-description">
-                            <div class="centermargin textcenter textstyling">
-                                <p>
-                                    Если кто-то пытается разблокировать ваше устройство, но у него не получается
-                                    с нескольких попыток, можно выполнить следующие действия:
-                                </p>
-                                <h4>Сигнализация</h4>
-                                <p>
-                                    Устройство возпроизведёт звук сигнализации (при желании его можно
-                                    изменить) на 100% громкости. Любые попытки изменить громкость будут
-                                    предотвращены.
-                                </p>
-                                <h4>Фотография злоумышленника</h4>
-                                <p>
-                                    Устройство сделает снимок злоумышленника с фронтальной камеры.
-                                </p>
-                                <p>
-                                    Вы можете прочитать, как пользоваться этой функцией
-                                    <a href="guides/how_to_use_unlock_protection" draggable="false">здесь</a>.
-                                </p>
-                                <hr/>
-                                <p>
-                                    Обратите внимание, что для работы этой функции требуется разрешение
-                                    администратора устройства.
-                                    Это необходимо для обнаружения неудачных попыток разблокировки и выполнения
-                                    требуемых действий.
-                                </p>
-                                <p>
-                                    Это приложение НИКОГДА не использует КАКИЕ-ЛИБО разрешения без вашего
-                                    согласия, они используются ТОЛЬКО для перечисленных целей.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="feature" id="donttouchmyphone">
-                        <div class="feature-header">
-                            <span class="material-symbols filled feature-icon">do_not_touch</span>
-                            <div class="feature-title">Не трогайте мой телефон</div>
-                            <md-icon-button class="feature-close">close</md-icon-button>
-                        </div>
-                        <div class="feature-description">
-                            Защитите ваш телефон от несанкционированных прикосновений!
-                        </div>
-                        <div class="feature-long-description">
-                            <div class="centermargin textcenter">
-                                <p>
-                                    Эта функция поможет Вам защитить ваш телефон от физических прикосновений (например,
-                                    когда кто-нибудь возьмет ваш телефон в руки).
-                                </p>
-                                <p>
-                                    При попытке прикосновения будут выполнены те же действия, что и при срабатывании
-                                    Защиты блокировки.
-                                </p>
-                                <p>
-                                    Использовать очень просто: Вы нажимаете кнопку в разделе, и после этого любое
-                                    прикосновение к вашему телефону будет записано. Когда Вы захотите выключить эту
-                                    защиту, просто нажмите "Стоп" и защита отключится.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="feature" id="tiles">
-                        <div class="feature-header">
-                            <span class="material-symbols filled feature-icon">apps</span>
-                            <div class="feature-title">Плитки</div>
-                            <md-icon-button class="feature-close">close</md-icon-button>
-                        </div>
-                        <div class="feature-description">
-                            Полезные плитки для быстрых настроек
-                        </div>
+                        <p id="main_p">
+                            Toolbox.io — это надежный инструмент, который помогает защитить ваши приложения и данные
+                            на Android от несанкционированного доступа. Он предлагает множество функций, которые делают
+                            вашу жизнь более безопасной и комфортной.
+                        </p>
 
-                        <div class="feature-long-description">
-                            <div class="centermargin textcenter">
-                                Плитки — это кнопки в <b><i>быстрых настройках</i></b> вашего устройства
-                                (меню, которое открывается свайпом вниз от верхней части экрана).
-                                <h3>Сон</h3>
-                                При отключении отключает режим сна до повторного включения.
-                                <div class="warning">
-                                    <span class="material-symbols filled warning-icon">warning</span>
-                                    Будьте осторожны, так как если вы забудете его включить, это может привести к разрядке аккумулятора.
+                        <a href="/download" draggable="false" class="noeffect" id="download_a">
+                            <md-filled-button id="download_btn">Скачать Toolbox.io</md-filled-button>
+                        </a>
+
+                        <p class="subtext">
+                            Нужен Android 7+ для работы. Подробнее о совместимости
+                            <a href="/compatibility" draggable="false">здесь</a>.
+                        </p>
+                    </div>
+                    <div class="right">
+                        <video autoplay muted loop height="480" width="216" id="demo">
+                            <source src="/res/demo.webm" type="video/webm" />
+                        </video>
+                    </div>
+                </div>
+
+                <div class="section col" id="security_block">
+                    <h1 class="nomargin">Защищает ваш <span class="gradient-text">телефон</span></h2>
+                    <div class="section-inner">
+                        <div class="left-reverse">
+                            <div class="security-features">
+                                <div class="menu-item" id="security-applocker" data-feature="applocker">
+                                    <div class="menu-icon">
+                                        <span class="material-symbols outlined">phonelink_lock</span>
+                                    </div>
+                                    <div class="menu-content">
+                                        <h3>Блокировка приложений</h3>
+                                    </div>
+                                </div>
+                                
+                                <div class="menu-item" id="security-unlock_protection" data-feature="unlock_protection">
+                                    <div class="menu-icon">
+                                        <span class="material-symbols filled">lock</span>
+                                    </div>
+                                    <div class="menu-content">
+                                        <h3>Защита блокировки</h3>
+                                    </div>
+                                </div>
+                                
+                                <div class="menu-item" id="security-donttouchmyphone" data-feature="donttouchmyphone">
+                                    <div class="menu-icon">
+                                        <span class="material-symbols filled">do_not_touch</span>
+                                    </div>
+                                    <div class="menu-content">
+                                        <h3>Не трогайте мой телефон</h3>
+                                    </div>
+                                </div>
+
+                                <div class="special-text">... и не только!</div>
+                                
+                                <div class="menu-item" id="security-tiles" data-feature="tiles">
+                                    <div class="menu-icon">
+                                        <span class="material-symbols filled">apps</span>
+                                    </div>
+                                    <div class="menu-content">
+                                        <h3>Плитки</h3>
+                                    </div>
+                                </div>
+                                
+                                <div class="menu-item" id="security-shortcuts" data-feature="shortcuts">
+                                    <div class="menu-icon">
+                                        <span class="material-symbols filled">shortcut</span>
+                                    </div>
+                                    <div class="menu-content">
+                                        <h3>Ярлыки</h3>
+                                    </div>
+                                </div>
+                                
+                                <div class="menu-item" id="security-appmanager" data-feature="appmanager">
+                                    <div class="menu-icon">
+                                        <span class="material-symbols filled">apps</span>
+                                    </div>
+                                    <div class="menu-content">
+                                        <h3>Менеджер приложений</h3>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="feature" id="shortcuts">
-                        <div class="feature-header">
-                            <span class="material-symbols filled feature-icon">shortcut</span>
-                            <div class="feature-title">Ярлыки</div>
-                            <md-icon-button class="feature-close">close</md-icon-button>
-                        </div>
-                        <div class="feature-description">
-                            Полезные ярлыки для скрытых приложений на устройстве
-                        </div>
-                        <div class="feature-long-description">
-                            <div class="centermargin textcenter">
-                                Эта функция поможет вам быстро получить доступ практически к любой части вашего устройства
-                                (например, к скрытым приложениям, системным настройкам или другим приложениям).
-                                <h3>Файлы</h3>
-                                Встроенное приложение <b><i>Файлы</i></b> скрыто на большинстве устройств. Но если вы хотите
-                                получить к нему доступ, вы можете сделать это в этом приложении! Просто перейдите в
-                                <b>«Ярлыки»</b> и нажмите <b>«Добавить»</b> под кнопкой <b><i>«Файлы»</i></b>, а затем
-                                подтвердите добавление ярлыка.
+                        <div class="right-reverse">
+                            <div class="security-details">
+                                <div class="detail-item" id="applocker-detail">
+                                    <h2>Блокировка приложений</h2>
+                                    <p>Защищает ваши приложения от несанкционированного доступа, показывая злоумышленнику фальшивое сообщение о сбое.</p>
+                                    <div class="detail-content">
+                                        <p>Когда вы пытаетесь открыть защищённое приложение, оно закроется и вы увидите сообщение об ошибке. На самом деле, никакой ошибки нет, это нужно, чтобы запутать мошенника.</p>
+                                        <p>Чтобы разблокировать приложение, нужно использовать выбранный способ разблокировки. По умолчанию, это долгое нажатие кнопки <b>О приложении</b>. Но Вы всегда можете это изменить через настройки Блокировки приложений.</p>
+                                        <p>Вы можете прочитать, как пользоваться этой функцией <a href="guides/how_to_lock_apps" draggable="false">здесь</a>.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-item" id="unlock_protection-detail">
+                                    <h2>Защита блокировки</h2>
+                                    <p>Выполняет действия, если кто-то много раз попытался разблокировать ваш телефон.</p>
+                                    <div class="detail-content">
+                                        <p>Если кто-то пытается разблокировать ваше устройство, но у него не получается с нескольких попыток, можно выполнить следующие действия:</p>
+                                        <h4>Сигнализация</h4>
+                                        <p>Устройство возпроизведёт звук сигнализации (при желании его можно изменить) на 100% громкости. Любые попытки изменить громкость будут предотвращены.</p>
+                                        <h4>Фотография злоумышленника</h4>
+                                        <p>Устройство сделает снимок злоумышленника с фронтальной камеры.</p>
+                                        <p>Вы можете прочитать, как пользоваться этой функцией <a href="guides/how_to_use_unlock_protection" draggable="false">здесь</a>.</p>
+                                        <hr/>
+                                        <p>Обратите внимание, что для работы этой функции требуется разрешение администратора устройства. Это необходимо для обнаружения неудачных попыток разблокировки и выполнения требуемых действий.</p>
+                                        <p>Это приложение НИКОГДА не использует КАКИЕ-ЛИБО разрешения без вашего согласия, они используются ТОЛЬКО для перечисленных целей.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-item" id="donttouchmyphone-detail">
+                                    <h2>Не трогайте мой телефон</h2>
+                                    <p>Защитите ваш телефон от несанкционированных прикосновений!</p>
+                                    <div class="detail-content">
+                                        <p>Эта функция поможет Вам защитить ваш телефон от физических прикосновений (например, когда кто-нибудь возьмет ваш телефон в руки).</p>
+                                        <p>При попытке прикосновения будут выполнены те же действия, что и при срабатывании Защиты блокировки.</p>
+                                        <p>Использовать очень просто: Вы нажимаете кнопку в разделе, и после этого любое прикосновение к вашему телефону будет записано. Когда Вы захотите выключить эту защиту, просто нажмите "Стоп" и защита отключится.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-item" id="tiles-detail">
+                                    <h2>Плитки</h2>
+                                    <p>Полезные плитки для быстрых настроек</p>
+                                    <div class="detail-content">
+                                        <p>Плитки — это кнопки в <b><i>быстрых настройках</i></b> вашего устройства (меню, которое открывается свайпом вниз от верхней части экрана).</p>
+                                        <h4>Сон</h4>
+                                        <p>При отключении отключает режим сна до повторного включения.</p>
+                                        <div class="warning">
+                                            <span class="material-symbols filled warning-icon">warning</span>
+                                            Будьте осторожны, так как если вы забудете его включить, это может привести к разрядке аккумулятора.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-item" id="shortcuts-detail">
+                                    <h2>Ярлыки</h2>
+                                    <p>Полезные ярлыки для скрытых приложений на устройстве</p>
+                                    <div class="detail-content">
+                                        <p>Эта функция поможет вам быстро получить доступ практически к любой части вашего устройства (например, к скрытым приложениям, системным настройкам или другим приложениям).</p>
+                                        <h4>Файлы</h4>
+                                        <p>Встроенное приложение <b><i>Файлы</i></b> скрыто на большинстве устройств. Но если вы хотите получить к нему доступ, вы можете сделать это в этом приложении! Просто перейдите в <b>«Ярлыки»</b> и нажмите <b>«Добавить»</b> под кнопкой <b><i>«Файлы»</i></b>, а затем подтвердите добавление ярлыка.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-item" id="appmanager-detail">
+                                    <h2>Менеджер приложений</h2>
+                                    <p>Удобно управляйте вашими приложениями</p>
+                                    <div class="detail-content">
+                                        <p>Эта функция позволяет:</p>
+                                        <ul>
+                                            <li>делиться APK-файлом приложения, чтобы сделать резервную копию или отправить друзьям;</li>
+                                            <li>блокировать его с помощью Блокировки приложений, чтобы защитить конфиденциальную информацию;</li>
+                                            <li>получать дополнительную техническую информацию;</li>
+                                            <li>легко находить нужное приложение с помощью поиска по ключевым словам.</li>
+                                        </ul>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="feature" id="appmanager">
-                        <div class="feature-header">
-                            <span class="material-symbols filled feature-icon">apps</span>
-                            <div class="feature-title">Менеджер приложений</div>
-                            <md-icon-button class="feature-close">close</md-icon-button>
+                </div>
+                <div class="section" id="progress_block">
+                    <div class="section-inner">
+                        <div class="left-reverse">
+                            <div class="action-cards">
+                                <div class="menu-item" id="action-progress" data-action="progress">
+                                    <div class="menu-icon">
+                                        <span class="material-symbols filled">timeline</span>
+                                    </div>
+                                    <div class="menu-content">
+                                        <h3>Прогресс</h3>
+                                    </div>
+                                </div>
+                                
+                                <div class="menu-item" id="action-support" data-action="support">
+                                    <div class="menu-icon">
+                                        <span class="material-symbols filled">support_agent</span>
+                                    </div>
+                                    <div class="menu-content">
+                                        <h3>Поддержка</h3>
+                                    </div>
+                                </div>
+                                
+                                <div class="menu-item" id="action-download" data-action="download">
+                                    <div class="menu-icon">
+                                        <span class="material-symbols filled">download</span>
+                                    </div>
+                                    <div class="menu-content">
+                                        <h3>Скачать</h3>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="feature-description">
-                            Удобно управляйте вашими приложениями
-                        </div>
-                        <div class="feature-long-description">
-                            <div class="centermargin textcenter">
-                                Эта функция позволяет:
-
-                                <ul>
-                                    <li>
-                                        делиться APK-файлом приложения, чтобы сделать резервную копию
-                                        или отправить друзьям;
-                                    </li>
-                                    <li>
-                                        блокировать его с помощью Блокировки приложений, чтобы защитить
-                                        конфиденциальную информацию;
-                                    </li>
-                                    <li>
-                                        получать дополнительную техническую информацию;
-                                    </li>
-                                    <li>
-                                        легко находить нужное приложение с помощью поиска по ключевым словам.
-                                    </li>
-                                </ul>
+                        <div class="right-reverse">
+                            <div class="action-details">
+                                <div class="detail-item" id="progress-detail">
+                                    <h2>Прогресс</h2>
+                                    <p>Весь прогресс программы есть в проекте на GitHub. Вы можете проверить прогресс, нажав на кнопку ниже.</p>
+                                    <div class="button-row">
+                                        <a href="https://github.com/orgs/Toolbox-io/projects/1" draggable="false" class="noeffect">
+                                            <md-filled-button>Открыть проект</md-filled-button>
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-item" id="support-detail">
+                                    <h2>Поддержка</h2>
+                                    <p>Есть вопросы или предложения? Пишите на <a href="mailto:support@toolbox-io.ru" draggable="false">support@toolbox-io.ru</a>! Также вы можете отправить ошибку на <a href="https://github.com/Toolbox-io/Toolbox-io/issues/new" draggable="false">GitHub</a>.</p>
+                                    <div class="button-row">
+                                        <a href="https://github.com/Toolbox-io/Toolbox-io/issues/new" draggable="false" class="noeffect">
+                                            <md-filled-button>Открыть проблемы</md-filled-button>
+                                        </a>
+                                        <a href="mailto:support@toolbox-io.ru" draggable="false" class="noeffect">
+                                            <md-filled-button>Написать в поддержку</md-filled-button>
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-item" id="download-detail">
+                                    <h2>Попробуйте приложение</h2>
+                                    <p>Toolbox.io совместим с Android 7 и выше. Подробнее о совместимости <a href="/compatibility" draggable="false">здесь</a>. Приложение не гарантировано на работу на всех устройствах, поэтому если видите что-то неожиданное, отправить отчет об ошибке на GitHub.</p>
+                                    <div class="button-row">
+                                        <a href="/download" draggable="false" class="noeffect">
+                                            <md-filled-button id="download_btn">Скачать Toolbox.io</md-filled-button>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <!-- TODO notification history description -->
-                </div>
-                <h2>Прогресс</h2>
-                <p>
-                    Весь прогресс программы есть в проекте на GitHub.
-                    Вы можете проверить прогресс, нажав на кнопку ниже.
-                </p>
-                <div class="center topmargin">
-                    <a
-                        href="https://github.com/orgs/Toolbox-io/projects/1"
-                        draggable="false"
-                        class="noeffect">
-                        <md-filled-button id="progress_btn">Открыть проект</md-filled-button>
-                    </a>
-                </div>
-
-                <h2 id="help_h1" class="h1">
-                    <div id="help_h" class="h"></div>
-                    Поддержка
-                </h2>
-                <p>
-                    Если вам нужна помощь, вы нашли ошибку или хотите предложить новую функцию, не стесняйтесь
-                    писать мне на <a href="mailto:support@toolbox-io.ru" draggable="false">support@toolbox-io.ru</a>. Также вы можете
-                    отправить ошибку на
-                    <a href="https://github.com/Toolbox-io/Toolbox-io/issues/new" draggable="false">GitHub</a>.
-                </p>
-                <div class="center">
-                    <md-filled-button id="issues_btn">Открыть проблемы</md-filled-button>
-                </div>
-
-                <h2 id="download_h1" class="h1">
-                    <div id="download_h" class="h"></div>
-                    Попробуйте приложение
-                </h2>
-                <p>
-                    Toolbox.io совместим с Android 7 и выше. Подробнее о совместимости
-                    <a href="/compatibility" draggable="false">здесь</a>.
-                    Приложение не гарантировано на работу на всех устройтвах, поэтому если видите что-то
-                    неожиданное, отправить отчет об ошибке на GitHub.
-                </p>
-                <div class="center topmargin">
-                    <a href="/download" draggable="false" class="noeffect">
-                        <md-filled-button id="download_btn">Скачать Toolbox.io</md-filled-button>
-                    </a>
                 </div>
             </div>
         </div>

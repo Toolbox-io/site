@@ -104,7 +104,7 @@ body {
 
 .automargin {
     @include automargin();
-    max-width: 1000px;
+    max-width: 1150px;
     transition: all 0.5s ease-in-out;
 
     @media (max-width: 1020px) {
@@ -117,4 +117,17 @@ body {
     margin-left: 25%;
     margin-right: 25%;
     transition: all 0.5s ease-in-out;
+}
+
+.gradient-text {
+    @include gradient_text();
+}
+
+.nomargin {
+    margin: 0;
+    margin-block: 0;
+}
+
+.subtext {
+    color: $color-onSurfaceVariant;
 }
