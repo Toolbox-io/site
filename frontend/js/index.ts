@@ -85,8 +85,8 @@ import TioHeader = Components.TioHeader;
     header.tabs[2].addEventListener("click", () => switchTab(2));
 
     // Security items
-    const securityItems = document.querySelectorAll(".security-item");
-    const securityDetails = document.querySelectorAll(".security-detail");
+    const securityItems = document.querySelectorAll("#security_block .menu-item");
+    const securityDetails = document.querySelectorAll("#security_block .detail-item");
     
     securityItems.forEach((item) => {
         const securityItem = item as HTMLDivElement;
@@ -132,8 +132,8 @@ import TioHeader = Components.TioHeader;
     }
 
     // Action cards
-    const actionCards = document.querySelectorAll(".action-card");
-    const actionDetails = document.querySelectorAll(".action-detail");
+    const actionCards = document.querySelectorAll("#progress_block .menu-item");
+    const actionDetails = document.querySelectorAll("#progress_block .detail-item");
     
     actionCards.forEach((item) => {
         const actionCard = item as HTMLDivElement;

@@ -2,6 +2,157 @@
 @use "common/colors" as *;
 @use "common/mixins" as *;
 
+// Shared menu item styles
+.menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: max-content;
+
+    .menu-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 16px;
+        padding-right: 20px;
+        border-radius: 16px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        max-width: 300px;
+        user-select: none;
+
+        &:hover {
+            background-color: rgba($color-onSecondaryContainer, 0.08);
+        }
+
+        &.active {
+            background-color: $color-secondaryContainer;
+            
+            .menu-content h3 {
+                color: $color-onSecondaryContainer;
+            }
+        }
+
+        .menu-icon {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            color: $color-onSecondaryContainer;
+
+            .material-symbols {
+                font-size: 20px;
+            }
+        }
+
+        .menu-content {
+            flex-grow: 1;
+
+            h3 {
+                margin: 0;
+                font-size: 14px;
+                font-weight: 600;
+                color: $color-onSurface;
+            }
+        }
+    }
+}
+
+// Shared detail panel styles
+.detail-panel {
+    position: relative;
+    min-height: 400px;
+
+    .detail-item {
+        display: none;
+        padding: 30px;
+        background-color: $color-surface;
+        border-radius: 20px;
+
+        &.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        h2 {
+            margin: 0 0 16px 0;
+            font-size: 24px;
+            font-weight: 600;
+            color: $color-onSurface;
+        }
+
+        > p {
+            margin: 0 0 24px 0;
+            font-size: 16px;
+            line-height: 1.6;
+            color: $color-onSurfaceVariant;
+        }
+
+        .detail-content {
+            h4 {
+                margin: 24px 0 12px 0;
+                font-size: 18px;
+                font-weight: 600;
+                color: $color-onSurface;
+            }
+
+            p {
+                margin: 0 0 16px 0;
+                font-size: 14px;
+                line-height: 1.6;
+                color: $color-onSurfaceVariant;
+            }
+
+            ul {
+                margin: 16px 0;
+                padding-left: 20px;
+
+                li {
+                    margin: 8px 0;
+                    font-size: 14px;
+                    line-height: 1.6;
+                    color: $color-onSurfaceVariant;
+                }
+            }
+
+            hr {
+                margin: 24px 0;
+                border: none;
+                border-top: 1px solid $color-outline;
+            }
+
+            .warning {
+                display: flex;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 16px;
+                border-radius: 12px;
+                margin: 16px 0;
+
+                .warning-icon {
+                    color: #ff0;
+                    font-size: 20px;
+                    flex-shrink: 0;
+                }
+
+                p {
+                    margin: 0;
+                    color: #ff0;
+                    font-size: 14px;
+                    line-height: 1.5;
+                }
+            }
+
+            .button-row {
+                display: flex;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+        }
+    }
+}
+
 #main {
     .section {
         display: flex;
@@ -103,153 +254,24 @@
     
             .left-reverse {
                 .security-features {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 5px;
-                    width: max-content;
-    
-                    .security-item {
-                        display: flex;
-                        align-items: center;
-                        gap: 12px;
-                        padding: 16px 16px;
-                        padding-right: 20px;
-                        border-radius: 16px;
-                        transition: all 0.3s ease;
-                        cursor: pointer;
-                        max-width: 300px;
-                        user-select: none;
-    
-                        &:hover {
-                            background-color: rgba($color-onSecondaryContainer, 0.08);
-                        }
-    
-                        &.active {
-                            background-color: $color-secondaryContainer;
-                            
-                            .security-content h3 {
-                                color: $color-onSecondaryContainer;
-                            }
-                        }
-    
-                        .security-icon {
-                            flex-shrink: 0;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            border-radius: 8px;
-                            color: $color-onSecondaryContainer;
-    
-                            .material-symbols {
-                                font-size: 20px;
-                            }
-                        }
-    
-                        .security-content {
-                            flex-grow: 1;
-    
-                            h3 {
-                                margin: 0;
-                                font-size: 14px;
-                                font-weight: 600;
-                                color: $color-onSurface;
-                            }
-                        }
-                    }
+                    @extend .menu-items;
+                }
 
-                    .special-text {
-                        margin-left: 15px;
-                        color: $color-onSurfaceVariant;
-                    }
+                .special-text {
+                    margin-left: 15px;
+                    color: $color-onSurfaceVariant;
                 }
             }
     
             .right-reverse {
                 .security-details {
-                    position: relative;
-                    min-height: 400px;
-    
-                    .security-detail {
-                        display: none;
-                        padding: 30px;
-                        background-color: $color-surface;
-                        border-radius: 20px;
-    
-                        &.active {
-                            display: block;
-                            animation: fadeIn 0.3s ease-in-out;
-                        }
-    
-                        h2 {
-                            margin: 0 0 16px 0;
-                            font-size: 24px;
-                            font-weight: 600;
-                            color: $color-onSurface;
-                        }
-    
-                        > p {
-                            margin: 0 0 24px 0;
-                            font-size: 16px;
-                            line-height: 1.6;
-                            color: $color-onSurfaceVariant;
-                        }
-    
-                        .detail-content {
-                            h4 {
-                                margin: 24px 0 12px 0;
-                                font-size: 18px;
-                                font-weight: 600;
-                                color: $color-onSurface;
-                            }
-    
-                            p {
-                                margin: 0 0 16px 0;
-                                font-size: 14px;
-                                line-height: 1.6;
-                                color: $color-onSurfaceVariant;
-                            }
-    
-                            ul {
-                                margin: 16px 0;
-                                padding-left: 20px;
-    
-                                li {
-                                    margin: 8px 0;
-                                    font-size: 14px;
-                                    line-height: 1.6;
-                                    color: $color-onSurfaceVariant;
-                                }
-                            }
-    
-                            hr {
-                                margin: 24px 0;
-                                border: none;
-                                border-top: 1px solid $color-outline;
-                            }
-    
-                            .warning {
-                                display: flex;
-                                align-items: flex-start;
-                                gap: 12px;
-                                padding: 16px;
-                                border-radius: 12px;
-                                margin: 16px 0;
-    
-                                .warning-icon {
-                                    color: #ff0;
-                                    font-size: 20px;
-                                    flex-shrink: 0;
-                                }
-    
-                                p {
-                                    margin: 0;
-                                    color: #ff0;
-                                    font-size: 14px;
-                                    line-height: 1.5;
-                                }
-                            }
-                        }
-                    }
+                    @extend .detail-panel;
+                }
+            }
+
+            .right-reverse {
+                .action-details {
+                    @extend .detail-panel;
                 }
             }
     
@@ -395,100 +417,13 @@
 
             .left-reverse {
                 .action-cards {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 5px;
-                    width: max-content;
-
-                    .action-card {
-                        display: flex;
-                        align-items: center;
-                        gap: 12px;
-                        padding: 16px 16px;
-                        padding-right: 20px;
-                        border-radius: 16px;
-                        transition: all 0.3s ease;
-                        cursor: pointer;
-                        max-width: 300px;
-                        user-select: none;
-
-                        &:hover {
-                            background-color: rgba($color-onSecondaryContainer, 0.08);
-                        }
-
-                        &.active {
-                            background-color: $color-secondaryContainer;
-                            
-                            .action-content h3 {
-                                color: $color-onSecondaryContainer;
-                            }
-                        }
-
-                        .action-icon {
-                            flex-shrink: 0;
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            border-radius: 8px;
-                            color: $color-onSecondaryContainer;
-
-                            .material-symbols {
-                                font-size: 20px;
-                            }
-                        }
-
-                        .action-content {
-                            flex-grow: 1;
-
-                            h3 {
-                                margin: 0;
-                                font-size: 14px;
-                                font-weight: 600;
-                                color: $color-onSurface;
-                            }
-                        }
-                    }
+                    @extend .menu-items;
                 }
             }
 
             .right-reverse {
                 .action-details {
-                    position: relative;
-                    min-height: 400px;
-
-                    .action-detail {
-                        display: none;
-                        padding: 30px;
-                        background-color: $color-surface;
-                        border-radius: 20px;
-
-                        &.active {
-                            display: block;
-                            animation: fadeIn 0.3s ease-in-out;
-                        }
-
-                        h2 {
-                            margin: 0 0 16px 0;
-                            font-size: 24px;
-                            font-weight: 600;
-                            color: $color-onSurface;
-                        }
-
-                        > p {
-                            margin: 0 0 24px 0;
-                            font-size: 16px;
-                            line-height: 1.6;
-                            color: $color-onSurfaceVariant;
-                        }
-
-                        .detail-content {
-                            .button-row {
-                                display: flex;
-                                gap: 12px;
-                                flex-wrap: wrap;
-                            }
-                        }
-                    }
+                    @extend .detail-panel;
                 }
             }
 
@@ -508,7 +443,7 @@
                             max-width: 100%;
                             position: relative;
 
-                            .action-card {
+                            .menu-item {
                                 max-width: none;
                                 padding: 12px 16px;
                                 border-radius: 12px;
@@ -521,7 +456,7 @@
                             min-height: 250px;
                             width: 100%;
 
-                            .action-detail {
+                            .detail-item {
                                 padding: 20px;
                                 border-radius: 16px;
 
