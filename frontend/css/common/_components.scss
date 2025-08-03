@@ -147,6 +147,7 @@ div.button-row {
     display: inline-flex;
     flex-direction: row;
     gap: 10px;
+    flex-wrap: wrap;
 }
 
 button.big-button {
