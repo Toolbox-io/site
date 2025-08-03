@@ -187,59 +187,81 @@
                         </div>
                     </div>
                 </div>
-                <h2>Прогресс</h2>
-                <p>
-                    Весь прогресс программы есть в проекте на GitHub.
-                    Вы можете проверить прогресс, нажав на кнопку ниже.
-                </p>
-                <div class="center topmargin">
-                    <a
-                        href="https://github.com/orgs/Toolbox-io/projects/1"
-                        draggable="false"
-                        class="noeffect">
-                        <md-filled-button>Открыть проект</md-filled-button>
-                    </a>
-                </div>
-
-                <h2 id="help_h1" class="h1">
-                    <div id="help_h" class="h"></div>
-                    Поддержка
-                </h2>
-                <p>
-                    Есть вопросы или предложения? Пишите 
-                    на <a href="mailto:support@toolbox-io.ru" draggable="false">support@toolbox-io.ru</a>! 
-                    Также вы можете отправить ошибку на
-                    <a href="https://github.com/Toolbox-io/Toolbox-io/issues/new" draggable="false">GitHub</a>.
-                </p>
-                <div class="button-row">
-                    <a 
-                        href="https://github.com/Toolbox-io/Toolbox-io/issues/new"
-                        draggable="false"
-                        class="noeffect">
-                        <md-filled-button>Открыть проблемы</md-filled-button>
-                    </a>
-                    <a 
-                        href="mailto:support@toolbox-io.ru"
-                        draggable="false"
-                        class="noeffect">
-                        <md-filled-button>Написать в поддержку</md-filled-button>
-                    </a>
-                </div>
-
-                <h2 id="download_h1" class="h1">
-                    <div id="download_h" class="h"></div>
-                    Попробуйте приложение
-                </h2>
-                <p>
-                    Toolbox.io совместим с Android 7 и выше. Подробнее о совместимости
-                    <a href="/compatibility" draggable="false">здесь</a>.
-                    Приложение не гарантировано на работу на всех устройствах, поэтому если видите что-то
-                    неожиданное, отправить отчет об ошибке на GitHub.
-                </p>
-                <div class="center topmargin">
-                    <a href="/download" draggable="false" class="noeffect">
-                        <md-filled-button id="download_btn">Скачать Toolbox.io</md-filled-button>
-                    </a>
+                <div class="section" id="progress_block">
+                    <div class="section-inner">
+                        <div class="left-reverse">
+                            <div class="action-cards">
+                                <div class="action-card" data-action="progress">
+                                    <div class="action-icon">
+                                        <span class="material-symbols filled">timeline</span>
+                                    </div>
+                                    <div class="action-content">
+                                        <h3>Прогресс</h3>
+                                    </div>
+                                </div>
+                                
+                                <div class="action-card" data-action="support">
+                                    <div class="action-icon">
+                                        <span class="material-symbols filled">support_agent</span>
+                                    </div>
+                                    <div class="action-content">
+                                        <h3>Поддержка</h3>
+                                    </div>
+                                </div>
+                                
+                                <div class="action-card" data-action="download">
+                                    <div class="action-icon">
+                                        <span class="material-symbols filled">download</span>
+                                    </div>
+                                    <div class="action-content">
+                                        <h3>Скачать</h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="right-reverse">
+                            <div class="action-details">
+                                <div class="action-detail" id="progress-detail">
+                                    <h2>Прогресс</h2>
+                                    <p>Весь прогресс программы есть в проекте на GitHub. Вы можете проверить прогресс, нажав на кнопку ниже.</p>
+                                    <div class="detail-content">
+                                        <div class="center topmargin">
+                                            <a href="https://github.com/orgs/Toolbox-io/projects/1" draggable="false" class="noeffect">
+                                                <md-filled-button>Открыть проект</md-filled-button>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="action-detail" id="support-detail">
+                                    <h2>Поддержка</h2>
+                                    <p>Есть вопросы или предложения? Пишите на <a href="mailto:support@toolbox-io.ru" draggable="false">support@toolbox-io.ru</a>! Также вы можете отправить ошибку на <a href="https://github.com/Toolbox-io/Toolbox-io/issues/new" draggable="false">GitHub</a>.</p>
+                                    <div class="detail-content">
+                                        <div class="button-row">
+                                            <a href="https://github.com/Toolbox-io/Toolbox-io/issues/new" draggable="false" class="noeffect">
+                                                <md-filled-button>Открыть проблемы</md-filled-button>
+                                            </a>
+                                            <a href="mailto:support@toolbox-io.ru" draggable="false" class="noeffect">
+                                                <md-filled-button>Написать в поддержку</md-filled-button>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="action-detail" id="download-detail">
+                                    <h2>Попробуйте приложение</h2>
+                                    <p>Toolbox.io совместим с Android 7 и выше. Подробнее о совместимости <a href="/compatibility" draggable="false">здесь</a>. Приложение не гарантировано на работу на всех устройствах, поэтому если видите что-то неожиданное, отправить отчет об ошибке на GitHub.</p>
+                                    <div class="detail-content">
+                                        <div class="center topmargin">
+                                            <a href="/download" draggable="false" class="noeffect">
+                                                <md-filled-button id="download_btn">Скачать Toolbox.io</md-filled-button>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

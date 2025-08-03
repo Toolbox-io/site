@@ -130,4 +130,51 @@ import TioHeader = Components.TioHeader;
             }
         }
     }
+
+    // Action cards
+    const actionCards = document.querySelectorAll(".action-card");
+    const actionDetails = document.querySelectorAll(".action-detail");
+    
+    actionCards.forEach((item) => {
+        const actionCard = item as HTMLDivElement;
+        const actionId = actionCard.getAttribute("data-action");
+        
+        actionCard.addEventListener("click", () => {
+            // Remove active class from all action cards
+            actionCards.forEach((ac) => {
+                ac.classList.remove("active");
+            });
+            
+            // Add active class to clicked item
+            actionCard.classList.add("active");
+            
+            // Hide all action details
+            actionDetails.forEach((detail) => {
+                detail.classList.remove("active");
+            });
+            
+            // Show the corresponding detail
+            const detailId = `${actionId}-detail`;
+            const detailElement = document.getElementById(detailId);
+            if (detailElement) {
+                detailElement.classList.add("active");
+            }
+        });
+    });
+    
+    // Show first action card by default
+    if (actionCards.length > 0) {
+        const firstActionCard = actionCards[0] as HTMLDivElement;
+        const firstActionId = firstActionCard.getAttribute("data-action");
+        
+        firstActionCard.classList.add("active");
+        
+        if (firstActionId) {
+            const firstDetailId = `${firstActionId}-detail`;
+            const firstDetailElement = document.getElementById(firstDetailId);
+            if (firstDetailElement) {
+                firstDetailElement.classList.add("active");
+            }
+        }
+    }
 })();
