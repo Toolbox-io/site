@@ -17,10 +17,6 @@ body.iframe {
 }
 
 .chat-container {
-    background-color: $color-surface;
-    border: 1px solid $color-outline;
-    border-radius: 16px;
-    padding: 24px;
     margin: 24px auto;
     max-width: 800px;
     display: flex;
@@ -28,10 +24,6 @@ body.iframe {
     height: 600px;
 
     #response {
-        background-color: $color-surfaceVariant;
-        border: 1px solid $color-outline;
-        border-radius: 12px;
-        padding: 20px;
         flex: 1;
         white-space: pre-wrap;
         color: $color-onSurface;
@@ -64,24 +56,28 @@ body.iframe {
             opacity: 0;
             animation: fadeIn 0.5s ease forwards;
             margin-bottom: 16px;
-            padding: 12px 16px;
-            background-color: $color-surface;
-            border-radius: 8px;
-            border-left: 3px solid $color-primary;
+            padding: 8px 0;
+            color: $color-onSurface;
 
             &.user-message {
-                background-color: rgba($color-primary, 0.1);
-                border-left-color: $color-primary;
+                text-align: right;
                 margin-left: 20%;
+                color: $color-primary;
+                font-weight: 500;
             }
 
             &.bot-message {
-                background-color: rgba($color-surfaceVariant, 0.5);
-                border-left-color: $color-outline;
+                text-align: left;
                 margin-right: 20%;
+                color: $color-onSurface;
             }
 
             &.typing {
+                text-align: left;
+                margin-right: 20%;
+                color: $color-onSurfaceVariant;
+                font-style: italic;
+
                 &::after {
                     content: '';
                     display: inline-block;
@@ -98,6 +94,7 @@ body.iframe {
         .streaming-word {
             opacity: 0;
             animation: fadeInWord 0.3s ease forwards;
+            display: inline;
         }
     }
 
@@ -105,23 +102,27 @@ body.iframe {
         display: flex;
         gap: 12px;
         margin-top: auto;
+        background-color: $color-surface;
+        border: 1px solid $color-outline;
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 
         #messageInput {
             flex: 1;
             padding: 16px 20px;
-            background-color: $color-surface;
+            background-color: transparent;
             border: 1px solid $color-outline;
             border-radius: 25px;
             color: $color-onSurface;
             font-family: inherit;
             font-size: 14px;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
             &:focus {
                 outline: none;
                 border-color: $color-primary;
-                box-shadow: 0 0 0 2px rgba($color-primary, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+                box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
             }
 
             &::placeholder {
@@ -214,10 +215,12 @@ body.iframe {
 @media (max-width: 768px) {
     .chat-container {
         margin: 16px;
-        padding: 16px;
         height: 500px;
 
         .input-container {
+            padding: 16px;
+            margin: 0 16px;
+
             #messageInput {
                 padding: 14px 18px;
                 font-size: 14px;
@@ -236,7 +239,6 @@ body.iframe {
         #response {
             .message {
                 margin-bottom: 12px;
-                padding: 10px 14px;
                 font-size: 13px;
 
                 &.user-message {
@@ -254,10 +256,12 @@ body.iframe {
 @media (max-width: 480px) {
     .chat-container {
         margin: 12px;
-        padding: 12px;
         height: 400px;
 
         .input-container {
+            padding: 12px;
+            margin: 0 12px;
+
             #messageInput {
                 padding: 12px 16px;
                 font-size: 13px;
@@ -267,18 +271,16 @@ body.iframe {
                 width: 42px;
                 height: 42px;
 
-                .material-symbols-outlined {
+                .material-symbols.outlined {
                     font-size: 16px;
                 }
             }
         }
 
         #response {
-            padding: 16px;
             font-size: 13px;
 
             .message {
-                padding: 8px 12px;
                 font-size: 12px;
 
                 &.user-message {

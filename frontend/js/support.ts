@@ -56,11 +56,11 @@
             }
         }
 
-        private addStreamingWord(word: string): void {
+        private addStreamingWord(word: string, botMessageDiv: HTMLDivElement): void {
             const wordSpan = document.createElement('span');
             wordSpan.className = 'streaming-word';
             wordSpan.textContent = word;
-            this.responseDiv.appendChild(wordSpan);
+            botMessageDiv.appendChild(wordSpan);
             this.responseDiv.scrollTop = this.responseDiv.scrollHeight;
         }
 
@@ -126,7 +126,7 @@
                                     const words = data.content.split(' ');
                                     for (const word of words) {
                                         if (word.trim()) {
-                                            this.addStreamingWord(word + ' ');
+                                            this.addStreamingWord(word + ' ', botMessageDiv);
                                         }
                                     }
                                 }
