@@ -23,82 +23,24 @@ body.iframe {
     padding: 24px;
     margin: 24px auto;
     max-width: 800px;
-
-    .input-container {
-        display: flex;
-        gap: 12px;
-        margin-bottom: 20px;
-
-        #messageInput {
-            flex: 1;
-            padding: 12px 16px;
-            background-color: $color-surface;
-            border: 1px solid $color-outline;
-            border-radius: 12px;
-            color: $color-onSurface;
-            font-family: inherit;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            min-width: 400px;
-
-            &:focus {
-                outline: none;
-                border-color: $color-primary;
-                box-shadow: 0 0 0 2px rgba($color-primary, 0.2);
-            }
-
-            &::placeholder {
-                color: $color-onSurfaceVariant;
-            }
-        }
-
-        #sendButton {
-            padding: 12px 24px;
-            background: linear-gradient(135deg, $color-primary, darken($color-primary, 10%));
-            color: $color-onPrimary;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-
-            &:hover {
-                background: linear-gradient(135deg, darken($color-primary, 5%), darken($color-primary, 15%));
-                transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba($color-primary, 0.3);
-            }
-
-            &:active {
-                transform: translateY(0);
-                box-shadow: 0 2px 8px rgba($color-primary, 0.2);
-            }
-
-            &:disabled {
-                background: $color-surfaceVariant;
-                color: $color-onSurfaceVariant;
-                cursor: not-allowed;
-                transform: none;
-                box-shadow: none;
-            }
-        }
-    }
+    display: flex;
+    flex-direction: column;
+    height: 600px;
 
     #response {
         background-color: $color-surfaceVariant;
         border: 1px solid $color-outline;
         border-radius: 12px;
         padding: 20px;
-        min-height: 120px;
+        flex: 1;
         white-space: pre-wrap;
         color: $color-onSurface;
         font-family: inherit;
         font-size: 14px;
         line-height: 1.6;
         overflow-y: auto;
-        max-height: 400px;
+        margin-bottom: 20px;
+        position: relative;
 
         &::-webkit-scrollbar {
             width: 6px;
@@ -117,6 +59,117 @@ body.iframe {
                 background: $color-onSurfaceVariant;
             }
         }
+
+        .message {
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            background-color: $color-surface;
+            border-radius: 8px;
+            border-left: 3px solid $color-primary;
+
+            &.user-message {
+                background-color: rgba($color-primary, 0.1);
+                border-left-color: $color-primary;
+                margin-left: 20%;
+            }
+
+            &.bot-message {
+                background-color: rgba($color-surfaceVariant, 0.5);
+                border-left-color: $color-outline;
+                margin-right: 20%;
+            }
+
+            &.typing {
+                &::after {
+                    content: '';
+                    display: inline-block;
+                    width: 8px;
+                    height: 8px;
+                    background-color: $color-onSurfaceVariant;
+                    border-radius: 50%;
+                    animation: typing 1.4s infinite;
+                    margin-left: 4px;
+                }
+            }
+        }
+
+        .streaming-word {
+            opacity: 0;
+            animation: fadeInWord 0.3s ease forwards;
+        }
+    }
+
+    .input-container {
+        display: flex;
+        gap: 12px;
+        margin-top: auto;
+
+        #messageInput {
+            flex: 1;
+            padding: 16px 20px;
+            background-color: $color-surface;
+            border: 1px solid $color-outline;
+            border-radius: 25px;
+            color: $color-onSurface;
+            font-family: inherit;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+            &:focus {
+                outline: none;
+                border-color: $color-primary;
+                box-shadow: 0 0 0 2px rgba($color-primary, 0.2), 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+
+            &::placeholder {
+                color: $color-onSurfaceVariant;
+            }
+        }
+
+        #sendButton {
+            padding: 16px;
+            background: linear-gradient(135deg, $color-primary, darken($color-primary, 10%));
+            color: $color-onPrimary;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba($color-primary, 0.3);
+
+            .material-symbols-outlined {
+                font-size: 20px;
+            }
+
+            &:hover {
+                background: linear-gradient(135deg, darken($color-primary, 5%), darken($color-primary, 15%));
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba($color-primary, 0.4);
+            }
+
+            &:active {
+                transform: translateY(0);
+                box-shadow: 0 2px 8px rgba($color-primary, 0.2);
+            }
+
+            &:disabled {
+                background: $color-surfaceVariant;
+                color: $color-onSurfaceVariant;
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: none;
+            }
+        }
     }
 
     .loading {
@@ -127,29 +180,73 @@ body.iframe {
     }
 }
 
+// Animations
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInWord {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes typing {
+    0%, 60%, 100% {
+        opacity: 0.4;
+    }
+    30% {
+        opacity: 1;
+    }
+}
+
 // Responsive design
 @media (max-width: 768px) {
     .chat-container {
         margin: 16px;
         padding: 16px;
+        height: 500px;
 
         .input-container {
-            flex-direction: column;
-            gap: 8px;
-
             #messageInput {
-                order: 1;
+                padding: 14px 18px;
+                font-size: 14px;
             }
 
             #sendButton {
-                order: 2;
-                width: 100%;
+                width: 46px;
+                height: 46px;
+
+                .material-symbols.outlined {
+                    font-size: 18px;
+                }
             }
         }
 
         #response {
-            min-height: 100px;
-            max-height: 300px;
+            .message {
+                margin-bottom: 12px;
+                padding: 10px 14px;
+                font-size: 13px;
+
+                &.user-message {
+                    margin-left: 15%;
+                }
+
+                &.bot-message {
+                    margin-right: 15%;
+                }
+            }
         }
     }
 }
@@ -158,18 +255,40 @@ body.iframe {
     .chat-container {
         margin: 12px;
         padding: 12px;
+        height: 400px;
 
         .input-container {
-            #messageInput,
-            #sendButton {
-                padding: 10px 12px;
+            #messageInput {
+                padding: 12px 16px;
                 font-size: 13px;
+            }
+
+            #sendButton {
+                width: 42px;
+                height: 42px;
+
+                .material-symbols-outlined {
+                    font-size: 16px;
+                }
             }
         }
 
         #response {
             padding: 16px;
             font-size: 13px;
+
+            .message {
+                padding: 8px 12px;
+                font-size: 12px;
+
+                &.user-message {
+                    margin-left: 10%;
+                }
+
+                &.bot-message {
+                    margin-right: 10%;
+                }
+            }
         }
     }
 }

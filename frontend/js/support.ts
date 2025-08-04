@@ -3,17 +3,17 @@
         message: string;
         session_id: string;
     }
-    
+
     interface ChatResponse {
         content: string;
     }
-    
+
     class SupportChat {
         private messageInput: HTMLInputElement;
         private sendButton: HTMLButtonElement;
         private responseDiv: HTMLDivElement;
         private apiUrl: string;
-    
+
         constructor() {
             this.messageInput = document.getElementById('messageInput') as HTMLInputElement;
             this.sendButton = document.getElementById('sendButton') as HTMLButtonElement;
@@ -22,7 +22,7 @@
             
             this.initializeEventListeners();
         }
-    
+
         private initializeEventListeners(): void {
             this.sendButton.addEventListener('click', () => this.sendMessage());
             this.messageInput.addEventListener('keypress', (e: KeyboardEvent) => {
@@ -31,17 +31,53 @@
                 }
             });
         }
-    
+
+        private addMessage(content: string, type: 'user' | 'bot'): void {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}-message`;
+            messageDiv.textContent = content;
+            this.responseDiv.appendChild(messageDiv);
+            this.responseDiv.scrollTop = this.responseDiv.scrollHeight;
+        }
+
+        private showTypingIndicator(): void {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot-message typing';
+            typingDiv.textContent = 'Typing';
+            typingDiv.id = 'typing-indicator';
+            this.responseDiv.appendChild(typingDiv);
+            this.responseDiv.scrollTop = this.responseDiv.scrollHeight;
+        }
+
+        private hideTypingIndicator(): void {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        private addStreamingWord(word: string): void {
+            const wordSpan = document.createElement('span');
+            wordSpan.className = 'streaming-word';
+            wordSpan.textContent = word;
+            this.responseDiv.appendChild(wordSpan);
+            this.responseDiv.scrollTop = this.responseDiv.scrollHeight;
+        }
+
         private async sendMessage(): Promise<void> {
             const message = this.messageInput.value.trim();
             if (!message) return;
-    
+
+            // Add user message
+            this.addMessage(message, 'user');
+
             // Disable input and button
             this.messageInput.disabled = true;
             this.sendButton.disabled = true;
-            this.responseDiv.textContent = 'Loading...';
-            this.responseDiv.className = 'loading';
-    
+
+            // Show typing indicator
+            this.showTypingIndicator();
+
             try {
                 const response = await fetch(this.apiUrl, {
                     method: 'POST',
@@ -53,34 +89,46 @@
                         session_id: 'support-session'
                     } as ChatRequest)
                 });
-    
+
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-    
+
+                // Hide typing indicator and start bot message
+                this.hideTypingIndicator();
+                const botMessageDiv = document.createElement('div');
+                botMessageDiv.className = 'message bot-message';
+                this.responseDiv.appendChild(botMessageDiv);
+
                 const reader = response.body?.getReader();
                 if (!reader) {
                     throw new Error('No response body reader available');
                 }
-    
+
                 const decoder = new TextDecoder();
                 let fullResponse = '';
-    
+
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
-    
+
                     const chunk = decoder.decode(value);
                     const lines = chunk.split('\n');
-    
+
                     for (const line of lines) {
                         if (line.startsWith('data: ')) {
                             try {
                                 const data: ChatResponse = JSON.parse(line.slice(6));
                                 if (data.content) {
                                     fullResponse += data.content;
-                                    this.responseDiv.textContent = fullResponse;
-                                    this.responseDiv.className = '';
+                                    
+                                    // Split into words and animate each word
+                                    const words = data.content.split(' ');
+                                    for (const word of words) {
+                                        if (word.trim()) {
+                                            this.addStreamingWord(word + ' ');
+                                        }
+                                    }
                                 }
                             } catch (e) {
                                 console.error('Error parsing SSE data:', e);
@@ -89,9 +137,9 @@
                     }
                 }
             } catch (error) {
+                this.hideTypingIndicator();
                 const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-                this.responseDiv.textContent = `Error: ${errorMessage}`;
-                this.responseDiv.className = '';
+                this.addMessage(`Error: ${errorMessage}`, 'bot');
             } finally {
                 // Re-enable input and button
                 this.messageInput.disabled = false;
