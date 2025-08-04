@@ -72,8 +72,8 @@ services:
 
   support-backend:
     build:
-      context: backend/support
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: backend/support/Dockerfile
     container_name: toolbox-io-support-backend
     restart: unless-stopped
     ports:
