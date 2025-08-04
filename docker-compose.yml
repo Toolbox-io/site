@@ -73,6 +73,24 @@ services:
     volumes:
       - download_cache:/root/site/backend/download/cache
 
+  support-backend:
+    build:
+      context: backend/support
+      dockerfile: Dockerfile
+    container_name: toolbox-io-support-backend
+    restart: unless-stopped
+    ports:
+      - "8003:8003"
+    environment:
+      API_KEY: ${AI_API_KEY}
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend/support
+          target: /app
+        - action: rebuild
+          path: ./backend/support/requirements.txt
+
   caddy:
     build:
       context: ./caddy

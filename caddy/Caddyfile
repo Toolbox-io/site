@@ -59,3 +59,7 @@ panel.toolbox-io.ru {
 		}
 	}
 }
+
+support.api.toolbox-io.ru {
+	reverse_proxy support-backend:8003
+}
