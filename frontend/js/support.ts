@@ -122,13 +122,8 @@
                                 if (data.content) {
                                     fullResponse += data.content;
                                     
-                                    // Split into words and animate each word
-                                    const words = data.content.split(' ');
-                                    for (const word of words) {
-                                        if (word.trim()) {
-                                            this.addStreamingWord(word + ' ', botMessageDiv);
-                                        }
-                                    }
+                                    // Add the content directly as a streaming word
+                                    this.addStreamingWord(data.content, botMessageDiv);
                                 }
                             } catch (e) {
                                 console.error('Error parsing SSE data:', e);

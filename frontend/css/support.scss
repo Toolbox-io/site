@@ -116,8 +116,9 @@ body > .wrapper {
 
         .streaming-word {
             opacity: 0;
-            animation: fadeInWord 0.3s ease forwards;
+            animation: fadeInWord 0.2s ease forwards;
             display: inline;
+            color: inherit;
         }
     }
 
@@ -207,9 +208,11 @@ body > .wrapper {
 @keyframes fadeInWord {
     from {
         opacity: 0;
+        transform: translateY(2px);
     }
     to {
         opacity: 1;
+        transform: translateY(0);
     }
 }
 
