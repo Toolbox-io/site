@@ -17,3 +17,4 @@ passlib
 httpx
 PyJWT
 watchdog>=3.0.0
+openai
