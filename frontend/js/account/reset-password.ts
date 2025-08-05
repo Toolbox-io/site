@@ -7,7 +7,7 @@ import CodeInputRow = Components.CodeInputRow;
     const submit = id("submit") as HTMLButtonElement;
     const newPassword = id("new-password") as HTMLInputElement;
     const confirmPassword = id("confirm-password") as HTMLInputElement;
-    const message = id("reset-password-message")!;
+    const message = id("reset-password-message");
 
     codeInput.addEventListener('complete', () => submit.click());
 

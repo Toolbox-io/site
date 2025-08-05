@@ -6,23 +6,22 @@ from openai.types.chat.chat_completion_chunk import ChatCompletionChunk
 import os
 import json
 from limiter import limiter
-from ai_cache import cache_manager
 
 router = APIRouter()
 
 # --- Load Context and Instructions ---
 try:
-    with open("routes/support/context/data.md", "r") as f:
+    with open("context/data.md", "r") as f:
         full_context = f.read()
 except FileNotFoundError:
-    print("Error: routes/support/context/data.md not found.")
+    print("Error: context/data.md not found.")
     exit()
 
 try:
-    with open("routes/support/context/instruction.md", "r") as f:
+    with open("context/instruction.md", "r") as f:
         instructions = f.read()
 except FileNotFoundError:
-    print("Error: routes/support/context/instruction.md not found.")
+    print("Error: context/instruction.md not found.")
     exit()
 
 # --- OpenAI client setup ---
@@ -87,62 +86,11 @@ def generate_response(session_id: str, message: str):
     except Exception as e:
         yield f"data: {json.dumps({'error': str(e)})}\n\n"
 
-def generate_cached_response(session_id: str, message: str):
-    """Generate response from cache and stream it"""
-    # Get conversation history for this session
-    session_history = conversation_history.get(session_id, [])
-    
-    # Check cache with conversation context
-    cached_response = cache_manager.check_cache(
-        message, 
-        instructions, 
-        full_context, 
-        session_history
-    )
-    
-    if cached_response:
-        # Stream cached response character by character to simulate real response
-        for char in cached_response:
-            yield f"data: {json.dumps({'content': char})}\n\n"
-    else:
-        # Generate new response and cache it
-        full_response = ""
-        for chunk in generate_response(session_id, message):
-            if chunk.startswith("data: "):
-                try:
-                    data = json.loads(chunk[6:])
-                    if 'content' in data:
-                        content = data['content']
-                        full_response += content
-                        yield chunk
-                except json.JSONDecodeError:
-                    yield chunk
-        
-        # Store response in cache (background) with conversation history
-        cache_manager.store_response(
-            message, 
-            full_response, 
-            instructions, 
-            full_context, 
-            session_history
-        )
-
 @router.post("/chat")
 @limiter.limit("1/second")
 @limiter.limit("20/day")
 async def chat(request: Request, chat_request: ChatRequest):
     return StreamingResponse(
-        generate_cached_response(chat_request.session_id, chat_request.message),
+        generate_response(chat_request.session_id, chat_request.message),
         media_type="text/plain"
     )
-
-@router.get("/cache/stats")
-async def get_cache_stats():
-    """Get cache statistics"""
-    return cache_manager.get_cache_stats()
-
-@router.delete("/cache")
-async def invalidate_cache():
-    """Invalidate entire cache"""
-    cache_manager.invalidate_cache()
-    return {"message": "Cache invalidated successfully"}

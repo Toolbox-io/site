@@ -6,7 +6,7 @@ import id = Utils.id;
 (() => {
     const codeInput = id("register-code") as CodeInputRow;
     const resendBtn = id('resend-btn') as HTMLButtonElement;
-    const message = id('verify-message')!;
+    const message = id('verify-message');
 
     codeInput.addEventListener('complete', async () => {
         const code = codeInput.value;

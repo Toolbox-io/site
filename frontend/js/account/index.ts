@@ -83,8 +83,8 @@ type PageType = 'login' | 'register' | 'account';
         }
 
         const loginBtn = id('login-btn') as HTMLButtonElement;
-        const errorMessage = id('error-message')!;
-        const verifiedDialog = id("verified-dialog")!;
+        const errorMessage = id('error-message');
+        const verifiedDialog = id("verified-dialog");
 
         loginBtn.addEventListener('click', async () => {
             const username = (id('username') as HTMLInputElement).value;
@@ -132,7 +132,7 @@ type PageType = 'login' | 'register' | 'account';
         }
 
         const registerBtn = id('register-btn') as HTMLButtonElement;
-        const errorMessage = id('error-message')!;
+        const errorMessage = id('error-message');
 
         registerBtn.addEventListener('click', async () => {
             const username = (id('username') as HTMLInputElement).value.trim();
@@ -224,7 +224,7 @@ type PageType = 'login' | 'register' | 'account';
         } catch (error) {
             console.error('Failed to load user info:', error);
             showError(
-                id('error-message')!,
+                id('error-message'),
                 'Не удалось загрузить информацию об аккаунте'
             );
         }
@@ -236,7 +236,7 @@ type PageType = 'login' | 'register' | 'account';
     function setupEventListeners(): void {
         const logoutBtn = id('logout-btn') as HTMLButtonElement;
         const changePasswordBtn = id('change-password-btn') as HTMLButtonElement;
-        const passwordDialog = id('password-dialog')!;
+        const passwordDialog = id('password-dialog');
         const cancelBtn = id('cancel-btn') as HTMLButtonElement;
         const changePasswordSubmitBtn = id('change-password-btn2') as HTMLButtonElement;
 
@@ -327,7 +327,7 @@ type PageType = 'login' | 'register' | 'account';
             verifiedDialog.style.opacity = '1';
         }
 
-        id("verified-close")!.addEventListener("click", closeVerifiedDialog);
+        id("verified-close").addEventListener("click", closeVerifiedDialog);
     }
 
     /**
@@ -350,7 +350,7 @@ type PageType = 'login' | 'register' | 'account';
         const currentPassword = (id('current-password') as HTMLInputElement)?.value;
         const newPassword = (id('new-password') as HTMLInputElement)?.value;
         const confirmPassword = (id('confirm-password') as HTMLInputElement)?.value;
-        const dialogError = id('dialog-error')!;
+        const dialogError = id('dialog-error');
         const submitButton = id('change-password-btn') as HTMLButtonElement;
 
         if (!currentPassword || !newPassword || !confirmPassword) {
