@@ -53,8 +53,8 @@ services:
 
   download:
     build:
-      context: .
-      dockerfile: backend/download/Dockerfile
+      context: backend/download
+      dockerfile: Dockerfile
     restart: unless-stopped
     ports:
       - "8001:8001"
