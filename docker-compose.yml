@@ -34,6 +34,7 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       GITHUB_APP_ID: ${GITHUB_APP_ID}
       GITHUB_INSTALLATION_ID: ${GITHUB_INSTALLATION_ID}
+      AI_API_KEY: ${AI_API_KEY}
     ports:
       - "8000:8000"
     develop:
@@ -72,24 +73,6 @@ services:
           path: ./frontend/package.json
     volumes:
       - download_cache:/root/site/backend/download/cache
-
-  support-backend:
-    build:
-      context: .
-      dockerfile: backend/support/Dockerfile
-    container_name: toolbox-io-support-backend
-    restart: unless-stopped
-    ports:
-      - "8003:8003"
-    environment:
-      API_KEY: ${AI_API_KEY}
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./backend/support
-          target: /app
-        - action: rebuild
-          path: ./backend/support/requirements.txt
 
   caddy:
     build:

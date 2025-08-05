@@ -22,7 +22,7 @@ import { marked } from "./lib.js";
             this.messageInput = id('messageInput') as HTMLInputElement;
             this.sendButton = id('sendButton') as HTMLButtonElement;
             this.responseDiv = id('response')!;
-            this.apiUrl = 'http://localhost:8003/chat';
+            this.apiUrl = 'http://localhost:8003/api/support/chat';
             
             this.initializeEventListeners();
         }
