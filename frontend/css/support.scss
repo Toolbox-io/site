@@ -14,28 +14,20 @@ body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-}
 
-body.iframe {
-    tio-header, tio-footer {
-        display: none;
+    &.iframe {
+        tio-header, tio-footer {
+            display: none;
+        }
     }
-
+    
     > .wrapper {
         margin-bottom: 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0; // Important for flex child
     }
-
-    #main {
-        margin-top: 0;
-    }
-}
-
-body > .wrapper {
-    margin-bottom: 0;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    min-height: 0; // Important for flex child
 }
 
 tio-footer {
@@ -64,8 +56,7 @@ tio-footer {
     margin: 24px 0 15px 0;
 
     // Gradient overlays for smooth blending
-    &::before,
-    &::after {
+    &::before, &::after {
         content: '';
         position: absolute;
         left: 0;
@@ -77,12 +68,12 @@ tio-footer {
 
     &::before {
         top: 0;
-        background: linear-gradient(to bottom, $color-background 0%, transparent 100%);
+        background: linear-gradient(to bottom, $color-surface 0%, transparent 100%);
     }
 
     &::after {
         bottom: 70px; // Position above the input container
-        background: linear-gradient(to top, $color-background 0%, transparent 100%);
+        background: linear-gradient(to top, $color-surface 0%, transparent 100%);
     }
 
     #response {
@@ -209,28 +200,6 @@ tio-footer {
                 h4 { font-size: 1.1em; }
                 h5, h6 { font-size: 1em; }
             }
-
-            &.typing {
-                background-color: $color-surfaceVariant;
-                color: $color-onSurfaceVariant;
-                margin-right: auto;
-                margin-left: 0;
-                border-bottom-left-radius: 6px;
-                font-style: italic;
-                box-shadow: 0 2px 8px rgba($color-outline, 0.2);
-                text-align: left;
-
-                &::after {
-                    content: '';
-                    display: inline-block;
-                    width: 8px;
-                    height: 8px;
-                    background-color: $color-onSurfaceVariant;
-                    border-radius: 50%;
-                    animation: typing 1.4s infinite;
-                    margin-left: 4px;
-                }
-            }
         }
     }
 
@@ -254,10 +223,7 @@ tio-footer {
             font-family: inherit;
             font-size: 16px;
             transition: all 0.3s ease;
-
-            &:focus {
-                outline: none;
-            }
+            outline: none !important;
 
             &::placeholder {
                 color: $color-onSurfaceVariant;
@@ -281,10 +247,6 @@ tio-footer {
             justify-content: center;
             background-color: $color-primary;
 
-            .material-symbols-outlined {
-                font-size: 20px;
-            }
-
             &:hover {
                 background-color: color.mix($color-onPrimary, $color-primary, 8%);
             }
@@ -294,16 +256,8 @@ tio-footer {
                 color: $color-onSurfaceVariant;
                 cursor: not-allowed;
                 transform: none;
-                box-shadow: none;
             }
         }
-    }
-
-    .loading {
-        color: $color-onSurfaceVariant;
-        font-style: italic;
-        text-align: center;
-        padding: 20px;
     }
 
     .note {
@@ -323,121 +277,5 @@ tio-footer {
     to {
         opacity: 1;
         transform: translateY(0);
-    }
-}
-
-@keyframes fadeInWord {
-    from {
-        opacity: 0;
-        transform: translateY(2px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes typing {
-    0%, 60%, 100% {
-        opacity: 0.4;
-    }
-    30% {
-        opacity: 1;
-    }
-}
-
-// Responsive design
-@media (max-width: 768px) {
-    #main {
-        padding: 0 16px;
-    }
-
-    .chat-container {
-        margin: 16px 0;
-
-        .input-container {
-            padding: 16px;
-            margin: 0 16px 16px 16px;
-
-            #messageInput {
-                padding: 14px 18px;
-                font-size: 14px;
-            }
-
-            #sendButton {
-                width: 46px;
-                height: 46px;
-
-                .material-symbols.outlined {
-                    font-size: 18px;
-                }
-            }
-        }
-
-        #response {
-            .message {
-                margin-bottom: 12px;
-                font-size: 13px;
-                max-width: 75%;
-
-                &.user-message {
-                    margin-left: auto;
-                    margin-right: 0;
-                }
-
-                &.bot-message {
-                    margin-right: auto;
-                    margin-left: 0;
-                }
-            }
-        }
-    }
-}
-
-@media (max-width: 480px) {
-    #main {
-        padding: 0 12px;
-    }
-
-    .chat-container {
-        margin: 12px 0;
-
-        .input-container {
-            padding: 12px;
-            margin: 0 12px 12px 12px;
-
-            #messageInput {
-                padding: 12px 16px;
-                font-size: 13px;
-            }
-
-            #sendButton {
-                width: 42px;
-                height: 42px;
-
-                .material-symbols.outlined {
-                    font-size: 16px;
-                }
-            }
-        }
-
-        #response {
-            font-size: 13px;
-
-            .message {
-                font-size: 12px;
-                max-width: 80%;
-
-                &.user-message {
-                    margin-left: auto;
-                    margin-right: 0;
-                }
-
-                &.bot-message {
-                    margin-right: auto;
-                    margin-left: 0;
-                }
-            }
-        }
     }
 }
