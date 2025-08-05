@@ -156,13 +156,13 @@ export namespace Utils {
         history.pushState({}, "", newUrl);
     }
 
-    export function id(id: string) {
-        return document.getElementById(id)!!
+    export function id(id: string): HTMLElement | undefined {
+        return document.getElementById(id)!
     }
 
     // noinspection JSUnusedGlobalSymbols
     export function query(query: string, element: Element | Document = document) {
-        return element.querySelector(query)!! as HTMLElement;
+        return element.querySelector(query)! as HTMLElement;
     }
 
     hljs.registerLanguage("xml", xml);

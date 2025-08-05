@@ -1,3 +1,7 @@
+import { Utils } from "./common.js";
+import id = Utils.id;
+import { marked } from "./lib.js";
+
 (() => {
     interface ChatRequest {
         message: string;
@@ -11,13 +15,13 @@
     class SupportChat {
         private messageInput: HTMLInputElement;
         private sendButton: HTMLButtonElement;
-        private responseDiv: HTMLDivElement;
+        private responseDiv: HTMLElement;
         private apiUrl: string;
 
         constructor() {
-            this.messageInput = document.getElementById('messageInput') as HTMLInputElement;
-            this.sendButton = document.getElementById('sendButton') as HTMLButtonElement;
-            this.responseDiv = document.getElementById('response') as HTMLDivElement;
+            this.messageInput = id('messageInput') as HTMLInputElement;
+            this.sendButton = id('sendButton') as HTMLButtonElement;
+            this.responseDiv = id('response')!;
             this.apiUrl = 'http://localhost:8003/chat';
             
             this.initializeEventListeners();
@@ -25,7 +29,7 @@
 
         private initializeEventListeners(): void {
             this.sendButton.addEventListener('click', () => this.sendMessage());
-            this.messageInput.addEventListener('keypress', (e: KeyboardEvent) => {
+            this.messageInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') {
                     this.sendMessage();
                 }
@@ -57,12 +61,7 @@
         }
 
         private updateBotMessage(content: string, botMessageDiv: HTMLDivElement): void {
-            // Format markdown if available
-            if (typeof (window as any).marked !== 'undefined') {
-                botMessageDiv.innerHTML = (window as any).marked.parse(content);
-            } else {
-                botMessageDiv.textContent = content;
-            }
+            botMessageDiv.innerHTML = marked.parse(content);
             
             this.responseDiv.scrollTop = this.responseDiv.scrollHeight;
         }
