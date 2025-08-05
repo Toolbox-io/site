@@ -72,7 +72,7 @@ tio-footer {
     }
 
     &::after {
-        bottom: 70px; // Position above the input container
+        bottom: 100px; // Position above the input container
         background: linear-gradient(to top, $color-surface 0%, transparent 100%);
     }
 
@@ -107,8 +107,12 @@ tio-footer {
             }
         }
 
-        #welcome:only-child {
-            display: block;
+        #welcome {
+            display: none;
+
+            &:only-child {
+                display: block;
+            }
         }
 
         &:has(#welcome:only-child) {
