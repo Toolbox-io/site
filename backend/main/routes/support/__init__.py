@@ -44,7 +44,7 @@ def parse_faq_section(context_text: str) -> dict:
     
     # Simple approach: use the working regex pattern
     qa_pattern = r'- Вопрос:\s*((\s*>.*$)*)\s*Ответ:\s*((\s*>.*$)*)'
-    matches = re.findall(qa_pattern, faq_content, re.MULTILINE)
+    matches: list[str] = re.findall(qa_pattern, faq_content, re.MULTILINE)
     print(f"Found {len(matches)} FAQ matches")
     
     for i, match in enumerate(matches, 1):
@@ -52,24 +52,23 @@ def parse_faq_section(context_text: str) -> dict:
         answer_raw = match[2].strip()    # Group 3: answer
         
         print(f"Processing match {i}:")
-        print(f"  Raw question: '{question_raw}'")
-        print(f"  Raw answer: '{answer_raw[:100]}...'")
+        question = []
+        answer = []
+
+        for line in question_raw.splitlines():
+            print(line)
+            question.append(re.sub(r'\s*>\s*', '', line))
         
-        # Clean up question (remove > and normalize)
-        question = re.sub(r'^\s*>\s*', '', question_raw)  # Remove first >
-        question = re.sub(r'\n\s*>\s*', '\n', question)  # Replace subsequent > with newlines
-        question = re.sub(r'\n+', ' ', question)  # Replace multiple newlines with spaces
-        question = question.strip()
-        
-        # Clean up answer (remove > and normalize)
-        answer = re.sub(r'^\s*>\s*', '', answer_raw)  # Remove first >
-        answer = re.sub(r'\n\s*>\s*', '\n', answer)  # Replace subsequent > with newlines
-        answer = re.sub(r'\n+', ' ', answer)  # Replace multiple newlines with spaces
-        answer = answer.strip()
+        for line in answer_raw.splitlines():
+            print(line)
+            answer.append(re.sub(r'\s*>\s*', '', line).strip())
+
+        question = "\n".join(question)
+        answer = "\n".join(answer)
         
         faq_map[question] = answer
-        print(f"  Clean question: '{question}'")
-        print(f"  Clean answer: '{answer[:100]}...'")
+        print(f"Clean question: '{question}'")
+        print(f"Clean answer: '{answer}'")
     
     print(f"Total FAQ entries parsed: {len(faq_map)}")
     return faq_map
