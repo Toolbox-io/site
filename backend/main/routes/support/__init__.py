@@ -41,39 +41,35 @@ def parse_faq_section(context_text: str) -> dict:
     
     faq_content = faq_match.group(1)
     print(f"Found FAQ section, length: {len(faq_content)}")
-    print(f"FAQ content: '{faq_content}'")
     
-    # Parse questions and answers
-    # Pattern: "- Вопрос:\n\n  > (question text)\n\n  Ответ:\n\n  > (answer text with possible multiple > lines)"
-    qa_pattern = r'- Вопрос:\s*\n\s*\n\s*>\s*(.*?)\s*\n\s*\n\s*Ответ:\s*\n\s*\n\s*((?:>\s*.*?\n?)*?)(?=\n\s*-|\n\s*$|\n\s*\n)'
+    # Simple approach: use the working regex pattern
+    qa_pattern = r'- Вопрос:\s*((\s*>.*$)*)\s*Ответ:\s*((\s*>.*$)*)'
+    matches = re.findall(qa_pattern, faq_content, re.MULTILINE)
+    print(f"Found {len(matches)} FAQ matches")
     
-    # Test the pattern
-    test_match = re.search(qa_pattern, faq_content, re.DOTALL)
-    if test_match:
-        print(f"Pattern matched! Q: '{test_match.group(1)}' A: '{test_match.group(2)}'")
-    else:
-        print("Pattern did not match. Trying simpler pattern...")
-        # Try a simpler pattern
-        simple_pattern = r'- Вопрос:\s*\n\s*>\s*(.*?)\s*\n\s*Ответ:\s*\n\s*((?:>\s*.*?\n?)*?)(?=\n|$)'
-        simple_match = re.search(simple_pattern, faq_content, re.DOTALL)
-        if simple_match:
-            print(f"Simple pattern matched! Q: '{simple_match.group(1)}' A: '{simple_match.group(2)}'")
-        else:
-            print("Simple pattern also failed")
-    
-    matches = re.finditer(qa_pattern, faq_content, re.DOTALL)
-    
-    for match in matches:
-        question = match.group(1).strip()
-        answer = match.group(2).strip()
-        # Clean up the answer by removing the > characters and extra whitespace
-        answer = re.sub(r'^\s*>\s*', '', answer)  # Remove first >
+    for i, match in enumerate(matches, 1):
+        question_raw = match[0].strip()  # Group 1: question
+        answer_raw = match[2].strip()    # Group 3: answer
+        
+        print(f"Processing match {i}:")
+        print(f"  Raw question: '{question_raw}'")
+        print(f"  Raw answer: '{answer_raw[:100]}...'")
+        
+        # Clean up question (remove > and normalize)
+        question = re.sub(r'^\s*>\s*', '', question_raw)  # Remove first >
+        question = re.sub(r'\n\s*>\s*', '\n', question)  # Replace subsequent > with newlines
+        question = re.sub(r'\n+', ' ', question)  # Replace multiple newlines with spaces
+        question = question.strip()
+        
+        # Clean up answer (remove > and normalize)
+        answer = re.sub(r'^\s*>\s*', '', answer_raw)  # Remove first >
         answer = re.sub(r'\n\s*>\s*', '\n', answer)  # Replace subsequent > with newlines
         answer = re.sub(r'\n+', ' ', answer)  # Replace multiple newlines with spaces
         answer = answer.strip()
         
         faq_map[question] = answer
-        print(f"Parsed FAQ: Q='{question[:50]}...' A='{answer[:50]}...'")
+        print(f"  Clean question: '{question}'")
+        print(f"  Clean answer: '{answer[:100]}...'")
     
     print(f"Total FAQ entries parsed: {len(faq_map)}")
     return faq_map
