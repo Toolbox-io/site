@@ -1,6 +1,7 @@
 // Import common variables and mixins
 @use "common/colors" as *;
 @use "common/mixins" as *;
+@use "sass:color";
 
 // Set up full viewport height layout
 html, body {
@@ -285,7 +286,7 @@ tio-footer {
             }
 
             &:hover {
-                background-color: mix($color-onPrimary, $color-primary, 8%);
+                background-color: color.mix($color-onPrimary, $color-primary, 8%);
             }
 
             &:disabled {
