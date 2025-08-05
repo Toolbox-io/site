@@ -231,6 +231,47 @@ All `/api/auth/*` endpoints are under the `/api/auth` prefix.
 
 ---
 
+## Support Endpoints
+
+### POST `/api/support/chat`
+- **Description:** Chat with AI support assistant with semantic caching.
+- **Request Body:**
+  ```json
+  {
+    "message": "<string>",
+    "session_id": "<string>"
+  }
+  ```
+- **Response:** Streaming response with AI-generated content.
+- **Features:**
+  - Semantic search for similar questions
+  - Automatic caching of responses
+  - Context-aware responses
+- **Rate Limits:** 1 request per second, 20 requests per day
+
+### GET `/api/support/cache/stats`
+- **Description:** Get cache statistics for AI responses.
+- **Response:**
+  ```json
+  {
+    "total_entries": 42,
+    "cache_size_mb": 1.5,
+    "oldest_entry": 1234567890.123,
+    "newest_entry": 1234567890.456
+  }
+  ```
+
+### DELETE `/api/support/cache`
+- **Description:** Invalidate entire AI response cache.
+- **Response:**
+  ```json
+  {
+    "message": "Cache invalidated successfully"
+  }
+  ```
+
+---
+
 ## Error Handling
 
 - 404: Not found (returns a custom error page if available)

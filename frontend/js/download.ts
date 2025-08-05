@@ -7,5 +7,5 @@ import id = Utils.id;
     setUpTabs();
 
     await delay(1000);
-    id("download").click();
+    id("download")!.click();
 })();

@@ -53,6 +53,7 @@ services:
           path: ./frontend/package.json
     volumes:
       - photos:/root/site/backend/main/data/photos
+      - ai_response_cache:/root/site/backend/main/data/ai_response_cache
 
   download:
     build:
@@ -98,3 +99,4 @@ volumes:
   certs:
   download_cache:
   photos:
+  ai_response_cache:
