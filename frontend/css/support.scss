@@ -2,6 +2,19 @@
 @use "common/colors" as *;
 @use "common/mixins" as *;
 
+// Set up full viewport height layout
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 body.iframe {
     tio-header, tio-footer {
         display: none;
@@ -18,19 +31,36 @@ body.iframe {
 
 body > .wrapper {
     margin-bottom: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; // Important for flex child
+}
+
+tio-footer {
+    margin-top: 0 !important;
+    flex-shrink: 0; // Prevent footer from shrinking
+}
+
+#main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; // Important for flex child
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 24px;
+    box-sizing: border-box;
 }
 
 .chat-container {
-    margin: 24px auto;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 0;
-    margin-top: 24px;
-    max-width: 800px;
+    flex: 1;
     display: flex;
     flex-direction: column;
-    height: 600px;
+    min-height: 0; // Important for flex child
     position: relative;
+    margin: 24px 0;
 
     // Gradient overlays for smooth blending
     &::before,
@@ -64,6 +94,7 @@ body > .wrapper {
         overflow-y: auto;
         position: relative;
         padding-top: 20px; // Add padding to account for gradient overlays
+        min-height: 0; // Important for flex child
 
         &::-webkit-scrollbar {
             width: 6px;
@@ -195,12 +226,12 @@ body > .wrapper {
     .input-container {
         display: flex;
         gap: 12px;
-        margin-top: auto;
         background-color: $color-surfaceContainer;
         border-radius: 80px;
         padding: 10px;
         position: relative;
         z-index: 2; // Ensure input container is above gradient overlays
+        flex-shrink: 0; // Prevent input from shrinking
 
         #messageInput {
             flex: 1;
@@ -299,13 +330,16 @@ body > .wrapper {
 
 // Responsive design
 @media (max-width: 768px) {
+    #main {
+        padding: 0 16px;
+    }
+
     .chat-container {
-        margin: 16px;
-        height: 500px;
+        margin: 16px 0;
 
         .input-container {
             padding: 16px;
-            margin: 0 16px;
+            margin: 0 16px 16px 16px;
 
             #messageInput {
                 padding: 14px 18px;
@@ -343,13 +377,16 @@ body > .wrapper {
 }
 
 @media (max-width: 480px) {
+    #main {
+        padding: 0 12px;
+    }
+
     .chat-container {
-        margin: 12px;
-        height: 400px;
+        margin: 12px 0;
 
         .input-container {
             padding: 12px;
-            margin: 0 12px;
+            margin: 0 12px 12px 12px;
 
             #messageInput {
                 padding: 12px 16px;
