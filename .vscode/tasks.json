@@ -32,31 +32,25 @@
         {
             "label": "TypeScript: Watch",
             "type": "shell",
-            "command": "npx",
+            "command": "npm",
             "options": {
                 "cwd": "${workspaceFolder}/frontend"
             },
-            "args": ["tsc", "--watch"],
+            "args": ["run", "watch:ts"],
             "isBackground": true,
             "problemMatcher": "$tsc-watch"
         },
         {
             "label": "SCSS: Watch",
             "type": "shell",
-            "command": "npx",
-            "args": [
-                "sass",
-                "--watch",
-                "css:css",
-                "--no-source-map",
-                "-s",
-                "compressed"
-            ],
+            "command": "npm",
+            "args": ["run", "watch:scss"],
             "options": {
                 "cwd": "${workspaceFolder}/frontend"
             },
             "isBackground": true,
-            "group": "build"
+            "group": "build",
+            "problemMatcher": "$node-sass"
         }
     ]
 }
