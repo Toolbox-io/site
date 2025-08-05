@@ -4,15 +4,9 @@
 #
 
 # 1. Backend (Python)
-FROM ubuntu:24.04 AS backend
+FROM python:3.12 AS backend
 
-# 1.1. Install Python
-RUN apt update && \
-    apt upgrade -y --no-install-recommends \
-        python3.12-full && \
-    rm -rf /var/lib/apt/lists/
-
-# 2.2. Create venv and install pip dependencies
+# 1.2. Create venv and install pip dependencies
 WORKDIR /root
 RUN rm -rf .venv && \
     python3 -m venv .venv
@@ -41,18 +35,9 @@ RUN if [ "$DEBUG" = "true" ]; then \
 
 
 # 3. Runtime
-FROM ubuntu:24.04 AS runtime
+FROM python:3.12 AS runtime
 
-# 3.1. Install runtime dependencies
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    --mount=type=cache,target=/var/lib/apt,sharing=locked \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    apt update && \
-    apt install -y --no-install-recommends \
-        mysql-client python3.12-full && \
-    rm -rf /var/lib/apt/lists/*
-
-# 3.2. Copy content
+# 3.1. Copy content
 COPY --from=backend /root/.venv /root/.venv
 COPY backend/main /root/site/backend/main
 COPY --from=frontend /root/site/frontend /root/site/frontend
