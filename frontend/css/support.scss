@@ -86,7 +86,6 @@ tio-footer {
 
     #response {
         flex: 1;
-        white-space: pre-wrap;
         color: $color-onSurface;
         font-family: inherit;
         font-size: 14px;
@@ -95,6 +94,8 @@ tio-footer {
         position: relative;
         padding-top: 20px; // Add padding to account for gradient overlays
         min-height: 0; // Important for flex child
+        display: flex;
+        flex-direction: column;
 
         &::-webkit-scrollbar {
             width: 6px;
@@ -112,6 +113,15 @@ tio-footer {
             &:hover {
                 background: $color-onSurfaceVariant;
             }
+        }
+
+        #welcome:only-child {
+            display: block;
+        }
+
+        &:has(#welcome:only-child) {
+            align-items: center;
+            justify-content: center;
         }
 
         .message {
