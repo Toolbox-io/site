@@ -71,6 +71,22 @@ services:
     volumes:
       - download_cache:/home/toolbox/site/backend/download/cache
 
+  supportbot:
+    build:
+      context: backend/supportbot
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - main
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      API_BASE_URL: http://main:8000
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend/supportbot
+          target: /root/site/backend/supportbot
+
   caddy:
     build:
       context: ./caddy
