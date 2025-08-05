@@ -8,7 +8,8 @@ from starlette.responses import Response, JSONResponse
 import utils
 from limiter import limiter
 from routes import auth, guides, core, issues, support
-from live_reload import HTMLInjectorMiddleware, router as live_reload_router
+from live_reload import HTMLInjectorMiddleware
+import live_reload
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
@@ -26,7 +27,6 @@ app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://beta.toolbox-io.ru",
         "http://localhost:8000",
         "https://toolbox-io.ru"
     ],
@@ -47,5 +47,5 @@ app.include_router(core.router)
 app.include_router(guides.router)
 app.include_router(utils.router)
 app.include_router(issues.router, prefix="/api/issues")
-app.include_router(live_reload_router)
+app.include_router(live_reload.router)
 app.include_router(support.router, prefix="/api/support")
