@@ -51,24 +51,19 @@ def parse_faq_section(context_text: str) -> dict:
         question_raw = match[0].strip()  # Group 1: question
         answer_raw = match[2].strip()    # Group 3: answer
         
-        print(f"Processing match {i}:")
         question = []
         answer = []
 
         for line in question_raw.splitlines():
-            print(line)
             question.append(re.sub(r'\s*>\s*', '', line))
         
         for line in answer_raw.splitlines():
-            print(line)
             answer.append(re.sub(r'\s*>\s*', '', line).strip())
 
         question = "\n".join(question)
         answer = "\n".join(answer)
         
         faq_map[question] = answer
-        print(f"Clean question: '{question}'")
-        print(f"Clean answer: '{answer}'")
     
     print(f"Total FAQ entries parsed: {len(faq_map)}")
     return faq_map
