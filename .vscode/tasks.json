@@ -27,7 +27,26 @@
                 "focus": false,
                 "panel": "shared"
             },
-            "problemMatcher": []
+            "problemMatcher": [
+                {
+                    "owner": "docker",
+                    "fileLocation": "relative",
+                    "pattern": {
+                        "regexp": "^(ERROR|WARNING):\\s*(.+)$",
+                        "severity": 1,
+                        "message": 2
+                    }
+                },
+                {
+                    "owner": "shell",
+                    "fileLocation": "relative",
+                    "pattern": {
+                        "regexp": "^ERROR:\\s*(.+)$",
+                        "severity": 1,
+                        "message": 1
+                    }
+                }
+            ]
         },
         {
             "label": "TypeScript: Watch",
@@ -50,7 +69,20 @@
             },
             "isBackground": true,
             "group": "build",
-            "problemMatcher": "$node-sass"
+            "problemMatcher": {
+                "owner": "scss",
+                "fileLocation": "relative",
+                "pattern": {
+                    "regexp": "^(Error|Warning):\\s+(.+)$",
+                    "severity": 1,
+                    "message": 2
+                },
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^\\s*Sass is watching for changes\\. Press Ctrl-C to stop\\.\\s*$",
+                    "endsPattern": "^\\s*\\d{1,2}:\\d{1,2}:\\d{1,2}\\s*(?:AM|PM)?\\s*-\\s*Compiled\\s+(.+)\\s+to\\s+(.+)\\s*$"
+                }
+            }
         }
     ]
 }
