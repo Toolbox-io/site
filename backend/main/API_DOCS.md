@@ -231,6 +231,54 @@ All `/api/auth/*` endpoints are under the `/api/auth` prefix.
 
 ---
 
+## Support Chat Endpoints
+
+### POST `/api/support/chat`
+- **Description:** Chat with the Toolbox.io support assistant.
+- **Request Body:**
+  ```json
+  {
+    "message": "<string>",
+    "session_id": "<string>"
+  }
+  ```
+- **Response:** Server-Sent Events (SSE) stream with JSON data:
+  ```
+  data: {"content": "partial response text"}
+  data: {"content": "more response text"}
+  ```
+- **Rate Limits:**
+  - 1 request per second
+  - 20 requests per day
+- **Errors:**
+  - `429`: Rate limit exceeded
+  - `400`: Invalid request format
+
+---
+
+## Telegram Bot
+
+The Toolbox.io Telegram bot provides the same support functionality as the web interface.
+
+### Bot Features
+- **Commands:**
+  - `/start` - Start the bot and get welcome message
+  - `/help` - Show help information and usage instructions
+- **Message Handling:**
+  - Text messages are sent to the support API
+  - Non-text files receive "Извините, я не поддерживаю этот файл." response
+  - Rate limit exceeded: "Ваш лимит запросов исчерпан. Попробуйте еще раз завтра."
+- **Limitations:**
+  - Maximum message length: 1024 characters
+  - Same rate limits as web API (1/second, 20/day)
+  - Supports only text messages
+
+### Environment Variables
+- `TELEGRAM_BOT_TOKEN` - Telegram Bot API token (required)
+- `API_BASE_URL` - Base URL for the main API (default: http://main:8000)
+
+---
+
 ## Error Handling
 
 - 404: Not found (returns a custom error page if available)
