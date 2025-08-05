@@ -27,7 +27,6 @@ app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://beta.toolbox-io.ru",
         "http://localhost:8000",
         "https://toolbox-io.ru"
     ],
