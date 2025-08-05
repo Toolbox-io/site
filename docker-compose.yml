@@ -94,3 +94,4 @@ volumes:
   certs:
   download_cache:
   photos:
+  huggingface_cache:
