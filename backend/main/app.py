@@ -7,7 +7,7 @@ from starlette.responses import Response, JSONResponse
 
 import utils
 from limiter import limiter
-from routes import auth, guides, core, issues
+from routes import auth, guides, core, issues, support
 from live_reload import HTMLInjectorMiddleware
 import live_reload
 
@@ -48,3 +48,4 @@ app.include_router(guides.router)
 app.include_router(utils.router)
 app.include_router(issues.router, prefix="/api/issues")
 app.include_router(live_reload.router)
+app.include_router(support.router, prefix="/api/support")
