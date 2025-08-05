@@ -60,7 +60,7 @@ tio-footer {
     flex-direction: column;
     min-height: 0; // Important for flex child
     position: relative;
-    margin: 24px 0;
+    margin: 24px 0 15px 0;
 
     // Gradient overlays for smooth blending
     &::before,
@@ -293,6 +293,13 @@ tio-footer {
         font-style: italic;
         text-align: center;
         padding: 20px;
+    }
+
+    .note {
+        color: $color-onSurfaceVariant;
+        text-align: center;
+        margin-top: 15px;
+        font-size: small;
     }
 }
 
