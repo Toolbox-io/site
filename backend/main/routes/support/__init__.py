@@ -44,8 +44,8 @@ def parse_faq_section(context_text: str) -> dict:
     print(f"FAQ content: '{faq_content}'")
     
     # Parse questions and answers
-    # Pattern: "- Вопрос:\n\n  > (question text)\n\n  Ответ:\n\n  > (answer text)"
-    qa_pattern = r'- Вопрос:\s*\n\s*\n\s*>\s*(.*?)\s*\n\s*\n\s*Ответ:\s*\n\s*\n\s*>\s*(.*?)(?=\n\s*-|\n\s*$|\n\s*\n)'
+    # Pattern: "- Вопрос:\n\n  > (question text)\n\n  Ответ:\n\n  > (answer text with possible multiple > lines)"
+    qa_pattern = r'- Вопрос:\s*\n\s*\n\s*>\s*(.*?)\s*\n\s*\n\s*Ответ:\s*\n\s*\n\s*((?:>\s*.*?\n?)*?)(?=\n\s*-|\n\s*$|\n\s*\n)'
     
     # Test the pattern
     test_match = re.search(qa_pattern, faq_content, re.DOTALL)
@@ -54,7 +54,7 @@ def parse_faq_section(context_text: str) -> dict:
     else:
         print("Pattern did not match. Trying simpler pattern...")
         # Try a simpler pattern
-        simple_pattern = r'- Вопрос:\s*\n\s*>\s*(.*?)\s*\n\s*Ответ:\s*\n\s*>\s*(.*?)(?=\n|$)'
+        simple_pattern = r'- Вопрос:\s*\n\s*>\s*(.*?)\s*\n\s*Ответ:\s*\n\s*((?:>\s*.*?\n?)*?)(?=\n|$)'
         simple_match = re.search(simple_pattern, faq_content, re.DOTALL)
         if simple_match:
             print(f"Simple pattern matched! Q: '{simple_match.group(1)}' A: '{simple_match.group(2)}'")
@@ -66,6 +66,12 @@ def parse_faq_section(context_text: str) -> dict:
     for match in matches:
         question = match.group(1).strip()
         answer = match.group(2).strip()
+        # Clean up the answer by removing the > characters and extra whitespace
+        answer = re.sub(r'^\s*>\s*', '', answer)  # Remove first >
+        answer = re.sub(r'\n\s*>\s*', '\n', answer)  # Replace subsequent > with newlines
+        answer = re.sub(r'\n+', ' ', answer)  # Replace multiple newlines with spaces
+        answer = answer.strip()
+        
         faq_map[question] = answer
         print(f"Parsed FAQ: Q='{question[:50]}...' A='{answer[:50]}...'")
     
