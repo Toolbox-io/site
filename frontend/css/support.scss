@@ -60,7 +60,7 @@ tio-footer {
     flex-direction: column;
     min-height: 0; // Important for flex child
     position: relative;
-    margin: 24px 0;
+    margin: 24px 0 15px 0;
 
     // Gradient overlays for smooth blending
     &::before,
@@ -86,7 +86,6 @@ tio-footer {
 
     #response {
         flex: 1;
-        white-space: pre-wrap;
         color: $color-onSurface;
         font-family: inherit;
         font-size: 14px;
@@ -95,6 +94,8 @@ tio-footer {
         position: relative;
         padding-top: 20px; // Add padding to account for gradient overlays
         min-height: 0; // Important for flex child
+        display: flex;
+        flex-direction: column;
 
         &::-webkit-scrollbar {
             width: 6px;
@@ -112,6 +113,15 @@ tio-footer {
             &:hover {
                 background: $color-onSurfaceVariant;
             }
+        }
+
+        #welcome:only-child {
+            display: block;
+        }
+
+        &:has(#welcome:only-child) {
+            align-items: center;
+            justify-content: center;
         }
 
         .message {
@@ -293,6 +303,13 @@ tio-footer {
         font-style: italic;
         text-align: center;
         padding: 20px;
+    }
+
+    .note {
+        color: $color-onSurfaceVariant;
+        text-align: center;
+        margin-top: 15px;
+        font-size: small;
     }
 }
 
