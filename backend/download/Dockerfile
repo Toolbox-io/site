@@ -11,7 +11,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     ./.venv/bin/pip3 install -r requirements.txt
 
 # 4. Copy code
-COPY . /root/site/backend/download
+COPY . .
 
 # 5. Final command
 EXPOSE 8001
