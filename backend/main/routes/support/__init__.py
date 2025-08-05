@@ -11,17 +11,17 @@ router = APIRouter()
 
 # --- Load Context and Instructions ---
 try:
-    with open("context/data.md", "r") as f:
+    with open("routes/support/context/data.md", "r") as f:
         full_context = f.read()
 except FileNotFoundError:
-    print("Error: context/data.md not found.")
+    print("Error: routes/support/context/data.md not found.")
     exit()
 
 try:
-    with open("context/instruction.md", "r") as f:
+    with open("routes/support/context/instruction.md", "r") as f:
         instructions = f.read()
 except FileNotFoundError:
-    print("Error: context/instruction.md not found.")
+    print("Error: routes/support/context/instruction.md not found.")
     exit()
 
 # --- OpenAI client setup ---
