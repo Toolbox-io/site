@@ -159,7 +159,7 @@ def find_matching_faq_question(user_question: str, faq_map: dict) -> str:
 
 # --- OpenAI client setup ---
 client = OpenAI(
-    api_key=os.getenv("AI_API_KEY"),
+    api_key=os.getenv("OPENAI_API_KEY"),
     base_url="https://openrouter.ai/api/v1"
 )
 
