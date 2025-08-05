@@ -44,6 +44,7 @@ jobs:
           SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}
           GITHUB_APP_ID=${{ secrets.APP_ID }}
           GITHUB_INSTALLATION_ID=${{ secrets.INSTALLATION_ID }}
+          AI_API_KEY=${{ secrets.AI_API_KEY }}
           EOF
       - name: Build container
         env:
