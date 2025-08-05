@@ -56,11 +56,14 @@
             }
         }
 
-        private addStreamingWord(word: string, botMessageDiv: HTMLDivElement): void {
-            const wordSpan = document.createElement('span');
-            wordSpan.className = 'streaming-word';
-            wordSpan.textContent = word;
-            botMessageDiv.appendChild(wordSpan);
+        private updateBotMessage(content: string, botMessageDiv: HTMLDivElement): void {
+            // Format markdown if available
+            if (typeof (window as any).marked !== 'undefined') {
+                botMessageDiv.innerHTML = (window as any).marked.parse(content);
+            } else {
+                botMessageDiv.textContent = content;
+            }
+            
             this.responseDiv.scrollTop = this.responseDiv.scrollHeight;
         }
 
@@ -107,6 +110,7 @@
 
                 const decoder = new TextDecoder();
                 let fullResponse = '';
+                let accumulatedText = '';
 
                 while (true) {
                     const { done, value } = await reader.read();
@@ -121,9 +125,10 @@
                                 const data: ChatResponse = JSON.parse(line.slice(6));
                                 if (data.content) {
                                     fullResponse += data.content;
+                                    accumulatedText += data.content;
                                     
-                                    // Add the content directly as a streaming word
-                                    this.addStreamingWord(data.content, botMessageDiv);
+                                    // Update the bot message with accumulated content
+                                    this.updateBotMessage(accumulatedText, botMessageDiv);
                                 }
                             } catch (e) {
                                 console.error('Error parsing SSE data:', e);
