@@ -265,10 +265,18 @@
             <span class="material-symbols filled">support_agent</span>
         </div>
         <div id="support-iframe-container">
+            <div class="button-row2">
+                <a href="/support">
+                    <button id="support-iframe-open" class="icon-button" title="Закрыть поддержку">
+                        <span class="material-symbols filled">open_in_new</span>
+                    </button>
+                </a>
+                <button id="support-iframe-close" class="icon-button" title="Закрыть">
+                    <span class="material-symbols filled">close</span>
+                </button>
+            </div>
+            
             <iframe id="support-iframe" src="/support?iframe=true" frameborder="0" allowfullscreen></iframe>
-            <button id="support-iframe-close" title="Закрыть поддержку">
-                <span class="material-symbols filled">close</span>
-            </button>
         </div>
         <script type="module" src="/js/index.js"></script>
     </body>

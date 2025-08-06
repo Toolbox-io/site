@@ -536,47 +536,60 @@
 
 #support-iframe-container {
     position: fixed;
-    right: 32px;
-    bottom: 112px;
+    right: 10px;
+    bottom: -660px;
     z-index: 1300;
-    display: none;
+    display: flex;
     flex-direction: column;
     align-items: flex-end;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
+    transition: all 0.25s ease;
+    background-color: $color-surface;
+    overflow: hidden;
 
     &.open {
-        display: flex;
+        bottom: 10px;
     }
 
     #support-iframe {
         width: 400px;
         height: 600px;
-        border-radius: 24px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.22);
         border: none;
-        background: white;
-        overflow: hidden;
-        transition: box-shadow 0.2s;
+        background: $color-surface;
     }
 
-    #support-iframe-close {
-        margin-top: 8px;
-        background: $color-surface;
-        color: $color-onSurface;
-        border: none;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
+    .button-row2 {
         display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
-        cursor: pointer;
-        transition: background 0.2s;
-        &:hover {
-            background: color.adjust($color-surface, $lightness: -6%);
+        flex-direction: row;
+        margin: 8px;
+        gap: 8px;
+
+        a {
+            text-decoration: none !important;
         }
-        .material-symbols {
-            font-size: 24px;
+
+        .icon-button {
+            background: $color-surface;
+            color: $color-onSurface;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px 20px rgba(0,0,0,0.12);
+            cursor: pointer;
+            transition: background 0.2s;
+
+            &:hover {
+                background: color.adjust($color-surface, $lightness: -6%);
+            }
+
+            .material-symbols {
+                font-size: 24px;
+            }
         }
     }
 }
