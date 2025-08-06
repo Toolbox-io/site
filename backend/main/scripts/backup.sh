@@ -11,7 +11,7 @@ export HOME="${HOME:-"/root"}"
 
 # Configuration
 BACKUP_DIR="$HOME/site_backups"
-VOLUME_NAME="toolbox-io_data"
+VOLUME_NAME="toolbox-io-data"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 BACKUP_FILE="${BACKUP_DIR}/mysql_backup_${TIMESTAMP}.tar.gz"
 
