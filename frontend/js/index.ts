@@ -180,4 +180,23 @@ import TioHeader = Components.TioHeader;
             }
         }
     }
+
+
+    const fab = id("support-fab");
+    const container = id("support-iframe-container");
+    const closeBtn = id("support-iframe-close");
+    if (fab && container && closeBtn) {
+        fab.addEventListener("click", () => {
+            container.classList.add("open");
+        });
+        closeBtn.addEventListener("click", () => {
+            container.classList.remove("open");
+        });
+        // Optional: close on outside click
+        document.addEventListener("mousedown", (e) => {
+            if (container.classList.contains("open") && !container.contains(e.target as Node) && e.target !== fab) {
+                container.classList.remove("open");
+            }
+        });
+    }
 })();
