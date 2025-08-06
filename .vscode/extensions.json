@@ -2,6 +2,15 @@
     "recommendations": [
         "ms-azuretools.vscode-containers",
         "ms-python.python",
-        "hangxingliu.vscode-systemd-support"
+        "hangxingliu.vscode-systemd-support",
+        "varlock.env-spec-language",
+        "matthewpi.caddyfile-support",
+        "ms-azuretools.vscode-docker",
+        "tamasfe.even-better-toml",
+        "github.vscode-github-actions",
+        "cweijan.vscode-mysql-client2",
+        "christian-kohler.npm-intellisense",
+        "timonwong.shellcheck",
+        "dotjoshjohnson.xml"
     ]
 }
