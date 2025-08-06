@@ -526,7 +526,7 @@
     transition: background 0.2s;
 
     &:hover {
-        background: darken($color-primary, 8%);
+        background: color.adjust($color-primary, $lightness: -8%);
     }
 
     .material-symbols {
