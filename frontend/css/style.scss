@@ -515,8 +515,8 @@
     z-index: 1200;
     width: 64px;
     height: 64px;
-    background: $color-primary;
-    color: white;
+    background-color: $color-secondaryContainer;
+    color: $color-onSecondaryContainer;
     border-radius: 50%;
     box-shadow: 0 4px 16px rgba(0,0,0,0.18);
     display: flex;
@@ -525,9 +525,7 @@
     cursor: pointer;
     transition: background 0.2s;
 
-    &:hover {
-        background: color.adjust($color-primary, $lightness: -8%);
-    }
+    @include hoverStateLayer($background: $color-secondaryContainer);
 
     .material-symbols {
         font-size: 32px;
@@ -535,26 +533,44 @@
 }
 
 #support-iframe-container {
+    $height: 700px;
+
     position: fixed;
     right: 10px;
-    bottom: -660px;
+    bottom: -$height - 60px;
     z-index: 1300;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     border-radius: 24px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
-    transition: all 0.25s ease;
+    transition: bottom 0.25s ease;
     background-color: $color-surface;
     overflow: hidden;
+    width: 400px;
+    height: $height;
 
     &.open {
         bottom: 10px;
     }
 
+    @media (max-width: 440px) {
+        left: 0;
+        right: 0;
+        width: 100%;
+        height: 100dvh;
+        bottom: -100dvh;
+        box-shadow: none;
+        border-radius: 0;
+
+        &.open {
+            bottom: 0;
+        }
+    }
+
     #support-iframe {
-        width: 400px;
-        height: 600px;
+        width: 100%;
+        height: 100%;
         border: none;
         background: $color-surface;
     }
@@ -570,7 +586,7 @@
         }
 
         .icon-button {
-            background: $color-surface;
+            background-color: $color-surface;
             color: $color-onSurface;
             border: none;
             border-radius: 50%;
@@ -579,13 +595,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 8px 32px 20px rgba(0,0,0,0.12);
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background-color 0.2s;
 
-            &:hover {
-                background: color.adjust($color-surface, $lightness: -6%);
-            }
+            @include hoverStateLayer();
 
             .material-symbols {
                 font-size: 24px;

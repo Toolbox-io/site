@@ -45,6 +45,10 @@ tio-footer {
     width: 100%;
     padding: 0 24px;
     box-sizing: border-box;
+
+    @media (max-width: 440px) {
+        padding: 0 16px;
+    }
 }
 
 .chat-container {
@@ -219,7 +223,7 @@ tio-footer {
 
         #messageInput {
             flex: 1;
-            padding: 10px 20px;
+            padding: 10px 0 10px 20px;
             background-color: transparent;
             border: none;
             border-radius: 25px;
@@ -228,6 +232,7 @@ tio-footer {
             font-size: 16px;
             transition: all 0.3s ease;
             outline: none !important;
+            min-width: 0;
 
             &::placeholder {
                 color: $color-onSurfaceVariant;
@@ -251,9 +256,7 @@ tio-footer {
             justify-content: center;
             background-color: $color-primary;
 
-            &:hover {
-                background-color: color.mix($color-onPrimary, $color-primary, 8%);
-            }
+            @include hoverStateLayer($background: $color-primary);
 
             &:disabled {
                 background: $color-surfaceVariant;
