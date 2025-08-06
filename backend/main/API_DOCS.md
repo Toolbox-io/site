@@ -242,14 +242,17 @@ All `/api/auth/*` endpoints are under the `/api/auth` prefix.
     "session_id": "<string>"
   }
   ```
+- **Headers (for Telegram Bot only):**
+  - `X-User-ID`: Telegram user ID (string, required for bot requests)
+  - `X-Internal-Token`: Internal bot token (string, must match server env `INTERNAL_BOT_TOKEN`)
+- **Rate Limiting:**
+  - If both headers are present and the token matches, rate limiting is applied per user ID (1 request/second, 20 requests/day per user).
+  - For all other requests, rate limiting is applied per client IP address.
 - **Response:** Server-Sent Events (SSE) stream with JSON data:
   ```
   data: {"content": "partial response text"}
   data: {"content": "more response text"}
   ```
-- **Rate Limits:**
-  - 1 request per second
-  - 20 requests per day
 - **Errors:**
   - `429`: Rate limit exceeded
   - `400`: Invalid request format

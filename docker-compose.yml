@@ -33,6 +33,7 @@ services:
       GITHUB_APP_ID: ${GITHUB_APP_ID}
       GITHUB_INSTALLATION_ID: ${GITHUB_INSTALLATION_ID}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
+      INTERNAL_BOT_TOKEN: ${INTERNAL_BOT_TOKEN}
     ports:
       - "8000:8000"
     develop:
@@ -82,6 +83,7 @@ services:
     environment:
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       API_BASE_URL: http://main:8000
+      INTERNAL_BOT_TOKEN: ${INTERNAL_BOT_TOKEN}
     develop:
       watch:
         - action: sync+restart
