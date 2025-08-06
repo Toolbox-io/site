@@ -9,4 +9,4 @@ router = APIRouter()
 async def index(): return FileResponse(CONTENT_PATH / "index.html")
 
 @router.get("/favicon.ico")
-async def favicon(): return FileResponse(CONTENT_PATH / "res" / "favicon.svg")
+async def favicon(): return FileResponse(CONTENT_PATH / "res" / "favicon.ico")
