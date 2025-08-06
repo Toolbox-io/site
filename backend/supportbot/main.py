@@ -130,6 +130,7 @@ class SupportBot:
             )
 
 def main():
+    print("Starting Toolbox.io support bot...")
     """Main function to run the bot"""
     if not TELEGRAM_TOKEN:
         print("Error: TELEGRAM_BOT_TOKEN environment variable is not set")
@@ -151,7 +152,7 @@ def main():
     application.add_error_handler(bot.error_handler)
     
     # Start the bot
-    print("Starting Telegram bot...")
+    print("Bot is running")
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == "__main__":
