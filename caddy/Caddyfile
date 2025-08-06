@@ -12,11 +12,7 @@ toolbox-io.ru {
 		Permissions-Policy "geolocation=(), microphone=(), camera=()"
 	}
 
-	# Add rate limiting
-	@limited {
-		path /*
-	}
-	rate_limit @limited {
+	rate_limit {
 		zone global {
 			key {remote_ip}
 			window 1m
@@ -25,13 +21,11 @@ toolbox-io.ru {
 		}
 	}
 
-	# Handle different types of error
 	handle_errors {
 		@errors {
 			expression {err.status_code} >= 400
 		}
 
-		# Handle other error with http.cat reverse proxy
 		handle @errors {
 			rewrite * /{err.status_code}
 			reverse_proxy https://http.cat {
