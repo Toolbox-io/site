@@ -1,3 +1,6 @@
+@use "colors" as *;
+@use "sass:color";
+
 @mixin automargin() {
     margin-left: auto;
     margin-right: auto;
@@ -13,4 +16,10 @@
     );
     color: transparent;
     background-clip: text;
+}
+
+@mixin hoverStateLayer($background: $color-surface, $overlayColor: $color-onPrimary) {
+    &:hover {
+        background-color: color.mix($overlayColor, $background, 8%);
+    }
 }
