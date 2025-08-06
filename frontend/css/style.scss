@@ -1,6 +1,7 @@
 @use "common/animations";
 @use "common/colors" as *;
 @use "common/mixins" as *;
+@use "sass:color";
 
 // Shared menu item styles
 .menu-items {
@@ -502,6 +503,93 @@
         * {
             margin-left: auto;
             margin-right: auto;
+        }
+    }
+}
+
+// Support FAB and Iframe styles
+#support-fab {
+    position: fixed;
+    right: 32px;
+    bottom: 32px;
+    z-index: 1200;
+    width: 64px;
+    height: 64px;
+    background: $color-primary;
+    color: white;
+    border-radius: 50%;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover {
+        background: darken($color-primary, 8%);
+    }
+
+    .material-symbols {
+        font-size: 32px;
+    }
+}
+
+#support-iframe-container {
+    position: fixed;
+    right: 10px;
+    bottom: -660px;
+    z-index: 1300;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
+    transition: all 0.25s ease;
+    background-color: $color-surface;
+    overflow: hidden;
+
+    &.open {
+        bottom: 10px;
+    }
+
+    #support-iframe {
+        width: 400px;
+        height: 600px;
+        border: none;
+        background: $color-surface;
+    }
+
+    .button-row2 {
+        display: flex;
+        flex-direction: row;
+        margin: 8px;
+        gap: 8px;
+
+        a {
+            text-decoration: none !important;
+        }
+
+        .icon-button {
+            background: $color-surface;
+            color: $color-onSurface;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 32px 20px rgba(0,0,0,0.12);
+            cursor: pointer;
+            transition: background 0.2s;
+
+            &:hover {
+                background: color.adjust($color-surface, $lightness: -6%);
+            }
+
+            .material-symbols {
+                font-size: 24px;
+            }
         }
     }
 }
