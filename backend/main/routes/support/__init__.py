@@ -149,7 +149,7 @@ def find_matching_faq_question(user_question: str, faq_map: dict) -> str:
         best_similarity = similarities[best_idx]
         
         # Return match if similarity is above threshold
-        threshold = 0.6  # Lowered threshold for better matching
+        threshold = 0.8  # Lowered threshold for better matching
         if best_similarity >= threshold:
             print(f"FAQ match found: '{user_question}' -> '{faq_questions[best_idx]}' (similarity: {best_similarity:.3f})")
             return faq_questions[best_idx]
