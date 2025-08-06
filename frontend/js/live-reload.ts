@@ -70,7 +70,6 @@ class LiveReloadClient {
         if (!this.ws) return;
 
         this.ws.onopen = (): void => {
-            console.log('Live reload: Connected');
             this.isConnected = true;
             this.reconnectAttempts = 0;
             this.reconnectDelay = 1000;
@@ -86,7 +85,6 @@ class LiveReloadClient {
         };
 
         this.ws.onclose = (event: CloseEvent): void => {
-            console.log('Live reload: Disconnected');
             this.isConnected = false;
 
             if (!this.isReloading) {
@@ -115,7 +113,6 @@ class LiveReloadClient {
 
         // Add a small delay to ensure the file change is complete
         setTimeout(() => {
-            console.log('Live reload: Reloading page...');
             window.location.reload();
         }, 100);
     }
