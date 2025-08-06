@@ -29,11 +29,9 @@ class LiveReloadManager:
     async def connect(self, websocket: WebSocket):
         await websocket.accept()
         self.active_connections.add(websocket)
-        logger.info(f"Live reload: {len(self.active_connections)} client(s) connected")
         
     def disconnect(self, websocket: WebSocket):
         self.active_connections.discard(websocket)
-        logger.info(f"Live reload: {len(self.active_connections)} client(s) connected")
         
     def queue_reload(self, file_path: str):
         """Queue a reload event from the file watcher thread"""
@@ -77,7 +75,7 @@ class LiveReloadManager:
                 else:
                     disconnected.add(connection)
             except Exception as e:
-                logger.error(f"Live reload: Error sending message: {e}")
+                logger.error(f"Error sending message: {e}")
                 disconnected.add(connection)
                 
         # Clean up disconnected websockets
@@ -85,7 +83,7 @@ class LiveReloadManager:
             self.disconnect(connection)
             
         if self.active_connections:
-            logger.info(f"Live reload: Reloaded {file_path} for {len(self.active_connections)} client(s)")
+            logger.info(f"Reloaded {file_path} for {len(self.active_connections)} client(s)")
 
 class FileChangeHandler(FileSystemEventHandler):
     def __init__(self, manager: LiveReloadManager, watch_paths: list[Path]):
@@ -132,7 +130,7 @@ class FileChangeHandler(FileSystemEventHandler):
             for watch_path in self.watch_paths:
                 try:
                     relative_path = path.relative_to(watch_path)
-                    logger.info(f"Live reload: File changed: {relative_path}")
+                    logger.info(f"File changed: {relative_path}")
                     
                     # Queue the reload event for processing in the main event loop
                     self.manager.queue_reload(str(relative_path))
@@ -140,7 +138,7 @@ class FileChangeHandler(FileSystemEventHandler):
                 except ValueError:
                     continue
         except Exception as e:
-            logger.error(f"Live reload: Error handling file change: {e}")
+            logger.error(f"Error handling file change: {e}")
     
     def on_modified(self, event):
         if not event.is_directory:
@@ -179,7 +177,7 @@ class HTMLInjectorMiddleware(BaseHTTPMiddleware):
             try:
                 html_content = body.decode("utf-8")
             except UnicodeDecodeError as e:
-                logger.warning(f"Live reload: Failed to decode HTML content: {e}")
+                logger.warning(f"Failed to decode HTML content: {e}")
                 return Response(
                     content=body,
                     status_code=response.status_code,
@@ -232,7 +230,7 @@ class HTMLInjectorMiddleware(BaseHTTPMiddleware):
             )
             
         except Exception as e:
-            logger.error(f"Live reload: Error in HTML injection: {e}")
+            logger.error(f"Error in HTML injection: {e}")
             # Return the original response if there's an error
             return response
 
@@ -253,7 +251,7 @@ async def websocket_endpoint(websocket: WebSocket):
     except WebSocketDisconnect:
         live_reload_manager.disconnect(websocket)
     except Exception as e:
-        logger.error(f"Live reload: WebSocket error: {e}")
+        logger.error(f"WebSocket error: {e}")
         live_reload_manager.disconnect(websocket)
 
 def start_file_watcher(watch_paths: list[Path]):
@@ -267,9 +265,8 @@ def start_file_watcher(watch_paths: list[Path]):
     for path in watch_paths:
         if path.exists():
             observer.schedule(event_handler, str(path), recursive=True)
-            logger.info(f"Live reload: Watching {path}")
         else:
-            logger.warning(f"Live reload: Watch path does not exist: {path}")
+            logger.warning(f"Watch path does not exist: {path}")
     
     observer.start()
     live_reload_manager.observer = observer
@@ -281,8 +278,6 @@ def start_file_watcher(watch_paths: list[Path]):
     except RuntimeError:
         # No event loop in current thread, will be set later
         pass
-    
-    logger.info(f"Live reload: Started with {len(watch_paths)} path(s)")
 
 def stop_file_watcher():
     """Stop the file watcher"""
