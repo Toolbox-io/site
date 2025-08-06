@@ -46,6 +46,7 @@ jobs:
           GITHUB_INSTALLATION_ID=${{ secrets.INSTALLATION_ID }}
           OPENAI_API_KEY=${{ secrets.AI_API_KEY }}
           TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }}
+          INTERNAL_BOT_TOKEN=${{ secrets.INTERNAL_BOT_TOKEN }}
           EOF
       - name: Build container
         env:

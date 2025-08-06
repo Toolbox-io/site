@@ -13,6 +13,7 @@ load_dotenv()
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 API_BASE_URL = os.getenv("API_BASE_URL", "http://main:8000")
 SUPPORT_API_URL = f"{API_BASE_URL}/api/support/chat"
+INTERNAL_BOT_TOKEN = os.getenv("INTERNAL_BOT_TOKEN")
 
 class SupportBot:
     def __init__(self):
@@ -22,17 +23,21 @@ class SupportBot:
         """Generate a unique session ID for each user"""
         return f"telegram-{user_id}-{self.session_id_counter}"
     
-    async def send_message_to_api(self, message: str, session_id: str) -> str:
+    async def send_message_to_api(self, message: str, session_id: str, user_id: int = None) -> str:
         """Send message to the support API and return the response"""
         async with aiohttp.ClientSession() as session:
             try:
+                headers = {"Content-Type": "application/json"}
+                if user_id is not None and INTERNAL_BOT_TOKEN:
+                    headers["X-User-ID"] = str(user_id)
+                    headers["X-Internal-Token"] = INTERNAL_BOT_TOKEN
                 async with session.post(
                     SUPPORT_API_URL,
                     json={
                         "message": message,
                         "session_id": session_id
                     },
-                    headers={"Content-Type": "application/json"},
+                    headers=headers,
                     timeout=aiohttp.ClientTimeout(total=30)
                 ) as response:
                     if response.status == 429:
@@ -109,8 +114,8 @@ class SupportBot:
         # Get session ID for this user
         session_id = self.get_session_id(user_id)
         
-        # Send message to API
-        response = await self.send_message_to_api(message_text, session_id)
+        # Send message to API with user_id for rate limiting
+        response = await self.send_message_to_api(message_text, session_id, user_id=user_id)
         response = response.replace(".", "\\.").replace("-", "\\-")
         
         # Send response back to user

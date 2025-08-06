@@ -9,7 +9,7 @@ import re
 import threading
 from sentence_transformers import SentenceTransformer
 import numpy as np
-from limiter import limiter
+from limiter import limiter, user_id_key_func
 
 router = APIRouter()
 
@@ -227,8 +227,8 @@ def generate_response(session_id: str, message: str):
         yield f"data: {json.dumps({'error': str(e)})}\n\n"
 
 @router.post("/chat")
-@limiter.limit("1/second")
-@limiter.limit("20/day")
+@limiter.limit("1/second", key_func=user_id_key_func)
+@limiter.limit("20/day", key_func=user_id_key_func)
 async def chat(request: Request, chat_request: ChatRequest):
     return StreamingResponse(
         generate_response(chat_request.session_id, chat_request.message),
