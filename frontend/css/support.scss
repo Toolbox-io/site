@@ -152,6 +152,10 @@ tio-footer {
                 border-bottom-left-radius: 6px;
                 text-align: left;
 
+                > p:first-child {
+                    margin: 0;
+                }
+
                 code {
                     background-color: rgba($color-outline, 0.2);
                     padding: 2px 4px;

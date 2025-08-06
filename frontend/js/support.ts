@@ -63,8 +63,8 @@ import { marked } from "./lib.js";
         private updateBotMessage(content: string, botMessageDiv: HTMLDivElement): void {
             // Trim any whitespace and ensure clean content
             const cleanContent = content.trim();
-            // Use parseInline to avoid wrapping in <p> tags
-            botMessageDiv.innerHTML = marked.parseInline(cleanContent);
+            // Use regular parse to handle lists and other block elements
+            botMessageDiv.innerHTML = marked.parse(cleanContent);
             
             this.responseDiv.scrollTop = this.responseDiv.scrollHeight;
         }
