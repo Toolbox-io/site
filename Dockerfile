@@ -35,32 +35,18 @@ RUN if [ "$DEBUG" = "true" ]; then \
 
 
 # 3. Runtime
-FROM python:3.12 AS runtime
+FROM python:3.12-slim AS runtime
 
-# 3.1. Copy content
-COPY --from=backend /root/.venv /root/.venv
-COPY backend/main /root/site/backend/main
-COPY --from=frontend /root/site/frontend /root/site/frontend
+# 3.1. Create non-root user
+RUN useradd -m -u 1000 toolbox
+
+# 3.2. Copy content
+COPY --from=backend --chown=toolbox:toolbox /root/.venv /home/toolbox/.venv
+COPY --chown=toolbox:toolbox backend/main /home/toolbox/site/backend/main
+COPY --from=frontend --chown=toolbox:toolbox /root/site/frontend /home/toolbox/site/frontend
 
 # 4. Final command
-# 4.1. Environment variables
-ARG SECRET_KEY
-ARG DB_PASSWORD
-ARG DB_HOST=localhost
-ARG DB_PORT=3306
-ARG DB_NAME=toolbox_db
-ARG DB_USER=toolbox_user
-
-ENV SECRET_KEY=$SECRET_KEY
-ENV DB_HOST=$DB_HOST
-ENV DB_PORT=$DB_PORT
-ENV DB_NAME=$DB_NAME
-ENV DB_USER=$DB_USER
-ENV DB_PASSWORD=$DB_PASSWORD
-
-# 4.2. Workdir and ports
-WORKDIR /root/site/backend/main
+WORKDIR /home/toolbox/site/backend/main
 EXPOSE 8000
-
-# 4.3. Run the server
-ENTRYPOINT ["/root/.venv/bin/python3", "main.py"]
+USER toolbox
+ENTRYPOINT ["/home/toolbox/.venv/bin/python3", "main.py"]
