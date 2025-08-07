@@ -202,32 +202,46 @@ def generate_response(session_id: str, message: str):
         "content": message
     })
 
-    try:
-        response: Stream[ChatCompletionChunk] = client.chat.completions.create(
-            model="qwen/qwen3-coder:free",
-            messages=messages,
-            stream=True
-        )
-        
-        full_response = ""
-        for chunk in response:
-            if chunk.choices[0].delta.content is not None:
-                content = chunk.choices[0].delta.content
-                full_response += content
-                yield f"data: {json.dumps({'content': content})}\n\n"
-        
-        # Add the exchange to conversation history
-        conversation_history[session_id].append({
-            "role": "user",
-            "content": message
-        })
-        conversation_history[session_id].append({
-            "role": "assistant",
-            "content": full_response
-        })
-        
-    except Exception as e:
-        yield f"data: {json.dumps({'error': str(e)})}\n\n"
+    models = [
+        "qwen/qwen3-coder:free",
+        "openai/gpt-oss-20b:free",
+        "mistralai/mistral-small-3.2-24b-instruct:free"
+    ]
+
+    for model in models:
+        try:
+            try:
+                response: Stream[ChatCompletionChunk] = client.chat.completions.create(
+                    model=model,
+                    messages=messages,
+                    stream=True
+                )
+            except Exception: continue
+            
+            full_response = ""
+            for chunk in response:
+                if chunk.choices[0].delta.content is not None:
+                    content = chunk.choices[0].delta.content
+                    full_response += content
+                    yield f"data: {json.dumps({'content': content})}\n\n"
+            
+            # Add the exchange to conversation history
+            conversation_history[session_id].append({
+                "role": "user",
+                "content": message
+            })
+            conversation_history[session_id].append({
+                "role": "assistant",
+                "content": full_response
+            })
+
+            return
+            
+        except Exception as e:
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+            return
+    
+    yield "data: {\"error\": \"All models failed\"}"
 
 @router.post("/chat")
 @limiter.limit("1/second", key_func=user_id_key_func)

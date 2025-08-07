@@ -10,6 +10,7 @@ import { marked } from "./lib.js";
 
     interface ChatResponse {
         content: string;
+        error?: string;
     }
 
     class SupportChat {
@@ -131,6 +132,11 @@ import { marked } from "./lib.js";
                                     
                                     // Update the bot message with accumulated content
                                     this.updateBotMessage(accumulatedText, botMessageDiv);
+                                } else if (data.error) {
+                                    this.updateBotMessage(
+                                        `Простите, что-то пошло не так. Если проблема сохраняется, напишите нам на support@toolbox-io.ru.`, 
+                                        botMessageDiv
+                                    );
                                 }
                             } catch (e) {
                                 console.error('Error parsing SSE data:', e);
@@ -140,8 +146,7 @@ import { marked } from "./lib.js";
                 }
             } catch (error) {
                 this.hideTypingIndicator();
-                const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-                this.addMessage(`Error: ${errorMessage}`, 'bot');
+                this.addMessage(`Простите, что-то пошло не так. Если проблема сохраняется, напишите нам на support@toolbox-io.ru.`, 'bot');
             } finally {
                 // Re-enable input and button
                 this.messageInput.disabled = false;
