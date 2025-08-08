@@ -45,7 +45,7 @@ services:
           path: ./backend/main
           target: /home/toolbox/site/backend/main
         - action: rebuild
-          path: ./backend/requirements.txt
+          path: backend/main/requirements.txt
         - action: rebuild
           path: ./frontend/package.json
     volumes:
@@ -64,7 +64,7 @@ services:
           path: ./backend/download
           target: /home/toolbox/site/backend/download
         - action: rebuild
-          path: ./backend/requirements.txt
+          path: backend/main/requirements.txt
         - action: rebuild
           path: ./frontend/package.json
     volumes:

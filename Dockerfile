@@ -5,7 +5,7 @@ FROM python:3.12 AS backend
 WORKDIR /root
 RUN rm -rf .venv && \
     python3 -m venv .venv
-COPY backend/requirements.txt /root/site/backend/requirements.txt
+COPY backend/main/requirements.txt /root/site/backend/requirements.txt
 RUN --mount=type=cache,target=/root/.cache/pip \
     ./.venv/bin/pip3 install -r /root/site/backend/requirements.txt
 
