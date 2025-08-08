@@ -5,6 +5,9 @@
 .idea/dataSources
 .vscode-test
 .idea/dataSources.local.xml
+.idea/misc.xml
+.idea/modules.xml
+*.iml
 
 # -----------------------------
 # Logs and Runtime Data
