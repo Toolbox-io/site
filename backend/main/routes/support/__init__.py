@@ -99,7 +99,7 @@ def load_sentence_transformer():
         
         # Encode questions in background (non-blocking for server startup)
         print(f"Encoding {len(faq_questions)} FAQ questions in background...")
-        faq_embeddings = model.encode(faq_questions)
+        faq_embeddings = model.encode(faq_questions, show_progress_bar=False)
         print("FAQ questions encoded successfully!")
         
     except Exception as e:
