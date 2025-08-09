@@ -201,8 +201,8 @@ def generate_response(session_id: str, message: str):
         {
             "base_url": "https://openrouter.ai/api/v1",
             "models": [
-                "qwen/qwen3-coder:free",
                 "openai/gpt-oss-20b:free",
+                "qwen/qwen3-coder:free",
                 "mistralai/mistral-small-3.2-24b-instruct:free"
             ],
             "api_key": os.getenv("OPENAI_API_KEY")
@@ -216,7 +216,7 @@ def generate_response(session_id: str, message: str):
                 "grok-3-fast-latest",
                 "gemini-2.5-flash"
             ],
-            "api_key": None
+            "api_key": "none"
         },
         {
             "base_url": "http://192.168.1.10:11434/v1",
@@ -224,7 +224,7 @@ def generate_response(session_id: str, message: str):
                 "gemma3:12b",
                 "gpt-oss"
             ],
-            "api_key": None
+            "api_key": "none"
         }
     ]
 
@@ -237,20 +237,15 @@ def generate_response(session_id: str, message: str):
 
         for model in provider["models"]:
             try:
-                try:
-                    print(f"Using model {model} from provider {provider['base_url']}")
-                    response: Stream[ChatCompletionChunk] = client.chat.completions.create(
-                        model=model,
-                        messages=messages,
-                        stream=True
-                    )
-                except Exception as e: 
-                    print(f"Error using model {model} from provider {provider['base_url']}")
-                    traceback.print_exc(e)
-                    continue
+                print(f"Using model {model} from provider {provider['base_url']}")
+                response: Stream[ChatCompletionChunk] = client.chat.completions.create(
+                    model=model,
+                    messages=messages,
+                    stream=True
+                )
 
                 print("Streaming started successfully")
-                
+            
                 full_response = ""
                 for chunk in response:
                     if chunk.choices[0].delta.content is not None:
@@ -271,10 +266,9 @@ def generate_response(session_id: str, message: str):
                 })
 
                 return
-                
-            except Exception as e:
-                yield f"data: {json.dumps({'error': str(e)})}\n\n"
-                return
+            except Exception as e: 
+                print(f"Error using model {model} from provider {provider['base_url']}")
+                traceback.print_exc(e)
     
     yield "data: {\"error\": \"All models failed\"}"
 
