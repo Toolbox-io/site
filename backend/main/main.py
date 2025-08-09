@@ -49,21 +49,16 @@ app.router.lifespan_context = lifespan
 @app.get("/{path:path}")
 async def serve_files(path: str, request: Request):
     """Serve .mdpage.md files first, then files from the content directory with various fallbacks."""
-    mdpath = path.upper()
-
-    # Log request for monitoring
-    logger.info(f"Serving request: {request.method} {request.url.path} from {request.client.host}")
-
+    
     # 1. Try to serve .mdpage.md file first
+    mdpath = path.upper()
     if (CONTENT_PATH / f"{mdpath}.page.md").resolve().is_file():
-        logger.info(f"Serving markdown page: {mdpath}.page.md")
         return templates.TemplateResponse(
             "mdpage.html",
             {"request": request, "file": f"{mdpath}.page.md"}
         )
 
     # 2. Fallback to regular file logic
-    logger.debug(f"Looking up file for path: {path}")
     file_path, redirect_path = find_file(path)
 
     if redirect_path:
@@ -75,11 +70,9 @@ async def serve_files(path: str, request: Request):
                 redirect_url += f"&{query_string}"
             else:
                 redirect_url += f"?{query_string}"
-        logger.info(f"Redirecting to: {redirect_url}")
         return RedirectResponse(url=redirect_url)
 
     if not file_path:
-        logger.warning(f"File not found: {path}")
         raise HTTPException(status_code=404, detail="File not found")
 
     if (
@@ -95,7 +88,6 @@ async def serve_files(path: str, request: Request):
         raise HTTPException(status_code=404, detail="Access denied")
 
     mime_type, _ = mimetypes.guess_type(str(file_path))
-    logger.info(f"Serving file: {file_path} (type: {mime_type})")
     return FileResponse(
         path=file_path,
         media_type=mime_type
