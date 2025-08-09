@@ -160,12 +160,6 @@ def find_matching_faq_question(user_question: str, faq_map: dict) -> str:
     
     return None
 
-# --- OpenAI client setup ---
-client = OpenAI(
-    api_key=os.getenv("OPENAI_API_KEY"),
-    base_url="https://openrouter.ai/api/v1"
-)
-
 # --- Conversation history ---
 conversation_history = {}
 
@@ -202,44 +196,81 @@ def generate_response(session_id: str, message: str):
         "content": message
     })
 
-    models = [
-        "qwen/qwen3-coder:free",
-        "openai/gpt-oss-20b:free",
-        "mistralai/mistral-small-3.2-24b-instruct:free"
+    providers: list[dict[str, str | None | list[str]]] = [
+        {
+            "base_url": "https://openrouter.ai/api/v1",
+            "models": [
+                "qwen/qwen3-coder:free",
+                "openai/gpt-oss-20b:free",
+                "mistralai/mistral-small-3.2-24b-instruct:free"
+            ],
+            "api_key": os.getenv("OPENAI_API_KEY")
+        },
+        {
+            "base_url": "https://api.long-time.ru/v1",
+            "models": [
+                "deepseek-v3-250324",
+                "chatgpt-4o-latest",
+                "claude-sonnet-4-20250514",
+                "grok-3-fast-latest",
+                "gemini-2.5-flash"
+            ],
+            "api_key": None
+        },
+        {
+            "base_url": "http://192.168.1.10:11434/v1",
+            "models": [
+                "gemma3:12b",
+                "gpt-oss"
+            ],
+            "api_key": None
+        }
     ]
 
-    for model in models:
-        try:
-            try:
-                response: Stream[ChatCompletionChunk] = client.chat.completions.create(
-                    model=model,
-                    messages=messages,
-                    stream=True
-                )
-            except Exception: continue
-            
-            full_response = ""
-            for chunk in response:
-                if chunk.choices[0].delta.content is not None:
-                    content = chunk.choices[0].delta.content
-                    full_response += content
-                    yield f"data: {json.dumps({'content': content})}\n\n"
-            
-            # Add the exchange to conversation history
-            conversation_history[session_id].append({
-                "role": "user",
-                "content": message
-            })
-            conversation_history[session_id].append({
-                "role": "assistant",
-                "content": full_response
-            })
+    for provider in providers:
+        print(f"Using provider: {provider['base_url']}")
+        client = OpenAI(
+            api_key=provider["api_key"],
+            base_url=provider["base_url"]
+        )
 
-            return
-            
-        except Exception as e:
-            yield f"data: {json.dumps({'error': str(e)})}\n\n"
-            return
+        for model in provider["models"]:
+            try:
+                try:
+                    print(f"Using model {model} from provider {provider['base_url']}")
+                    response: Stream[ChatCompletionChunk] = client.chat.completions.create(
+                        model=model,
+                        messages=messages,
+                        stream=True
+                    )
+                except Exception: 
+                    print(f"Error using model {model} from provider {provider['base_url']}")
+                    continue
+
+                print("Streaming started successfully")
+                
+                full_response = ""
+                for chunk in response:
+                    if chunk.choices[0].delta.content is not None:
+                        content = chunk.choices[0].delta.content
+                        full_response += content
+                        yield f"data: {json.dumps({'content': content})}\n\n"
+                
+                # Add the exchange to conversation history
+                conversation_history[session_id].append({
+                    "role": "user",
+                    "content": message
+                })
+                conversation_history[session_id].append({
+                    "role": "assistant",
+                    "content": full_response
+                })
+
+                return
+                
+            except Exception as e:
+                yield f"data: {json.dumps({'error': str(e)})}\n\n"
+                return
     
     yield "data: {\"error\": \"All models failed\"}"
 
