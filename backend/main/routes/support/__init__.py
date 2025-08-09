@@ -41,7 +41,6 @@ def parse_faq_section(context_text: str) -> dict:
         return faq_map
     
     faq_content = faq_match.group(1)
-    print(f"Found FAQ section, length: {len(faq_content)}")
     
     # Simple approach: use the working regex pattern
     qa_pattern = r'- Вопрос:\s*((\s*>.*$)*)\s*Ответ:\s*((\s*>.*$)*)'
@@ -96,7 +95,6 @@ def load_sentence_transformer():
         # Mark model as loaded but don't encode questions yet
         model_loaded = True
         faq_questions = list(faq_map.keys())
-        print(f"FAQ map has {len(faq_map)} entries, questions: {faq_questions}")
         
         # Encode questions in background (non-blocking for server startup)
         print(f"Encoding {len(faq_questions)} FAQ questions in background...")
@@ -128,7 +126,7 @@ def find_matching_faq_question(user_question: str, faq_map: dict) -> str:
     if faq_embeddings is None and faq_questions is not None:
         try:
             print("Encoding FAQ questions on-demand...")
-            faq_embeddings = model.encode(faq_questions)
+            faq_embeddings = model.encode(faq_questions, show_progress_bar=False)
             print("FAQ questions encoded successfully!")
         except Exception as e:
             print(f"Error encoding FAQ questions: {e}")
@@ -152,10 +150,10 @@ def find_matching_faq_question(user_question: str, faq_map: dict) -> str:
         # Return match if similarity is above threshold
         threshold = 0.8  # Lowered threshold for better matching
         if best_similarity >= threshold:
-            print(f"FAQ match found: '{user_question}' -> '{faq_questions[best_idx]}' (similarity: {best_similarity:.3f})")
+            print(f"FAQ match found: '{faq_questions[best_idx]}' (similarity: {best_similarity:.3f})")
             return faq_questions[best_idx]
         else:
-            print(f"No FAQ match: '{user_question}' best match: '{faq_questions[best_idx]}' (similarity: {best_similarity:.3f})")
+            print(f"No FAQ match: best match: '{faq_questions[best_idx]}' (similarity: {best_similarity:.3f})")
     except Exception as e:
         print(f"Error in sentence transformer matching: {e}")
     
