@@ -184,7 +184,7 @@ def generate_response(session_id: str, message: str):
         })
         conversation_history[session_id].append({
             "role": "assistant",
-            "content": full_response
+            "content": answer
         })
         
         return
