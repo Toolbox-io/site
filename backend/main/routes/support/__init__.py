@@ -10,6 +10,7 @@ import threading
 from sentence_transformers import SentenceTransformer
 import numpy as np
 from limiter import limiter, user_id_key_func
+import traceback
 
 router = APIRouter()
 
@@ -243,8 +244,9 @@ def generate_response(session_id: str, message: str):
                         messages=messages,
                         stream=True
                     )
-                except Exception: 
+                except Exception as e: 
                     print(f"Error using model {model} from provider {provider['base_url']}")
+                    traceback.print_exc(e)
                     continue
 
                 print("Streaming started successfully")
@@ -255,6 +257,8 @@ def generate_response(session_id: str, message: str):
                         content = chunk.choices[0].delta.content
                         full_response += content
                         yield f"data: {json.dumps({'content': content})}\n\n"
+
+                print("Response generation complete!")
                 
                 # Add the exchange to conversation history
                 conversation_history[session_id].append({
