@@ -167,16 +167,27 @@ class ChatRequest(BaseModel):
     session_id: str = Field(default="default", description="Session ID for conversation history")
 
 def generate_response(session_id: str, message: str):
+    # Get or create conversation history for this session
+    if session_id not in conversation_history:
+        conversation_history[session_id] = []
+
     # Check if we have a matching FAQ answer
     matching_question = find_matching_faq_question(message, faq_map)
     if matching_question:
         answer = faq_map[matching_question]
         yield f"data: {json.dumps({'content': answer})}\n\n"
+
+        # Add the exchange to conversation history
+        conversation_history[session_id].append({
+            "role": "user",
+            "content": message
+        })
+        conversation_history[session_id].append({
+            "role": "assistant",
+            "content": full_response
+        })
+        
         return
-    
-    # Get or create conversation history for this session
-    if session_id not in conversation_history:
-        conversation_history[session_id] = []
     
     # Prepare messages with conversation history
     messages = [
