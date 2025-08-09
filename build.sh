@@ -49,7 +49,7 @@ if [[ $DEBUG == "true" && $NORUN != "true" ]]; then
   if [[ $NORUN == "true" ]]; then
     docker compose --profile dev build
   else
-    docker compose --profile dev up --build --watch
+    docker compose --profile dev up --build --watch --remove-orphans
   fi
 # 5.2. Production
 else

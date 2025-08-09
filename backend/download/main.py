@@ -87,6 +87,9 @@ async def get_release_asset_url(version: Optional[str] = None) -> tuple[Optional
     logging.error(f"[get_release_asset_url] Failed to get asset URL after retries")
     return None, False, None
 
+@app.get("/favicon.ico")
+async def favicon():
+    return RedirectResponse("https://toolbox-io.ru/favicon.ico", status_code=308)
 
 @app.get("/{path:path}")
 async def serve_files(path: str):
