@@ -1,0 +1,298 @@
+// Import common variables and mixins
+@use "common/colors" as *;
+@use "common/mixins" as *;
+@use "sass:color";
+
+// Set up full viewport height layout
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+
+    &.iframe {
+        tio-header, tio-footer {
+            display: none;
+        }
+    }
+    
+    > .wrapper {
+        margin-bottom: 0;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0; // Important for flex child
+    }
+}
+
+tio-footer {
+    margin-top: 0 !important;
+    flex-shrink: 0; // Prevent footer from shrinking
+}
+
+#main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; // Important for flex child
+    max-width: 800px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 24px;
+    box-sizing: border-box;
+
+    @media (max-width: 440px) {
+        padding: 0 16px;
+    }
+}
+
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; // Important for flex child
+    position: relative;
+    margin: 24px 0 15px 0;
+
+    // Gradient overlays for smooth blending
+    &::before, &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 40px;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    &::before {
+        top: 0;
+        background: linear-gradient(to bottom, $color-surface 0%, transparent 100%);
+    }
+
+    &::after {
+        bottom: 100px; // Position above the input container
+        background: linear-gradient(to top, $color-surface 0%, transparent 100%);
+    }
+
+    #response {
+        flex: 1;
+        color: $color-onSurface;
+        font-family: inherit;
+        font-size: 14px;
+        line-height: 1.6;
+        overflow-y: auto;
+        position: relative;
+        padding-top: 20px; // Add padding to account for gradient overlays
+        min-height: 0; // Important for flex child
+        display: flex;
+        flex-direction: column;
+
+        &::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: $color-surface;
+            border-radius: 3px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: $color-outline;
+            border-radius: 3px;
+
+            &:hover {
+                background: $color-onSurfaceVariant;
+            }
+        }
+
+        #welcome {
+            display: none;
+
+            &:only-child {
+                display: block;
+            }
+        }
+
+        &:has(#welcome:only-child) {
+            align-items: center;
+            justify-content: center;
+        }
+
+        .message {
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            border-radius: 18px;
+            width: max-content;
+            max-width: 70%;
+            word-wrap: break-word;
+            position: relative;
+
+            &.user-message {
+                background-color: $color-primary;
+                color: $color-onPrimary;
+                margin-left: auto;
+                margin-right: 0;
+                border-bottom-right-radius: 6px;
+                text-align: left;
+            }
+
+            &.bot-message {
+                background-color: $color-surfaceContainer;
+                color: $color-onSurface;
+                margin-right: auto;
+                margin-left: 0;
+                border-bottom-left-radius: 6px;
+                text-align: left;
+
+                > p:first-child {
+                    margin-top: 0;
+                    margin-block-start: 0;
+                }
+
+                > p:last-child {
+                    margin-bottom: 0;
+                    margin-block-end: 0;
+                }
+
+                code {
+                    background-color: rgba($color-outline, 0.2);
+                    padding: 2px 4px;
+                    border-radius: 4px;
+                    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+                    font-size: 0.9em;
+                }
+
+                pre {
+                    background-color: rgba($color-outline, 0.1);
+                    padding: 8px 12px;
+                    border-radius: 6px;
+                    margin: 8px 0;
+                    overflow-x: auto;
+
+                    code {
+                        background: none;
+                        padding: 0;
+                    }
+                }
+
+                strong, b {
+                    font-weight: 600;
+                }
+
+                em, i {
+                    font-style: italic;
+                }
+
+                ul, ol {
+                    margin: 8px 0;
+                    padding-left: 20px;
+                }
+
+                li {
+                    margin: 4px 0;
+                }
+
+                blockquote {
+                    border-left: 3px solid $color-primary;
+                    margin: 8px 0;
+                    padding-left: 12px;
+                    color: $color-onSurfaceVariant;
+                }
+
+                h1, h2, h3, h4, h5, h6 {
+                    margin: 12px 0 8px 0;
+                    font-weight: 600;
+                }
+
+                h1 { font-size: 1.4em; }
+                h2 { font-size: 1.3em; }
+                h3 { font-size: 1.2em; }
+                h4 { font-size: 1.1em; }
+                h5, h6 { font-size: 1em; }
+            }
+        }
+    }
+
+    .input-container {
+        display: flex;
+        gap: 12px;
+        background-color: $color-surfaceContainer;
+        border-radius: 80px;
+        padding: 10px;
+        position: relative;
+        z-index: 2; // Ensure input container is above gradient overlays
+        flex-shrink: 0; // Prevent input from shrinking
+
+        #messageInput {
+            flex: 1;
+            padding: 10px 0 10px 20px;
+            background-color: transparent;
+            border: none;
+            border-radius: 25px;
+            color: $color-onSurface;
+            font-family: inherit;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            outline: none !important;
+            min-width: 0;
+
+            &::placeholder {
+                color: $color-onSurfaceVariant;
+            }
+        }
+
+        #sendButton {
+            padding: 16px;
+            color: $color-onPrimary;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: $color-primary;
+
+            @include hoverStateLayer($background: $color-primary);
+
+            &:disabled {
+                background: $color-surfaceVariant;
+                color: $color-onSurfaceVariant;
+                cursor: not-allowed;
+                transform: none;
+            }
+        }
+    }
+
+    .note {
+        color: $color-onSurfaceVariant;
+        text-align: center;
+        margin-top: 15px;
+        font-size: small;
+    }
+}
+
+// Animations
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
