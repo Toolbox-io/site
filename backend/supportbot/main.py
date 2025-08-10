@@ -4,10 +4,6 @@ import aiohttp
 import json
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
 
 # Configuration
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -91,7 +87,7 @@ class SupportBot:
             "• Максимальная длина сообщения: 1024 символа\n"
             "• Лимит: 1 запрос в секунду, 20 запросов в день"
         )
-        await update.message.reply_text(help_message, parse_mode='HTML')
+        await update.message.reply_html(help_message)
 
     async def handle_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle incoming messages"""
@@ -116,7 +112,7 @@ class SupportBot:
         
         # Send message to API with user_id for rate limiting
         response = await self.send_message_to_api(message_text, session_id, user_id=user_id)
-        response = response.replace(".", "\\.").replace("-", "\\-")
+        response = response.replace(".", "\\.").replace("-", "\\-").replace("!", "\\!")
         
         # Send response back to user
         await update.message.reply_markdown_v2(response)
@@ -126,7 +122,6 @@ class SupportBot:
         await update.message.reply_text("Извините, я не поддерживаю этот файл.")
 
     async def error_handler(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        """Handle errors"""
         print(f"Update {update} caused error {context.error}")
         if update and update.effective_message:
             print(update)

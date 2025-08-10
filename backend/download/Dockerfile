@@ -2,7 +2,11 @@
 FROM python:3.12
 
 # 2. User
-RUN useradd -m -u 1000 toolbox
+RUN useradd -m -u 1000 toolbox && \
+    mkdir -p /home/toolbox/site/backend/download && \
+    chown -R toolbox:toolbox /home/toolbox/site/backend/download && \
+    mkdir -p /home/toolbox/site/backend/download/cache && \
+    chown -R toolbox:toolbox /home/toolbox/site/backend/download/cache
 USER toolbox
 WORKDIR /home/toolbox/site/backend/download
 
