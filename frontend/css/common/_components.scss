@@ -7,22 +7,20 @@ a:has(md-filled-button) {
 }
 
 md-filled-button {
-    background-color: $color-primaryContainer;
+    background-color: $color-primary;
     user-select: none;
     padding: 10px;
     border-radius: 20px;
     transition: background-color 0.25s ease, transform 0.5s ease;
     text-decoration: none !important;
     cursor: pointer;
-    color: white;
+    color: $color-onPrimary;
     display: block;
     overflow: hidden;
     position: relative;
     width: max-content;
 
-    &:hover {
-        background-color: $color-primaryContainerDarkened;
-    }
+    @include hoverStateLayer($background: $color-primary);
 
     &:visited, &:link {
         text-decoration: none;
