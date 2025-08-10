@@ -515,8 +515,8 @@
     z-index: 1200;
     width: 64px;
     height: 64px;
-    background-color: $color-secondaryContainer;
-    color: $color-onSecondaryContainer;
+    background-color: $color-primaryContainer;
+    color: $color-onPrimaryContainer;
     border-radius: 50%;
     box-shadow: 0 4px 16px rgba(0,0,0,0.18);
     display: flex;
@@ -525,7 +525,7 @@
     cursor: pointer;
     transition: background 0.2s;
 
-    @include hoverStateLayer($background: $color-secondaryContainer);
+    @include hoverStateLayer($background: $color-primaryContainer);
 
     .material-symbols {
         font-size: 32px;
