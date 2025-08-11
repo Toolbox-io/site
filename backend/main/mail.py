@@ -38,6 +38,6 @@ def send_mail(to: str, subject: str, body: str, html: bool = False):
     if html:
         msg.attach(MIMEText(body, "html", "utf-8"))
 
-    with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=10) as server:
+    with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT, timeout=20) as server:
         server.login(SMTP_USER, SMTP_PASSWORD)
-        server.sendmail("robot@toolbox-io.ru", [to], msg.as_string())
+        server.sendmail("robot@toolbox-io.ru", to, msg.as_string())
