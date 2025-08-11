@@ -81,11 +81,11 @@ async def upload_photo(
 
     # Calculate current user storage usage
     user_photos = db.query(Photo).filter_by(user_id=current_user.id).order_by(Photo.uploaded_at).all()
-    user_storage = get_used_storage()
+    user_storage = get_used_storage(user_photos)
     
     # Read file in chunks, check size
     try:
-        total_size = save_file(input=file, output=file_path, max_size=MAX_SIZE)
+        total_size = await save_file(input=file, output=file_path, max_size=MAX_SIZE)
     except FileTooLargeError:
         raise HTTPException(status_code=413, detail="File too large (max 50MB)")
     
