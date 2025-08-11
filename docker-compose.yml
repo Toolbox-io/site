@@ -52,6 +52,7 @@ services:
           path: ./frontend/package.json
     volumes:
       - photos:/home/toolbox/site/backend/main/data/photos
+      - huggingface_cache:/home/toolbox/.cache/huggingface
 
   download:
     build:
