@@ -3,9 +3,9 @@ from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 import os
 from uuid import uuid4
-from backend.main.utils import FileTooLargeError, save_file
+from utils import FileTooLargeError, save_file
 from models import Photo, User
-from db.core import get_db  # Adjust if your session dependency is elsewhere
+from db.core import get_db
 from routes.auth.utils import get_current_user
 from limiter import limiter
 from fastapi import Request

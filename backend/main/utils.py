@@ -1,5 +1,5 @@
-from _typeshed import FileDescriptorOrPath
 import os
+from os import PathLike
 from functools import wraps
 from pathlib import Path
 from typing import Tuple, Optional
@@ -92,7 +92,7 @@ def trim_margin(text: str, margin: str = '|') -> str:
 
 class FileTooLargeError(Exception): pass
 
-async def save_file(input: UploadFile, output: FileDescriptorOrPath, max_size: int = 0, chunk_size: int = 1024 * 1024):
+async def save_file(input: UploadFile, output: str | PathLike[str], max_size: int = 0, chunk_size: int = 1024 * 1024):
     total_size = 0
     with open(output, "wb") as out_file:
         while True:
