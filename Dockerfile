@@ -35,7 +35,9 @@ FROM python:3.12-slim AS runtime
 RUN useradd -m -u 1000 toolbox && \
     chown -R toolbox:toolbox /home/toolbox && \
     mkdir -p /home/toolbox/.cache/huggingface && \
-    chown -R toolbox:toolbox /home/toolbox/.cache/huggingface
+    chown -R toolbox:toolbox /home/toolbox/.cache/huggingface && \
+    mkdir -p /home/toolbox/site/backend/main/data/photos && \
+    chown -R toolbox:toolbox /home/toolbox/site/backend/main/data/photos
 USER toolbox
 
 # 3.2. Copy content
