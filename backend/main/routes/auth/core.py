@@ -1,4 +1,6 @@
 import logging
+import sys
+import traceback
 from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -94,7 +96,11 @@ def register(request: Request, user: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(db_user)
 
-    send_verify_email(db_user, db)
+    try:
+        send_verify_email(db_user, db)
+    except Exception as e:
+        logger.error("Email sending failed; this doesn't mean that the email wasn't delivered.")
+        traceback.print_exc()
 
     logger.info(f"User registered successfully: {user.username} (ID: {db_user.id})")
     return db_user
