@@ -102,7 +102,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
         if expires_delta:
             expire = datetime.now() + expires_delta
         else:
-            expire = datetime.now() + timedelta(minutes=15)
+            expire = datetime.now() + timedelta(minutes=60 * 24 * 365) # 1 year
         to_encode.update({"exp": expire})
         logger.debug(f"Token will expire at: {expire}")
         
@@ -138,7 +138,7 @@ def verify_token(token: str) -> Optional[str]:
         return None
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-        username: str = payload.get("sub")
+        username: str | None = payload.get("sub")
         if username is None:
             logger.warning("JWT token missing 'sub' field")
             return None

@@ -1,10 +1,9 @@
 import logging
-import sys
 import traceback
-from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
@@ -12,8 +11,7 @@ from starlette.responses import RedirectResponse
 from db.core import get_db
 from limiter import limiter
 from models import UserCreate, UserLogin, UserResponse, Token, User
-from routes.auth.utils import send_verify_email, validate_password, hash_password, authenticate_user, \
-    ACCESS_TOKEN_EXPIRE_MINUTES, create_access_token, get_current_user, security, blacklist_token
+from routes.auth.utils import send_verify_email, validate_password, hash_password, authenticate_user, create_access_token, get_current_user, security, blacklist_token
 
 logger = logging.getLogger(__name__)
 
@@ -60,8 +58,16 @@ def register(request: Request, user: UserCreate, db: Session = Depends(get_db)):
 
     if db_user:
         logger.info("There is a user with the same data, re-registering")
-        db.delete(db_user)
-        db.commit()
+        try:
+            db.delete(db_user)
+            db.commit()
+        except IntegrityError as e:
+            traceback.print_exc()
+            logger.info("User has data, treating as taken")
+            raise HTTPException(
+                status_code=400,
+                detail="User is taken"
+            )
     else:
         # Check if username already exists
         logger.debug(f"Checking if username exists: {user.username}")
@@ -130,10 +136,7 @@ def login(request: Request, user_credentials: UserLogin, db: Session = Depends(g
             )
 
         logger.debug(f"User authenticated, creating access token for: {user.username}")
-        access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-        access_token = create_access_token(
-            data={"sub": user.username}, expires_delta=access_token_expires
-        )
+        access_token = create_access_token(data={"sub": user.username})
 
         logger.info(f"Login successful for user: {user.username} (ID: {user.id})")
         return {"access_token": access_token}
