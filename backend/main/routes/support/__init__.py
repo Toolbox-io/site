@@ -206,7 +206,7 @@ def generate_response(session_id: str, message: str):
         "content": message
     })
 
-    providers: list[dict[str, str | None | list[str]]] = [
+    providers: list[dict[str, str | list[str]]] = [
         {
             "base_url": "https://openrouter.ai/api/v1",
             "models": [
