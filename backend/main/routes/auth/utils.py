@@ -201,7 +201,7 @@ def authenticate_user(db: Session, username: str, password: str) -> Optional[Use
         logger.debug(f"User found: {user.username} (ID: {user.id})")
         
         # Verify password
-        if not verify_password(password, user.hashed_password):
+        if not verify_password(password, user.hashed_password): # TODO #13: compare password hashes instead of hashing the plaintext password in the request
             logger.warning(f"Password verification failed for user: {username}")
             return None
         

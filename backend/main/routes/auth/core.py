@@ -61,7 +61,7 @@ def register(request: Request, user: UserCreate, db: Session = Depends(get_db)):
         try:
             db.delete(db_user)
             db.commit()
-        except IntegrityError as e:
+        except IntegrityError:
             traceback.print_exc()
             logger.info("User has data, treating as taken")
             raise HTTPException(
@@ -91,7 +91,7 @@ def register(request: Request, user: UserCreate, db: Session = Depends(get_db)):
 
     # Create new user
     logger.debug(f"Creating new user: {user.username}")
-    hashed_password = hash_password(user.password)
+    hashed_password = hash_password(user.password) # TODO #13: the password should already be hashed in the request
     # noinspection PyTypeChecker
     db_user = User(
         username=user.username,
@@ -118,7 +118,7 @@ def login(request: Request, user_credentials: UserLogin, db: Session = Depends(g
     logger.info(f"Login attempt for username: {user_credentials.username}")
 
     try:
-        user = authenticate_user(db, user_credentials.username, user_credentials.password)
+        user = authenticate_user(db, user_credentials.username, user_credentials.password) # TODO #13: password should be hashed in the request
         if not user:
             logger.warning(f"Login failed for username: {user_credentials.username}")
             raise HTTPException(
