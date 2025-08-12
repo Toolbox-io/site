@@ -16,7 +16,13 @@ app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
 
 # Rate limiting
 async def rate_limit_handler(request: Request, exc: RateLimitExceeded) -> Response:
-    return JSONResponse({"message": "Rate Limit Exceeded"})
+    return JSONResponse(
+        {
+            "detail": "Rate limit exceeded",
+            "code": "1"
+        },
+        status_code=429
+    )
 
 app.state.limiter = limiter
 # noinspection PyTypeChecker
