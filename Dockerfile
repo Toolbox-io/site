@@ -39,9 +39,9 @@ RUN useradd -m -u 1000 toolbox && \
 USER toolbox
 
 # 3.2. Copy content
-COPY --from=backend /root/.venv /home/toolbox/.venv
-COPY backend/main /home/toolbox/site/backend/main
-COPY --from=frontend /root/site/frontend /home/toolbox/site/frontend
+COPY --from=backend --chown=toolbox:toolbox /root/.venv /home/toolbox/.venv
+COPY --chown=toolbox:toolbox backend/main /home/toolbox/site/backend/main
+COPY --from=frontend --chown=toolbox:toolbox /root/site/frontend /home/toolbox/site/frontend
 
 
 # 4. Final command

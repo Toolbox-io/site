@@ -15,7 +15,7 @@ RUN --mount=type=cache,target=/home/toolbox/.cache/pip \
     ./.venv/bin/pip3 install -r requirements.txt
 
 # 5. Copy code
-COPY . .
+COPY --chown=toolbox:toolbox . .
 
 # 6. Final command
 EXPOSE 8001
