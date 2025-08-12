@@ -1,119 +1,112 @@
 #photo-gallery {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 16px;
-  padding: 24px 0;
-  min-height: 200px;
-  position: relative;
-  background: #f8f9fa;
-  border-radius: 12px;
-  transition: box-shadow 0.2s;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 16px;
+    padding: 24px 0;
+    min-height: 200px;
+    position: relative;
+    background: #f8f9fa;
+    border-radius: 12px;
+    transition: box-shadow 0.2s;
+
+    &.dragover {
+        box-shadow: 0 0 0 4px #007bff33;
+        background: #e3f0ff;
+    }
+
+    #gallery-placeholder {
+        grid-column: 1 / -1;
+        text-align: center;
+        color: #888;
+        font-size: 1.1em;
+        padding: 40px 0;
+    }
+      
+    .gallery-thumb {
+        width: 100%;
+        height: 120px;
+        object-fit: cover;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px #0001;
+        transition: transform 0.2s, box-shadow 0.2s;
+
+        &:hover {
+            transform: scale(1.04);
+            box-shadow: 0 4px 16px #0002;
+        }
+    }
 }
 
-#photo-gallery.dragover {
-  box-shadow: 0 0 0 4px #007bff33;
-  background: #e3f0ff;
-}
-
-#gallery-placeholder {
-  grid-column: 1 / -1;
-  text-align: center;
-  color: #888;
-  font-size: 1.1em;
-  padding: 40px 0;
-}
-
-.gallery-thumb {
-  width: 100%;
-  height: 120px;
-  object-fit: cover;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 2px 8px #0001;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.gallery-thumb:hover {
-  transform: scale(1.04);
-  box-shadow: 0 4px 16px #0002;
-}
 
 #photo-modal {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(0,0,0,0.7);
-  opacity: 1;
-  pointer-events: auto;
-  transition: opacity 0.3s;
-}
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.7);
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.3s;
 
-#photo-modal.hidden {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.modal-overlay {
-  position: absolute;
-  inset: 0;
-  background: transparent;
-}
-
-.modal-content {
-  position: relative;
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 8px 32px #0003;
-  padding: 32px 24px 24px 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 320px;
-  min-height: 320px;
-  animation: modalExpand 0.3s cubic-bezier(.4,2,.6,1) both;
-}
-
-@keyframes modalExpand {
-  from { 
-    transform: scale(0.8); 
-    opacity: 0; 
+    &.hidden {
+        opacity: 0;
+        pointer-events: none;
     }
-  to { 
-    transform: scale(1); 
-    opacity: 1; 
-}
-}
 
-#modal-photo {
-  max-width: 80vw;
-  max-height: 60vh;
-  border-radius: 8px;
-  margin-bottom: 24px;
-  box-shadow: 0 2px 16px #0002;
-}
-.modal-actions {
-  position: absolute;
-  top: 12px;
-  left: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 24px;
-}
-.modal-actions button {
-  background: #007bff;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 8px 18px;
-  font-size: 1em;
-  cursor: pointer;
-  box-shadow: 0 2px 8px #007bff22;
-  transition: background 0.2s;
-}
-.modal-actions button:hover {
-  background: #0056b3;
+    .modal-overlay {
+        position: absolute;
+        inset: 0;
+        background: transparent;
+    }
+
+    .modal-content {
+        position: relative;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px #0003;
+        padding: 32px 24px 24px 24px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-width: 320px;
+        min-height: 320px;
+        animation: modalExpand 0.3s cubic-bezier(.4,2,.6,1) both;
+
+        #modal-photo {
+            max-width: 80vw;
+            max-height: 60vh;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 16px #0002;
+        }
+
+        .modal-actions {
+            position: absolute;
+            top: 12px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 24px;
+
+            button {
+                background: #007bff;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                padding: 8px 18px;
+                font-size: 1em;
+                cursor: pointer;
+                box-shadow: 0 2px 8px #007bff22;
+                transition: background 0.2s;
+
+                &:hover {
+                    background: #0056b3;
+                }
+            }
+        }
+    }
 }
