@@ -160,9 +160,38 @@ export namespace Utils {
         return document.getElementById(id)!
     }
 
-    // noinspection JSUnusedGlobalSymbols
     export function query(query: string, element: Element | Document = document) {
         return element.querySelector(query)! as HTMLElement;
+    }
+
+    export function decodeErrorMessage(message: string): string {
+        const regex = /^code (\d+):(.*)$/g;
+        const match = regex.exec(message);
+
+        if (match) {
+            const code = Number(match[1])
+            const decoded_message = match[2]
+
+            switch (code) {
+                // code 1 doesn't exist
+                case 2: return "Имя должно быть не меньше 3 символа";
+                case 3: return "Имя должно быть не больше 50 символов";
+                case 4: return "Имя может содержать только буквы, цифры, нижние подчеркивания и тире";
+                case 5: return "Email должен быть не больше 254 символов";
+                case 6: return "Имя не может быть пустым";
+                // code 7 doesn't exist
+                case 8: return "Пароль не может быть пустым";
+                case 9: return "Пароль должен быть не меньше 8 символов";
+                case 10: return "Пароль должен быть не больше 128 символов";
+                case 11: return "Пароль слишком частый, попробуйте сделать его посложнее";
+                case 12: return "Пароль должен содержать буквы, цифвы и специальные символы";
+                // end of codes
+            }
+
+            return decoded_message
+        }
+
+        return message
     }
 
     hljs.registerLanguage("xml", xml);

@@ -42,7 +42,7 @@ class UserLogin(BaseModel):
         if len(v) < 1:
             raise ValueError('code 6: Username cannot be empty')
         if len(v) > 50:
-            raise ValueError('code 7: Username is too long')
+            raise ValueError('code 3: Username must be less than 50 characters')
         return v
 
 class UserResponse(BaseModel):
