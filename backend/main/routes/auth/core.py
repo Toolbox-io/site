@@ -37,12 +37,17 @@ api_router = APIRouter()
 @limiter.limit("3/minute")
 def register(request: Request, user: UserCreate, db: Session = Depends(get_db)):
     """Register a new user"""
-    logger.info(f"Registration attempt for username: {user.username}, email: {user.email}")
+
+    email = user.email.strip()
+    username = user.username.strip()
+    password = user.password.strip()
+
+    logger.info(f"Registration attempt for username: {username}, email: {email}")
 
     # Validate password strength
-    is_valid, error_message = validate_password(user.password)
+    is_valid, error_message = validate_password(password)
     if not is_valid:
-        logger.warning(f"Registration failed - weak password for user: {user.username}")
+        logger.warning(f"Registration failed - weak password for user: {username}")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=error_message
@@ -51,8 +56,8 @@ def register(request: Request, user: UserCreate, db: Session = Depends(get_db)):
     db_user = (db
                .query(User)
                .filter(
-        User.username == user.username and
-        User.email == user.email and
+        User.username == username and
+        User.email == email and
         User.is_verified == False
     ).first())
 
@@ -70,32 +75,32 @@ def register(request: Request, user: UserCreate, db: Session = Depends(get_db)):
             )
     else:
         # Check if username already exists
-        logger.debug(f"Checking if username exists: {user.username}")
-        db_user = db.query(User).filter(User.username == user.username).first()
+        logger.debug(f"Checking if username exists: {username}")
+        db_user = db.query(User).filter(User.username == username).first()
         if db_user:
-            logger.warning(f"Registration failed - username already exists: {user.username}")
+            logger.warning(f"Registration failed - username already exists: {username}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Username already registered"
             )
 
         # Check if email already exists
-        logger.debug(f"Checking if email exists: {user.email}")
-        db_user = db.query(User).filter(User.email == user.email).first()
+        logger.debug(f"Checking if email exists: {email}")
+        db_user = db.query(User).filter(User.email == email).first()
         if db_user:
-            logger.warning(f"Registration failed - email already exists: {user.email}")
+            logger.warning(f"Registration failed - email already exists: {email}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Email already registered"
             )
 
     # Create new user
-    logger.debug(f"Creating new user: {user.username}")
-    hashed_password = hash_password(user.password) # TODO #13: the password should already be hashed in the request
+    logger.debug(f"Creating new user: {username}")
+    hashed_password = hash_password(password) # TODO #13: the password should already be hashed in the request
     # noinspection PyTypeChecker
     db_user = User(
-        username=user.username,
-        email=user.email,
+        username=username,
+        email=email,
         hashed_password=hashed_password
     )
     db.add(db_user)
@@ -108,7 +113,7 @@ def register(request: Request, user: UserCreate, db: Session = Depends(get_db)):
         logger.error("Email sending failed; this doesn't mean that the email wasn't delivered.")
         traceback.print_exc()
 
-    logger.info(f"User registered successfully: {user.username} (ID: {db_user.id})")
+    logger.info(f"User registered successfully: {username} (ID: {db_user.id})")
     return db_user
 
 @api_router.post("/login", response_model=Token)
@@ -117,46 +122,40 @@ def login(request: Request, user_credentials: UserLogin, db: Session = Depends(g
     """Login user and return access token"""
     logger.info(f"Login attempt for username: {user_credentials.username}")
 
-    try:
-        user = authenticate_user(db, user_credentials.username, user_credentials.password) # TODO #13: password should be hashed in the request
-        if not user:
-            logger.warning(f"Login failed for username: {user_credentials.username}")
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect username or password",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+    username = user_credentials.username.strip()
+    password = user_credentials.password.strip()
 
-        if not user.is_verified:
-            logger.warning(f"Login failed for unverified user: {user.username}")
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Email not verified",
-                headers={"WWW-Authenticate": "Bearer"},
-            )
+    user = authenticate_user(db, username, password) # TODO #13: password should be hashed in the request
 
-        logger.debug(f"User authenticated, creating access token for: {user.username}")
-        access_token = create_access_token(data={"sub": user.username})
-
-        logger.info(f"Login successful for user: {user.username} (ID: {user.id})")
-        return {"access_token": access_token}
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Unexpected error during login: {e}")
+    if not user:
+        logger.warning(f"Login failed for username: {username}")
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Internal server error during login"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
         )
+
+    user_username = user.username.strip()
+
+    if not user.is_verified:
+        logger.warning(f"Login failed for unverified user: {user_username}")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Email not verified",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    logger.debug(f"User authenticated, creating access token for: {user_username}")
+    access_token = create_access_token(data={"sub": user_username})
+
+    logger.info(f"Login successful for user: {user_username} (ID: {user.id})")
+    return {"access_token": access_token}
 
 @api_router.post("/logout")
 def logout(
     credentials: HTTPAuthorizationCredentials = Depends(security)
 ):
-    token = credentials.credentials
-    blacklist_token(token)
-    logger.debug("Logout request received, token blacklisted")
+    blacklist_token(credentials.credentials)
     return {"message": "Logged out successfully"}
 
 # Information
