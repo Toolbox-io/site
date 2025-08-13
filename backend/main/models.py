@@ -18,17 +18,17 @@ class UserCreate(BaseModel):
     @field_validator('username')
     def validate_username(cls, v):
         if len(v) < 3:
-            raise ValueError('Username must be at least 3 characters long')
+            raise ValueError('code 2: Username must be at least 3 characters long')
         if len(v) > 50:
-            raise ValueError('Username must be less than 50 characters')
-        if not re.match(r'^[a-zA-Z0-9_-]+$', v):
-            raise ValueError('Username can only contain letters, numbers, underscores, and hyphens')
+            raise ValueError('code 3: Username must be less than 50 characters')
+        if not re.match(r'^[a-zA-Z0-9_-а-яА-Я]+$', v):
+            raise ValueError('code 4: Username can only contain letters, numbers, underscores, and hyphens')
         return v
     
     @field_validator('email')
     def validate_email(cls, v):
         if len(v) > 254:
-            raise ValueError('Email is too long')
+            raise ValueError('code 5: Email is too long')
         return v.lower()
 
 
@@ -40,9 +40,9 @@ class UserLogin(BaseModel):
     @field_validator('username')
     def validate_username(cls, v):
         if len(v) < 1:
-            raise ValueError('Username cannot be empty')
+            raise ValueError('code 6: Username cannot be empty')
         if len(v) > 50:
-            raise ValueError('Username is too long')
+            raise ValueError('code 7: Username is too long')
         return v
 
 class UserResponse(BaseModel):
@@ -66,7 +66,7 @@ class PasswordChange(BaseModel):
     @field_validator('current_password', 'new_password')
     def validate_password_not_empty(cls, v):
         if len(v) < 1:
-            raise ValueError('Password cannot be empty')
+            raise ValueError('code 8: Password cannot be empty')
         return v
 
 
@@ -87,7 +87,7 @@ class ReportCrash(BaseModel):
     @field_validator('whatHappened')
     def validate_whatHappened(cls, v):
         if len(v) > 10000:
-            raise ValueError('Field is too long')
+            raise ValueError('code 5: Field is too long')
         return v
 
 class Message(BaseModel):

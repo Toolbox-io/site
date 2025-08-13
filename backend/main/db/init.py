@@ -77,8 +77,10 @@ def create_database_and_user():
 
 def create_test_user():
     """Create a test user if it doesn't exist"""
+
+    db = get_session_factory()()
+
     try:
-        db = get_session_factory()()
         logger.debug("Checking if test user already exists...")
         existing_user = db.query(User).filter(User.username == "testuser").first()
         if existing_user:
@@ -96,7 +98,6 @@ def create_test_user():
         logger.info("Test user created successfully!")
     except Exception as e:
         logger.error(f"Error creating test user: {e}")
-        # noinspection PyUnboundLocalVariable
         db.rollback()
         raise
     finally:

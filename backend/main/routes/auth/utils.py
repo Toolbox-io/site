@@ -27,19 +27,10 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 # Common passwords to block
 COMMON_PASSWORDS = {
-    "password", "123456", "123456789", "qwerty", "abc123", "password123",
-    "admin", "letmein", "welcome", "monkey", "dragon", "master", "hello",
-    "freedom", "whatever", "qazwsx", "trustno1", "jordan", "harley",
-    "ranger", "iwantu", "jennifer", "hunter", "buster", "soccer",
-    "baseball", "tiger", "charlie", "andrew", "michelle", "love",
-    "sunshine", "jessica", "asshole", "696969", "amanda", "access",
-    "computer", "cookie", "mickey", "shadow", "maggie", "654321",
-    "superman", "1qaz2wsx", "7777777", "121212", "buster", "butter",
-    "dragon", "joshua", "blowme", "fishing", "dolphin", "baseball",
-    "stupid", "shit", "saturn", "gemini", "apples", "august", "canon",
-    "blake", "cumming", "hunting", "kitty", "rainbow", "arthur",
-    "cream", "calvin", "shaved", "surfer", "samson", "kelly", "paul",
-    "11111111"
+    "password", "123456", "123456789", "qwerty", "abc123", "password123", "admin", 
+    "letmein", "welcome", "master", "hello", "freedom", "whatever", "qazwsx", 
+    "trustno1", "iwantu", "love", "696969", "access", "computer", "654321", 
+    "1qaz2wsx", "7777777", "121212", "11111111"
 }
 
 security = HTTPBearer()
@@ -48,25 +39,25 @@ def validate_password(password: str) -> tuple[bool, str]:
     """
     Validate password strength
     Returns: (is_valid, error_message)
-    """
+    """ 
+
     if len(password) < 8:
-        return False, "Password must be at least 8 characters long"
+        return False, "code 9: Password must be at least 8 characters long"
     
     if len(password) > 128:
-        return False, "Password must be less than 128 characters"
+        return False, "code 10: Password must be less than 128 characters"
     
     # Check for common passwords
     if password.lower() in COMMON_PASSWORDS:
-        return False, "Password is too common, please choose a stronger password"
+        return False, "code 11: Password is too common, please choose a stronger password"
     
     # Check for character variety
-    has_upper = any(c.isupper() for c in password)
-    has_lower = any(c.islower() for c in password)
+    has_chars = any((c.isupper() or c.islower()) for c in password)
     has_digit = any(c.isdigit() for c in password)
     has_special = any(c in "!@#$%^&*()_+-=[]{}|;:,.<>?" for c in password)
     
-    if not (has_upper and has_lower and has_digit and has_special):
-        return False, "Password must contain uppercase, lowercase, digit, and special characters"
+    if not (has_chars and has_digit and has_special):
+        return False, "code 12: Password must contain letters, digits, and special characters"
     
     return True, ""
 
@@ -77,7 +68,6 @@ def hash_password(password: str) -> str:
         salt = bcrypt.gensalt()
         hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
         hashed_str = hashed.decode('utf-8')
-        logger.debug(f"Password hashed successfully, hash length: {len(hashed_str)}")
         return hashed_str
     except Exception as e:
         logger.error(f"Error hashing password: {e}")
