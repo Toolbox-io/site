@@ -55,7 +55,7 @@ panel.toolbox-io.ru {
 }
 
 fromchat.toolbox-io.ru {
-	reverse_proxy 127.18.0.1:8301 host.docker.internal:8301 172.17.0.1:8301 {
+	reverse_proxy 172.18.0.1:8301 host.docker.internal:8301 172.17.0.1:8301 {
 		lb_policy first
 	}
 }
