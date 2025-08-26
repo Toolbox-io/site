@@ -59,3 +59,7 @@ fromchat.toolbox-io.ru {
 		lb_policy first
 	}
 }
+
+beta.fromchat.toolbox-io.ru {
+    reverse_proxy 95.165.0.162:8301
+}
