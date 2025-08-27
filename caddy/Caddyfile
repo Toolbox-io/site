@@ -58,6 +58,40 @@ fromchat.toolbox-io.ru {
 	reverse_proxy 172.18.0.1:8301 host.docker.internal:8301 172.17.0.1:8301 {
 		lb_policy first
 	}
+
+	# Security headers
+	header {
+		X-XSS-Protection "1; mode=block" # Prevent XSS attacks
+		X-Content-Type-Options "nosniff" # Prevent MIME type sniffing
+		X-Frame-Options "DENY" # Prevent clickjacking
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none';"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		Permissions-Policy "geolocation=(), microphone=(), camera=()"
+	}
+
+	rate_limit {
+		zone global {
+			key {remote_ip}
+			window 1m
+			burst 20
+			events 100
+		}
+	}
+
+	handle_errors {
+		@errors {
+			expression {err.status_code} >= 400
+		}
+
+		handle @errors {
+			rewrite * /{err.status_code}
+			reverse_proxy https://http.cat {
+				header_up Host {upstream_hostport}
+				replace_status {err.status_code}
+			}
+		}
+	}
 }
 
 beta.fromchat.toolbox-io.ru {
@@ -67,7 +101,7 @@ beta.fromchat.toolbox-io.ru {
 	header {
 		X-XSS-Protection "1; mode=block" # Prevent XSS attacks
 		X-Content-Type-Options "nosniff" # Prevent MIME type sniffing
-		X-Frame-Options "SAMEORIGIN" # Prevent clickjacking
+		X-Frame-Options "DENY" # Prevent clickjacking
 		Referrer-Policy "strict-origin-when-cross-origin"
 		Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none';"
 		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
