@@ -103,7 +103,7 @@ beta.fromchat.toolbox-io.ru {
 		X-Content-Type-Options "nosniff" # Prevent MIME type sniffing
 		X-Frame-Options "DENY" # Prevent clickjacking
 		Referrer-Policy "strict-origin-when-cross-origin"
-		Content-Security-Policy "default-src 'self'; script-src 'self' unsafe-inline; style-src 'self' unsafe-inline; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none';"
+		Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none';"
 		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
 		Permissions-Policy "geolocation=(), microphone=(), camera=()"
 	}
