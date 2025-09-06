@@ -75,7 +75,7 @@ fromchat.ru {
 			key {remote_ip}
 			window 1m
 			burst 20
-			events 100
+			events 500
 		}
 	}
 
@@ -113,7 +113,7 @@ beta.fromchat.ru {
 			key {remote_ip}
 			window 1m
 			burst 20
-			events 100
+			events 1000
 		}
 	}
 
