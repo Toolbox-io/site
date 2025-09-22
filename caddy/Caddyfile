@@ -12,15 +12,6 @@ toolbox-io.ru {
 		Permissions-Policy "geolocation=(), microphone=(), camera=()"
 	}
 
-	rate_limit {
-		zone global {
-			key {remote_ip}
-			window 1m
-			burst 20
-			events 100
-		}
-	}
-
 	handle_errors {
 		@errors {
 			expression {err.status_code} >= 400
