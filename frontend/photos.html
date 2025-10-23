@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8"/>
+        <meta lang="en" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Toolbox.io</title>
+        <link rel="icon" href="/res/favicon.svg" />
+
+        <link rel="stylesheet" href="/css/common.css" />
+        <link rel="stylesheet" href="/css/photos.css" />
+
+        <script src="/lib/jquery.js"></script>
+        <script type="module" src="/js/common.js"></script>
+    </head>
+    <body>
+        <tio-header class="top" tab="0"></tio-header>
+        <div class="wrapper">
+            <div id="main" class="automargin">
+                <h1>Фото</h1>
+                <div id="photo-gallery" class="gallery-drop-area">
+                    <!-- Thumbnails will be rendered here by JS -->
+                    <div id="gallery-placeholder">Перетащите фото сюда для загрузки</div>
+                </div>
+                <div id="photo-modal" class="hidden">
+                    <div class="modal-overlay"></div>
+                    <div class="modal-content">
+                        <img id="modal-photo" src="" alt="Фото" />
+                        <div class="modal-actions">
+                            <button id="download-photo">Скачать</button>
+                            <button id="delete-photo">Удалить</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <tio-footer></tio-footer>
+        <script type="module" src="/js/photos.js"></script>
+    </body>
+</html>

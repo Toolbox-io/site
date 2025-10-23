@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+
+when working with this project and adding API endpoints always document them in @API_DOCS.md

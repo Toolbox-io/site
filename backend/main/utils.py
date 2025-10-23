@@ -1,9 +1,10 @@
 import os
+from os import PathLike
 from functools import wraps
 from pathlib import Path
 from typing import Tuple, Optional
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, UploadFile
 from starlette.staticfiles import StaticFiles
 
 from constants import CONTENT_PATH
@@ -88,3 +89,21 @@ def trim_margin(text: str, margin: str = '|') -> str:
         else:
             trimmed_lines.append(line)
     return '\n'.join(trimmed_lines)
+
+class FileTooLargeError(Exception): pass
+
+async def save_file(input: UploadFile, output: str | PathLike[str], max_size: int = 0, chunk_size: int = 1024 * 1024):
+    total_size = 0
+    with open(output, "wb") as out_file:
+        while True:
+            chunk = await input.read(chunk_size)
+            if not chunk:
+                break
+            total_size += len(chunk)
+            if max_size != 0 and total_size > max_size:
+                out_file.close()
+                os.remove(output)
+                raise FileTooLargeError()
+            out_file.write(chunk)
+    
+    return total_size
