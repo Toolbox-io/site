@@ -1,5 +1,11 @@
 toolbox-io.ru {
-	reverse_proxy main:8000
+	# Proxy API requests to backend
+	handle /api/* {
+		reverse_proxy main:8000
+	}
+	
+	# Proxy all other requests to frontend
+	reverse_proxy frontend:8001
 
 	# Security headers
 	header {

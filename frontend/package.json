@@ -1,43 +1,23 @@
 {
-  "name": "toolbox-io-frontend",
-  "version": "1.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "npm run build:dev",
-    "build:dev": "npm run compile:ts && npm run compile:scss",
-    "build:prod": "npm run build:dev && npm run minify && npm run clean:prod",
-    "minify": "npm run minify:ts && npm run minify:scss && npm run minify:html",
-
-    "build:ts": "npm run compile:ts && npm run minify:ts",
-    "compile:ts": "tsc",
-    "minify:ts": "find . -name '*.js' -not -path './node_modules/*' -not -path './lib/*' -exec terser {} -o {} -m \\;",
-
-    "build:scss": "npm run compile:scss && npm run minify:scss",
-    "compile:scss": "sass css:css --no-source-map -s compressed",
-    "minify:scss": "postcss css/*.css --use autoprefixer --no-map -d css",
-
-    "minify:html": "find . -name '*.html' -not -path './node_modules/*' -exec html-minifier --collapse-whitespace --remove-comments --remove-optional-tags --remove-redundant-attributes --remove-script-type-attributes --remove-tag-whitespace --use-short-doctype --minify-css true --minify-js true -o {} {} \\;",
-    
-    "clean": "npm run clean:dev",
-    "clean:dev": "find . -name '*.js' -not -path './node_modules/*' -not -path './lib/*' -delete && find css -name '*.css' -delete",
-    "clean:prod": "find . \\( -name '*.ts' -o -name '*.scss' -o -name 'tsconfig.json' -o -name 'package*.json' -o -name 'live-reload.*' \\) -exec rm -f {} +",
-
-    "watch:ts": "tsc --watch",
-    "watch:scss": "sass --watch css:css --no-source-map -s compressed"
-  },
-  "dependencies": {
-    "@highlightjs/cdn-assets": "^11.11.1",
-    "highlight.js": "^11.11.1",
-    "marked": "^16.0.0"
-  },
-  "devDependencies": {
-    "@types/jquery": "^3.5.32",
-    "autoprefixer": "^10.4.21",
-    "html-minifier": "^4.0.0",
-    "postcss-cli": "^11.0.1",
-    "sass": "^1.89.2",
-    "terser": "^5.43.1",
-    "typescript": "^5.8.3"
-  }
+    "name": "toolbox-io-frontend",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview"
+    },
+    "dependencies": {
+        "highlight.js": "^11.11.1",
+        "jquery": "^3.7.1",
+        "marked": "^16.4.1"
+    },
+    "devDependencies": {
+        "@types/jquery": "^3.5.33",
+        "@types/node": "^20.19.23",
+        "sass": "^1.93.2",
+        "typescript": "^5.9.3",
+        "vite": "^5.4.21"
+    }
 }

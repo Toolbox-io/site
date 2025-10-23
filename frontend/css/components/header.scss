@@ -1,5 +1,5 @@
 @use "../common/colors" as *;
-@import url(/css/common.css);
+@import url(../common.scss);
 
 :host {
     backdrop-filter: none;

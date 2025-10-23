@@ -30,10 +30,10 @@ A comprehensive security application for Android devices with a full-stack web p
 - **Rate Limiting** - API protection
 
 ### Frontend
+- **Vite** - Fast build tool and dev server
 - **TypeScript** - Type-safe JavaScript
 - **SCSS** - Styled components
 - **Material Design** - Modern UI components
-- **WebSocket** - Live reload (development)
 
 ### Android
 - **Kotlin** - Modern Android development
@@ -95,7 +95,8 @@ npm run development:all
 ```
 
 #### 5. Access the Application
-- **Web App**: http://localhost:8000
+- **Frontend (Vite)**: http://localhost:8001
+- **Backend API**: http://localhost:8000
 - **Download Service**: http://localhost:8000/download/
 - **Database**: SQLite file at `backend/main/data/toolbox_dev.db`
 

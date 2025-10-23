@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import mimetypes
 import sys
 import os
 from contextlib import asynccontextmanager
@@ -13,16 +12,14 @@ from dotenv import load_dotenv
 env_path = Path(__file__).parent.parent.parent / '.env'
 load_dotenv(env_path)
 
-from fastapi import HTTPException, Request
+from fastapi import Request
 from fastapi.exception_handlers import http_exception_handler
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app import app
 from constants import *
 from db.init import initialize_database
-from live_reload import start_file_watcher, stop_file_watcher, live_reload_manager
-from utils import find_file
 from bot import start_support_bot, stop_support_bot
 import uvicorn
 
@@ -41,10 +38,6 @@ logger.info("Starting Toolbox.io server initialization...")
 async def lifespan(app):
     """Lifespan event handler for FastAPI"""
     # Startup
-    if os.getenv("DEBUG", "false").lower() == "true":
-        live_reload_manager.set_main_loop(asyncio.get_running_loop())
-        logger.info("Live reload event loop configured")
-    
     # Start support bot as background task
     bot_task = None
     if os.getenv("TELEGRAM_BOT_TOKEN"):
@@ -62,60 +55,12 @@ async def lifespan(app):
             await bot_task
         except asyncio.CancelledError:
             pass
-    
-    stop_file_watcher()
 
 
 # Update the app with lifespan
 app.router.lifespan_context = lifespan
 
 
-@app.get("/{path:path}")
-async def serve_files(path: str, request: Request):
-    """Serve .mdpage.md files first, then files from the content directory with various fallbacks."""
-    
-    # 1. Try to serve .mdpage.md file first
-    mdpath = path.upper()
-    if (CONTENT_PATH / f"{mdpath}.page.md").resolve().is_file():
-        return templates.TemplateResponse(
-            "mdpage.html",
-            {"request": request, "file": f"{mdpath}.page.md"}
-        )
-
-    # 2. Fallback to regular file logic
-    file_path, redirect_path = find_file(path)
-
-    if redirect_path:
-        # Preserve query parameters
-        query_string = request.url.query
-        redirect_url = redirect_path
-        if query_string:
-            if '?' in redirect_url:
-                redirect_url += f"&{query_string}"
-            else:
-                redirect_url += f"?{query_string}"
-        return RedirectResponse(url=redirect_url)
-
-    if not file_path:
-        raise HTTPException(status_code=404, detail="File not found")
-
-    if (
-        file_path.name.endswith(".ts") or
-        file_path.name.endswith(".scss") or
-        file_path.name.endswith(".sh") or
-        file_path.name == "package.json" or
-        file_path.name == "tsconfig.json" or
-        file_path.parent.resolve() == (CONTENT_PATH / "templates").resolve() or
-        file_path.parent.resolve() == (CONTENT_PATH / "emails").resolve()
-    ):
-        logger.warning(f"Access denied to: {file_path}")
-        raise HTTPException(status_code=404, detail="Access denied")
-
-    mime_type, _ = mimetypes.guess_type(str(file_path))
-    return FileResponse(
-        path=file_path,
-        media_type=mime_type
-    )
 
 
 @app.exception_handler(StarletteHTTPException)
@@ -138,12 +83,7 @@ if __name__ == "__main__":
         logger.error("Failed to initialize database. Exiting.")
         sys.exit(1)
 
-    # Start file watcher for live reload (only in development)
-    if os.getenv("DEBUG", "false").lower() == "true":
-        start_file_watcher([CONTENT_PATH])
-
     try:
         uvicorn.run(app, host="0.0.0.0", port=8000)
-    finally:
-        # Clean up file watcher on shutdown
-        stop_file_watcher()
+    except KeyboardInterrupt:
+        logger.info("Server stopped by user")

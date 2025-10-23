@@ -1,6 +1,3 @@
-import {Utils} from "./common.js";
-import setUpTabs = Utils.setUpTabs;
+import { setUpTabs } from "./common/utils";
 
-(() => {
-   setUpTabs();
-})();
+setUpTabs();

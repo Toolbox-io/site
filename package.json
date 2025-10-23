@@ -4,8 +4,8 @@
   "private": true,
   "description": "Toolbox.io website and API",
   "scripts": {
-    "development:backend": "cd backend/main && ../../.venv/bin/python3 main.py",
-    "development:frontend": "cd frontend && npm run build:dev && npm run watch:ts & npm run watch:scss",
+    "development:backend": "cd backend/main && ../../.venv/bin/fastapi dev main.py",
+    "development:frontend": "cd frontend && npm run dev",
     "development:all": "concurrently -n backend,frontend \"npm:development:backend\" \"npm:development:frontend\""
   },
   "devDependencies": {

@@ -12,6 +12,26 @@ services:
     volumes:
       - data:/var/lib/mysql
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8001:8001"
+    develop:
+      watch:
+        - action: sync
+          path: ./frontend
+          target: /app
+          ignore:
+            - node_modules/
+            - dist/
+        - action: rebuild
+          path: ./frontend/package.json
+        - action: rebuild
+          path: ./frontend/vite.config.ts
+
   main:
     build:
       context: .
@@ -21,6 +41,7 @@ services:
     restart: unless-stopped
     depends_on:
       - db
+      - frontend
     environment:
       SECRET_KEY: ${SECRET_KEY}
       DB_HOST: db
@@ -40,18 +61,11 @@ services:
       - "8000:8000"
     develop:
       watch:
-        - action: sync
-          path: ./frontend
-          target: /home/toolbox/site/frontend
-          ignore:
-            - node_modules/
         - action: sync+restart
           path: ./backend/main
           target: /home/toolbox/site/backend/main
         - action: rebuild
           path: backend/main/requirements.txt
-        - action: rebuild
-          path: ./frontend/package.json
     volumes:
       - photos:/home/toolbox/site/backend/main/data/photos
       - huggingface_cache:/home/toolbox/.cache/huggingface

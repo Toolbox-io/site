@@ -5,8 +5,7 @@
             "label": "Run",
             "dependsOrder": "parallel",
             "dependsOn": [
-                "TypeScript: Watch",
-                "SCSS: Watch",
+                "Frontend: Vite",
                 "Backend"
             ],
             "group": {
@@ -19,8 +18,7 @@
             "dependsOrder": "parallel",
             "dependsOn": [
                 "Backend",
-                "TypeScript: Watch",
-                "SCSS: Watch"
+                "Frontend: Vite"
             ],
             "group": {
                 "kind": "build"
@@ -42,41 +40,28 @@
             "isBackground": true,
             "problemMatcher": []
         },
-        {
-            "label": "TypeScript: Watch",
-            "type": "shell",
-            "command": "npm",
-            "options": {
-                "cwd": "${workspaceFolder}/frontend"
-            },
-            "args": ["run", "watch:ts"],
-            "isBackground": true,
-            "problemMatcher": "$tsc-watch"
-        },
-        {
-            "label": "SCSS: Watch",
-            "type": "shell",
-            "command": "npm",
-            "args": ["run", "watch:scss"],
-            "options": {
-                "cwd": "${workspaceFolder}/frontend"
-            },
-            "isBackground": true,
-            "group": "build",
-            "problemMatcher": {
-                "owner": "scss",
-                "fileLocation": "relative",
-                "pattern": {
-                    "regexp": "^(Error|Warning):\\s+(.+)$",
-                    "severity": 1,
-                    "message": 2
+            {
+                "label": "Frontend: Vite",
+                "type": "npm",
+                "script": "dev",
+                "options": {
+                    "cwd": "${workspaceFolder}/frontend"
                 },
-                "background": {
-                    "activeOnStart": true,
-                    "beginsPattern": "^\\s*Sass is watching for changes\\. Press Ctrl-C to stop\\.\\s*$",
-                    "endsPattern": "^\\s*\\d{1,2}:\\d{1,2}:\\d{1,2}\\s*(?:AM|PM)?\\s*-\\s*Compiled\\s+(.+)\\s+to\\s+(.+)\\s*$"
+                "isBackground": true,
+                "problemMatcher": {
+                    "owner": "vite",
+                    "fileLocation": "relative",
+                    "pattern": {
+                        "regexp": "^(Error|Warning):\\s+(.+)$",
+                        "severity": 1,
+                        "message": 2
+                    },
+                    "background": {
+                        "activeOnStart": true,
+                        "beginsPattern": "^\\s*VITE\\s+v\\d+\\.\\d+\\.\\d+\\s+ready in \\d+ms\\s*$",
+                        "endsPattern": "^\\s*Local:\\s+http://localhost:\\d+\\s*$"
+                    }
                 }
             }
-        }
     ]
 }

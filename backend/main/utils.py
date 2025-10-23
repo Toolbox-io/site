@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Tuple, Optional
 
 from fastapi import APIRouter, HTTPException
-from starlette.staticfiles import StaticFiles
 
 from constants import CONTENT_PATH
 
@@ -52,12 +51,6 @@ def find_file(path: str) -> Tuple[Optional[Path], Optional[str]]:
     return None, None
 
 
-def static(path: str | Path):
-    if not isinstance(path, Path):
-        path = Path(path)
-    path = str(path.resolve())
-
-    router.mount(path, StaticFiles(directory=path), name=path)
 
 def debug_only(route_handler):
     @wraps(route_handler)

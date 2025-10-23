@@ -1,11 +1,6 @@
-import {Utils} from "./common.js";
-import setUpTabs = Utils.setUpTabs;
-import delay = Utils.delay;
-import id = Utils.id;
+import { delay, id, setUpTabs } from "./common/utils";
 
-(async () => {
-    setUpTabs();
+setUpTabs();
 
-    await delay(1000);
-    id("download")!.click();
-})();
+await delay(1000);
+id("download")!.click();
