@@ -7,15 +7,16 @@ from pathlib import Path
 from typing import Optional
 
 import httpx
-from fastapi import HTTPException, FastAPI
+from fastapi import APIRouter, HTTPException
 from fastapi.responses import RedirectResponse, FileResponse
+
+router = APIRouter()
 
 GITHUB_API = "https://api.github.com/repos/Toolbox-io/Toolbox-io"
 CACHE = Path("./cache").resolve()
 
 logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
-
-app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+logger = logging.getLogger(__name__)
 
 async def github_api(url: str) -> tuple[Optional[any], bool]:
     cache_file = CACHE / "responses.json"
@@ -87,11 +88,7 @@ async def get_release_asset_url(version: Optional[str] = None) -> tuple[Optional
     logging.error(f"[get_release_asset_url] Failed to get asset URL after retries")
     return None, False, None
 
-@app.get("/favicon.ico")
-async def favicon():
-    return RedirectResponse("https://toolbox-io.ru/favicon.ico", status_code=308)
-
-@app.get("/{path:path}")
+@router.get("/download/{path:path}")
 async def serve_files(path: str):
     logging.info(f"[serve_files] Requested path: {path}")
     asset_url, from_cache, tag_name = await get_release_asset_url(path)
@@ -128,7 +125,3 @@ async def serve_files(path: str):
         return RedirectResponse(url=asset_url, status_code=308)
     logging.error(f"[serve_files] Asset not found for path: {path}")
     raise HTTPException(status_code=404)
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8001)

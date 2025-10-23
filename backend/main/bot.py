@@ -2,18 +2,22 @@ import os
 import asyncio
 import aiohttp
 import json
+import logging
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 
 # Configuration
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-API_BASE_URL = os.getenv("API_BASE_URL", "http://main:8000")
+API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
 SUPPORT_API_URL = f"{API_BASE_URL}/api/support/chat"
 INTERNAL_BOT_TOKEN = os.getenv("INTERNAL_BOT_TOKEN")
+
+logger = logging.getLogger(__name__)
 
 class SupportBot:
     def __init__(self):
         self.session_id_counter = 0
+        self.application = None
     
     def get_session_id(self, user_id: int) -> str:
         """Generate a unique session ID for each user"""
@@ -122,38 +126,57 @@ class SupportBot:
         await update.message.reply_text("Извините, я не поддерживаю этот файл.")
 
     async def error_handler(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        print(f"Update {update} caused error {context.error}")
+        logger.error(f"Update {update} caused error {context.error}")
         if update and update.effective_message:
-            print(update)
             await update.effective_message.reply_text(
                 "Произошла ошибка. Попробуйте еще раз позже."
             )
 
-def main():
-    print("Starting Toolbox.io support bot...")
-    """Main function to run the bot"""
-    if not TELEGRAM_TOKEN:
-        print("Error: TELEGRAM_BOT_TOKEN environment variable is not set")
-        return
-    
-    # Create bot instance
-    bot = SupportBot()
-    
-    # Create application
-    application = Application.builder().token(TELEGRAM_TOKEN).build()
-    
-    # Add handlers
-    application.add_handler(CommandHandler("start", bot.start_command))
-    application.add_handler(CommandHandler("help", bot.help_command))
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, bot.handle_message))
-    application.add_handler(MessageHandler(~filters.TEXT, bot.handle_unsupported))
-    
-    # Add error handler
-    application.add_error_handler(bot.error_handler)
-    
-    # Start the bot
-    print("Bot is running")
-    application.run_polling(allowed_updates=Update.ALL_TYPES)
+    async def start_bot(self):
+        """Start the Telegram bot"""
+        if not TELEGRAM_TOKEN:
+            logger.warning("TELEGRAM_BOT_TOKEN not set - support bot will not start")
+            return
+        
+        logger.info("Starting Toolbox.io support bot...")
+        
+        # Create application
+        self.application = Application.builder().token(TELEGRAM_TOKEN).build()
+        
+        # Add handlers
+        self.application.add_handler(CommandHandler("start", self.start_command))
+        self.application.add_handler(CommandHandler("help", self.help_command))
+        self.application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.handle_message))
+        self.application.add_handler(MessageHandler(~filters.TEXT, self.handle_unsupported))
+        
+        # Add error handler
+        self.application.add_error_handler(self.error_handler)
+        
+        # Start the bot
+        logger.info("Bot is running")
+        await self.application.initialize()
+        await self.application.start()
+        await self.application.updater.start_polling(allowed_updates=Update.ALL_TYPES)
 
-if __name__ == "__main__":
-    main()
+    async def stop_bot(self):
+        """Stop the Telegram bot"""
+        if self.application:
+            logger.info("Stopping support bot...")
+            await self.application.updater.stop()
+            await self.application.stop()
+            await self.application.shutdown()
+
+# Global bot instance
+bot_instance = None
+
+async def start_support_bot():
+    """Start the support bot as a background task"""
+    global bot_instance
+    bot_instance = SupportBot()
+    await bot_instance.start_bot()
+
+async def stop_support_bot():
+    """Stop the support bot"""
+    global bot_instance
+    if bot_instance:
+        await bot_instance.stop_bot()

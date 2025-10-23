@@ -11,20 +11,27 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Database configuration
+ENV = os.getenv('ENV', 'development')
 DB_HOST = os.getenv('DB_HOST', '0.0.0.0')
 DB_PORT = os.getenv('DB_PORT', '3306')
 DB_USER = os.getenv('DB_USER', 'toolbox_user')
 DB_PASSWORD = os.getenv('DB_PASSWORD')
 DB_NAME = os.getenv('DB_NAME', 'toolbox_db')
 
-if not DB_PASSWORD:
-    logger.critical("No password")
-    exit(1)
+# Create database URL based on environment
+if ENV == 'production':
+    # MySQL for production
+    if not DB_PASSWORD:
+        logger.critical("No password")
+        exit(1)
+    DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+else:
+    # SQLite for development
+    import os
+    os.makedirs('data', exist_ok=True)
+    DATABASE_URL = "sqlite:///./data/toolbox_dev.db"
 
-# Create MySQL connection string
-DATABASE_URL = f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-
-logger.info(f"Initializing database with URL: {DATABASE_URL.replace(DB_PASSWORD, '***')}")
+logger.info(f"Initializing database with URL: {DATABASE_URL.replace(DB_PASSWORD or '', '***')}")
 
 def create_engine_with_retry(max_retries=5, retry_delay=5):
     """Create database engine with retry mechanism"""
@@ -32,17 +39,27 @@ def create_engine_with_retry(max_retries=5, retry_delay=5):
         try:
             logger.info(f"Attempting to connect to database (attempt {attempt + 1}/{max_retries})")
             
-            engine = create_engine(
-                DATABASE_URL,
-                pool_pre_ping=True,
-                pool_recycle=300,
-                echo=False,  # Set to True for SQL debugging
-                connect_args={
-                    "connect_timeout": 10,
-                    "read_timeout": 30,
-                    "write_timeout": 30
-                }
-            )
+            # Configure engine based on database type
+            if ENV == 'production':
+                # MySQL configuration
+                engine = create_engine(
+                    DATABASE_URL,
+                    pool_pre_ping=True,
+                    pool_recycle=300,
+                    echo=False,  # Set to True for SQL debugging
+                    connect_args={
+                        "connect_timeout": 10,
+                        "read_timeout": 30,
+                        "write_timeout": 30
+                    }
+                )
+            else:
+                # SQLite configuration
+                engine = create_engine(
+                    DATABASE_URL,
+                    echo=False,  # Set to True for SQL debugging
+                    connect_args={"check_same_thread": False}
+                )
             
             # Test the connection
             with engine.connect() as conn:

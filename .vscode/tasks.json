@@ -7,7 +7,7 @@
             "dependsOn": [
                 "TypeScript: Watch",
                 "SCSS: Watch",
-                "Build"
+                "Backend"
             ],
             "group": {
                 "kind": "build",
@@ -15,9 +15,21 @@
             },
         },
         {
-            "label": "Build",
-            "type": "shell",
-            "command": "./build.sh",
+            "label": "Development",
+            "dependsOrder": "parallel",
+            "dependsOn": [
+                "Backend",
+                "TypeScript: Watch",
+                "SCSS: Watch"
+            ],
+            "group": {
+                "kind": "build"
+            },
+        },
+        {
+            "label": "Backend",
+            "type": "npm",
+            "script": "development:backend",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -25,28 +37,10 @@
                 "echo": true,
                 "reveal": "always",
                 "focus": false,
-                "panel": "shared"
+                "panel": "new"
             },
-            "problemMatcher": [
-                {
-                    "owner": "docker",
-                    "fileLocation": "relative",
-                    "pattern": {
-                        "regexp": "^(ERROR|WARNING):\\s*(.+)$",
-                        "severity": 1,
-                        "message": 2
-                    }
-                },
-                {
-                    "owner": "shell",
-                    "fileLocation": "relative",
-                    "pattern": {
-                        "regexp": "^ERROR:\\s*(.+)$",
-                        "severity": 1,
-                        "message": 1
-                    }
-                }
-            ]
+            "isBackground": true,
+            "problemMatcher": []
         },
         {
             "label": "TypeScript: Watch",

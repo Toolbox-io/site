@@ -28,7 +28,8 @@ toolbox-io.ru {
 }
 
 download.toolbox-io.ru {
-	reverse_proxy download:8001
+	reverse_proxy main:8000
+	uri strip_prefix /download
 }
 
 beta.toolbox-io.ru {

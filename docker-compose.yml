@@ -34,6 +34,8 @@ services:
       GITHUB_INSTALLATION_ID: ${GITHUB_INSTALLATION_ID}
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       INTERNAL_BOT_TOKEN: ${INTERNAL_BOT_TOKEN}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      API_BASE_URL: http://main:8000
     ports:
       - "8000:8000"
     develop:
@@ -53,42 +55,7 @@ services:
     volumes:
       - photos:/home/toolbox/site/backend/main/data/photos
       - huggingface_cache:/home/toolbox/.cache/huggingface
-
-  download:
-    build:
-      context: backend/download
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    ports:
-      - "8001:8001"
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./backend/download
-          target: /home/toolbox/site/backend/download
-        - action: rebuild
-          path: backend/main/requirements.txt
-        - action: rebuild
-          path: ./frontend/package.json
-    volumes:
-      - download_cache:/home/toolbox/site/backend/download/cache
-
-  supportbot:
-    build:
-      context: backend/supportbot
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    depends_on:
-      - main
-    environment:
-      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
-      API_BASE_URL: http://main:8000
-      INTERNAL_BOT_TOKEN: ${INTERNAL_BOT_TOKEN}
-    develop:
-      watch:
-        - action: sync+restart
-          path: ./backend/supportbot
-          target: /root/site/backend/supportbot
+      - download_cache:/home/toolbox/site/backend/main/cache
 
   caddy:
     build:

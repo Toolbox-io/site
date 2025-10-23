@@ -1,0 +1,15 @@
+{
+  "name": "toolbox-io-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Toolbox.io website and API",
+  "scripts": {
+    "development:backend": "cd backend/main && ../../.venv/bin/python3 main.py",
+    "development:frontend": "cd frontend && npm run build:dev && npm run watch:ts & npm run watch:scss",
+    "development:all": "concurrently -n backend,frontend \"npm:development:backend\" \"npm:development:frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3"
+  }
+}

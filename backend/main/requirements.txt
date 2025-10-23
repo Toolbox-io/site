@@ -20,3 +20,6 @@ watchdog>=3.0.0
 openai>=1.98.0
 sentence-transformers>=5.0.0
 numpy>=1.21.0
+python-telegram-bot>=22.3
+aiohttp>=3.12.15
+python-dotenv>=1.0.0

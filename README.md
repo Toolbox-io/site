@@ -42,29 +42,81 @@ A comprehensive security application for Android devices with a full-stack web p
 
 ## 📋 Prerequisites
 
-- **Docker & Docker Compose** - For easy deployment
+### For Local Development (No Docker)
 - **Node.js 18+** - For frontend development
 - **Python 3.9+** - For backend development
+- **SQLite** - Built-in database (no installation needed)
+
+### For Production Deployment
+- **Docker & Docker Compose** - For easy deployment
 - **MySQL 8+** - Database
 - **Android Studio** - For Android development
 
 ## 🚀 Quick Start
 
-### 1. Clone the Repository
+### Local Development (No Docker)
+
+#### 1. Clone the Repository
+```bash
+git clone https://github.com/Toolbox-io/site.git
+cd site
+```
+
+#### 2. Install Dependencies
+```bash
+# Install root dependencies
+npm install
+
+# Install frontend dependencies
+cd frontend && npm install && cd ..
+
+# Install backend dependencies
+cd backend/main && pip install -r requirements.txt && cd ../..
+```
+
+#### 3. Environment Setup
+```bash
+# Copy the environment template (works for both dev and prod)
+cp env.example .env
+
+# Edit .env with your values (optional - defaults work for basic development)
+# Set ENV=development for SQLite, ENV=production for MySQL
+nano .env
+```
+
+#### 4. Start Development Services
+```bash
+# Start all services at once
+npm run development:all
+
+# Or start individual services:
+# npm run development:backend     # Unified backend (API + Download + Support Bot)
+# npm run development:frontend   # Frontend with hot reload
+```
+
+#### 5. Access the Application
+- **Web App**: http://localhost:8000
+- **Download Service**: http://localhost:8000/download/
+- **Database**: SQLite file at `backend/main/data/toolbox_dev.db`
+
+### Production Deployment (Docker)
+
+#### 1. Clone the Repository
 ```bash
 git clone https://github.com/Toolbox-io/site.git
 ```
 
-### 2. Environment Setup
+#### 2. Environment Setup
 ```bash
-# Copy the environment template
+# Copy the environment template (same file for dev and prod)
 cp env.example .env
 
 # Edit .env with your actual values
+# Set ENV=production for Docker deployment
 nano .env
 ```
 
-### 3. Start with Docker
+#### 3. Start with Docker
 ```bash
 # Start all services
 docker-compose up -d
@@ -73,14 +125,25 @@ docker-compose up -d
 docker-compose logs -f
 ```
 
-### 4. Access the Application
+#### 4. Access the Application
 - **Web App**: http://localhost:8000
 - **API Docs**: http://localhost:8000/api/docs (if enabled)
-- **Download Service**: http://localhost:8001
+- **Download Service**: http://localhost:8000/download/
 
 ## 🔧 Development Setup
 
-### Backend Development
+### Using VSCode Tasks
+The project includes VSCode tasks for easy development:
+
+1. **Run** - Starts unified backend + frontend (TypeScript + SCSS watch)
+2. **Development** - Starts all services (unified backend + frontend)
+3. **Backend** - Just the unified backend (API + Download + Support Bot)
+4. **TypeScript: Watch** - Frontend TypeScript compilation
+5. **SCSS: Watch** - Frontend SCSS compilation
+
+### Manual Development
+
+#### Backend Development
 ```bash
 cd backend/main
 python -m venv venv
@@ -88,18 +151,20 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 
 # Set up environment variables
-cp ../../env.example .env
+cp ../../env.development.example .env
 # Edit .env with your values
 
 # Run the server
-python main.py
+ENV=development python main.py
 ```
 
-### Frontend Development
+#### Frontend Development
 ```bash
 cd frontend
 npm install
 npm run build  # Compile TypeScript to JavaScript
+npm run watch:ts  # Watch TypeScript changes
+npm run watch:scss  # Watch SCSS changes
 ```
 
 ### Android Development
@@ -114,9 +179,7 @@ cd ../Android
 Toolbox.io/
 ├── Site/                    # Web platform
 │   ├── backend/
-│   │   ├── main/           # Main API server
-│   │   ├── download/       # Download service
-│   │   └── supportbot/     # Telegram bot
+│   │   └── main/           # Unified backend (API + Download + Support Bot)
 │   ├── frontend/           # Web frontend
 │   ├── caddy/              # Reverse proxy
 │   └── docker-compose.yml  # Docker configuration

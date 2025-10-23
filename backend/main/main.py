@@ -2,7 +2,16 @@ import asyncio
 import logging
 import mimetypes
 import sys
+import os
 from contextlib import asynccontextmanager
+from pathlib import Path
+
+# Load environment variables from .env file
+from dotenv import load_dotenv
+
+# Load .env file from project root (two levels up from backend/main)
+env_path = Path(__file__).parent.parent.parent / '.env'
+load_dotenv(env_path)
 
 from fastapi import HTTPException, Request
 from fastapi.exception_handlers import http_exception_handler
@@ -14,7 +23,7 @@ from constants import *
 from db.init import initialize_database
 from live_reload import start_file_watcher, stop_file_watcher, live_reload_manager
 from utils import find_file
-import os
+from bot import start_support_bot, stop_support_bot
 import uvicorn
 
 # Configure logging
@@ -35,10 +44,25 @@ async def lifespan(app):
     if os.getenv("DEBUG", "false").lower() == "true":
         live_reload_manager.set_main_loop(asyncio.get_running_loop())
         logger.info("Live reload event loop configured")
+    
+    # Start support bot as background task
+    bot_task = None
+    if os.getenv("TELEGRAM_BOT_TOKEN"):
+        logger.info("Starting support bot...")
+        bot_task = asyncio.create_task(start_support_bot())
 
     yield
 
     # Shutdown
+    if bot_task:
+        logger.info("Stopping support bot...")
+        await stop_support_bot()
+        bot_task.cancel()
+        try:
+            await bot_task
+        except asyncio.CancelledError:
+            pass
+    
     stop_file_watcher()
 
 
