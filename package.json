@@ -1,15 +1,14 @@
 {
-  "name": "toolbox-io-site",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Toolbox.io website and API",
-  "scripts": {
-    "development:backend": "cd backend/main && ../../.venv/bin/fastapi dev main.py",
-    "development:frontend": "cd frontend && npm run dev",
-    "development:all": "concurrently -n backend,frontend \"npm:development:backend\" \"npm:development:frontend\""
-  },
-  "devDependencies": {
-    "concurrently": "^8.2.2",
-    "cross-env": "^7.0.3"
-  }
+    "name": "toolbox-io-site",
+    "version": "1.0.0",
+    "private": true,
+    "description": "Toolbox.io website and API",
+    "scripts": {
+        "backend:main": "cd backend/main && ../../.venv/bin/fastapi dev --host 0.0.0.0 --port 8000 main.py",
+        "backend:assistant": "cd backend/assistant && ../../.venv/bin/python3 main.py",
+        "frontend": "cd frontend && npm run dev"
+    },
+    "devDependencies": {
+        "cross-env": "^7.0.3"
+    }
 }

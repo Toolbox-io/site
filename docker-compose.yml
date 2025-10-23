@@ -32,6 +32,28 @@ services:
         - action: rebuild
           path: ./frontend/vite.config.ts
 
+  assistant:
+    build:
+      context: ./backend/assistant
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      - main
+    environment:
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      API_BASE_URL: http://main:8000
+      INTERNAL_BOT_TOKEN: ${INTERNAL_BOT_TOKEN}
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    volumes:
+      - huggingface_cache:/root/.cache/huggingface
+    develop:
+      watch:
+        - action: sync+restart
+          path: ./backend/assistant
+          target: /app
+        - action: rebuild
+          path: requirements.txt
+
   main:
     build:
       context: .
@@ -53,9 +75,6 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD}
       GITHUB_APP_ID: ${GITHUB_APP_ID}
       GITHUB_INSTALLATION_ID: ${GITHUB_INSTALLATION_ID}
-      OPENAI_API_KEY: ${OPENAI_API_KEY}
-      INTERNAL_BOT_TOKEN: ${INTERNAL_BOT_TOKEN}
-      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
       API_BASE_URL: http://main:8000
     ports:
       - "8000:8000"
@@ -65,7 +84,7 @@ services:
           path: ./backend/main
           target: /home/toolbox/site/backend/main
         - action: rebuild
-          path: backend/main/requirements.txt
+          path: requirements.txt
     volumes:
       - photos:/home/toolbox/site/backend/main/data/photos
       - huggingface_cache:/home/toolbox/.cache/huggingface

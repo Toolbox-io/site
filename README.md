@@ -70,8 +70,8 @@ npm install
 # Install frontend dependencies
 cd frontend && npm install && cd ..
 
-# Install backend dependencies
-cd backend/main && pip install -r requirements.txt && cd ../..
+# Install Python dependencies (for both backend and assistant)
+pip install -r requirements.txt
 ```
 
 #### 3. Environment Setup
@@ -90,8 +90,9 @@ nano .env
 npm run development:all
 
 # Or start individual services:
-# npm run development:backend     # Unified backend (API + Download + Support Bot)
-# npm run development:frontend   # Frontend with hot reload
+# npm run development:backend     # Backend API server
+# npm run development:frontend    # Frontend with Vite hot reload
+# npm run development:assistant  # Telegram support bot
 ```
 
 #### 5. Access the Application
@@ -180,7 +181,8 @@ cd ../Android
 Toolbox.io/
 ├── Site/                    # Web platform
 │   ├── backend/
-│   │   └── main/           # Unified backend (API + Download + Support Bot)
+│   │   ├── main/           # Backend API server
+│   │   └── assistant/      # Telegram support bot
 │   ├── frontend/           # Web frontend
 │   ├── caddy/              # Reverse proxy
 │   └── docker-compose.yml  # Docker configuration

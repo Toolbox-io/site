@@ -5,9 +5,9 @@ FROM python:3.12 AS backend
 WORKDIR /root
 RUN rm -rf .venv && \
     python3 -m venv .venv
-COPY backend/main/requirements.txt /root/site/backend/requirements.txt
+COPY requirements.txt /root/site/requirements.txt
 RUN --mount=type=cache,target=/root/.cache/pip \
-    ./.venv/bin/pip3 install -r /root/site/backend/requirements.txt
+    ./.venv/bin/pip3 install -r /root/site/requirements.txt
 
 
 # 2. Frontend build

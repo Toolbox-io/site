@@ -2,32 +2,21 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Run",
-            "dependsOrder": "parallel",
-            "dependsOn": [
-                "Frontend: Vite",
-                "Backend"
-            ],
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-        },
-        {
             "label": "Development",
             "dependsOrder": "parallel",
             "dependsOn": [
-                "Backend",
-                "Frontend: Vite"
+                "Backend: Main",
+                "Frontend",
+                "Backend: Assistant"
             ],
             "group": {
                 "kind": "build"
             },
         },
         {
-            "label": "Backend",
+            "label": "Backend: Main",
             "type": "npm",
-            "script": "development:backend",
+            "script": "backend:main",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -40,28 +29,44 @@
             "isBackground": true,
             "problemMatcher": []
         },
-            {
-                "label": "Frontend: Vite",
-                "type": "npm",
-                "script": "dev",
-                "options": {
-                    "cwd": "${workspaceFolder}/frontend"
+        {
+            "label": "Backend: Assistant",
+            "type": "npm",
+            "script": "backend:assistant",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "new"
+            },
+            "isBackground": true,
+            "problemMatcher": []
+        },
+        {
+            "label": "Frontend",
+            "type": "npm",
+            "script": "frontend",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "isBackground": true,
+            "problemMatcher": {
+                "owner": "vite",
+                "fileLocation": "relative",
+                "pattern": {
+                    "regexp": "^(Error|Warning):\\s+(.+)$",
+                    "severity": 1,
+                    "message": 2
                 },
-                "isBackground": true,
-                "problemMatcher": {
-                    "owner": "vite",
-                    "fileLocation": "relative",
-                    "pattern": {
-                        "regexp": "^(Error|Warning):\\s+(.+)$",
-                        "severity": 1,
-                        "message": 2
-                    },
-                    "background": {
-                        "activeOnStart": true,
-                        "beginsPattern": "^\\s*VITE\\s+v\\d+\\.\\d+\\.\\d+\\s+ready in \\d+ms\\s*$",
-                        "endsPattern": "^\\s*Local:\\s+http://localhost:\\d+\\s*$"
-                    }
+                "background": {
+                    "activeOnStart": true,
+                    "beginsPattern": "^\\s*VITE\\s+v\\d+\\.\\d+\\.\\d+\\s+ready in \\d+ms\\s*$",
+                    "endsPattern": "^\\s*Local:\\s+http://localhost:\\d+\\s*$"
                 }
             }
+        }
     ]
 }

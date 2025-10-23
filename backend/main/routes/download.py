@@ -15,7 +15,6 @@ router = APIRouter()
 GITHUB_API = "https://api.github.com/repos/Toolbox-io/Toolbox-io"
 CACHE = Path("./cache").resolve()
 
-logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
 logger = logging.getLogger(__name__)
 
 async def github_api(url: str) -> tuple[Optional[any], bool]:

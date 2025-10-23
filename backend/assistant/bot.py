@@ -1,16 +1,28 @@
 import os
 import asyncio
-import aiohttp
 import json
 import logging
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+from ai_model import generate_response, initialize_ai_model
 
 # Configuration
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-API_BASE_URL = os.getenv("API_BASE_URL", "http://localhost:8000")
-SUPPORT_API_URL = f"{API_BASE_URL}/api/support/chat"
-INTERNAL_BOT_TOKEN = os.getenv("INTERNAL_BOT_TOKEN")
+
+# Load context and instructions
+try:
+    with open("context/data.md", "r", encoding="utf-8") as f:
+        full_context = f.read()
+except FileNotFoundError:
+    print("Error: context/data.md not found.")
+    exit()
+
+try:
+    with open("context/instruction.md", "r", encoding="utf-8") as f:
+        instructions = f.read()
+except FileNotFoundError:
+    print("Error: context/instruction.md not found.")
+    exit()
 
 logger = logging.getLogger(__name__)
 
@@ -24,48 +36,26 @@ class SupportBot:
         return f"telegram-{user_id}-{self.session_id_counter}"
     
     async def send_message_to_api(self, message: str, session_id: str, user_id: int = None) -> str:
-        """Send message to the support API and return the response"""
-        async with aiohttp.ClientSession() as session:
-            try:
-                headers = {"Content-Type": "application/json"}
-                if user_id is not None and INTERNAL_BOT_TOKEN:
-                    headers["X-User-ID"] = str(user_id)
-                    headers["X-Internal-Token"] = INTERNAL_BOT_TOKEN
-                async with session.post(
-                    SUPPORT_API_URL,
-                    json={
-                        "message": message,
-                        "session_id": session_id
-                    },
-                    headers=headers,
-                    timeout=aiohttp.ClientTimeout(total=30)
-                ) as response:
-                    if response.status == 429:
-                        return "Ваш лимит запросов исчерпан. Попробуйте еще раз завтра."
+        """Generate AI response using local model"""
+        try:
+            # Use the local AI model to generate response
+            full_response = ""
+            for chunk in generate_response(session_id, message, faq_map, instructions, full_context):
+                if chunk.startswith('data: '):
+                    try:
+                        data = json.loads(chunk[6:])
+                        if 'content' in data:
+                            full_response += data['content']
+                        elif 'error' in data:
+                            return f"Ошибка: {data['error']}"
+                    except json.JSONDecodeError:
+                        continue
+            
+            return full_response if full_response else "Извините, не удалось получить ответ."
                     
-                    if response.status != 200:
-                        return f"Ошибка сервера: {response.status}"
-                    
-                    # Read the streaming response and accumulate content
-                    full_response = ""
-                    async for line in response.content:
-                        line_str = line.decode('utf-8').strip()
-                        if line_str.startswith('data: '):
-                            try:
-                                data = json.loads(line_str[6:])
-                                if 'content' in data:
-                                    full_response += data['content']
-                                elif 'error' in data:
-                                    return f"Ошибка: {data['error']}"
-                            except json.JSONDecodeError:
-                                continue
-                    
-                    return full_response if full_response else "Извините, не удалось получить ответ."
-                    
-            except asyncio.TimeoutError:
-                return "Превышено время ожидания ответа. Попробуйте еще раз."
-            except Exception as e:
-                return f"Ошибка соединения: {str(e)}"
+        except Exception as e:
+            logger.error(f"Error generating AI response: {e}")
+            return "Произошла ошибка при обработке запроса."
 
     async def start_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         """Handle /start command"""

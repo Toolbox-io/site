@@ -17,7 +17,6 @@ from models import User, BlacklistedToken
 from mail import send_mail, render_email
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 # Security configuration

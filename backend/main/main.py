@@ -20,17 +20,10 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from app import app
 from constants import *
 from db.init import initialize_database
-from bot import start_support_bot, stop_support_bot
 import uvicorn
 
 # Configure logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
 logger = logging.getLogger(__name__)
-
-logger.info("Starting Toolbox.io server initialization...")
 
 
 # noinspection PyUnusedLocal,PyShadowingNames
@@ -38,23 +31,9 @@ logger.info("Starting Toolbox.io server initialization...")
 async def lifespan(app):
     """Lifespan event handler for FastAPI"""
     # Startup
-    # Start support bot as background task
-    bot_task = None
-    if os.getenv("TELEGRAM_BOT_TOKEN"):
-        logger.info("Starting support bot...")
-        bot_task = asyncio.create_task(start_support_bot())
-
     yield
 
     # Shutdown
-    if bot_task:
-        logger.info("Stopping support bot...")
-        await stop_support_bot()
-        bot_task.cancel()
-        try:
-            await bot_task
-        except asyncio.CancelledError:
-            pass
 
 
 # Update the app with lifespan
@@ -82,8 +61,3 @@ if __name__ == "__main__":
     if not initialize_database():
         logger.error("Failed to initialize database. Exiting.")
         sys.exit(1)
-
-    try:
-        uvicorn.run(app, host="0.0.0.0", port=8000)
-    except KeyboardInterrupt:
-        logger.info("Server stopped by user")
