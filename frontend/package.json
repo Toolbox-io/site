@@ -29,7 +29,7 @@
   "dependencies": {
     "@highlightjs/cdn-assets": "^11.11.1",
     "highlight.js": "^11.11.1",
-    "marked": "^16.0.0"
+    "marked": "^17.0.0"
   },
   "devDependencies": {
     "@types/jquery": "^3.5.32",
