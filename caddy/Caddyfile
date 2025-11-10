@@ -48,6 +48,7 @@ panel.toolbox-io.ru {
 fromchat.ru {
 	reverse_proxy 172.18.0.1:8301 host.docker.internal:8301 172.17.0.1:8301 {
 		lb_policy first
+        header_up X-Real-IP {remote_host}
 	}
 
 	# Security headers
@@ -86,7 +87,9 @@ fromchat.ru {
 }
 
 beta.fromchat.ru {
-    reverse_proxy 95.165.0.162:8301
+    reverse_proxy 95.165.0.162:8301 {
+        header_up X-Real-IP {remote_host}
+    }
 
 	# Security headers
 	header {
